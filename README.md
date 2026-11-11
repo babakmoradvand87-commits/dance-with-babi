@@ -99,7 +99,7 @@ Five small scripts, one stylesheet, zero dependencies:
 | file | what's inside |
 |---|---|
 | `src/math3d.js` | the maths: vectors, a look-at camera with roll, perspective projection, and box/beam/sphere meshes. |
-| `src/motion.js` | the gyroscope. Reads `beta`/`gamma`/`alpha`, rebuilds the gravity vector in the device frame, projects it onto the screen's own axes (so portrait, landscape and upside-down all agree), calibrates the pose you are holding as "flat", and smooths both axes. |
+| `src/motion.js` | the sensor. Rebuilds the gravity vector in the device frame and then measures the **rotation vector** from the pose you started in: `r = θ·(ĝ₀ × ĝ)`, whose x and y components are exactly "how far has the tray tipped away / right". Because it measures an angle and not a projection, it gives the same answer whether the phone is flat, at 45°, upright or in landscape. |
 | `src/paths.js` | the choreography: each dance is a closed loop on the tray sampled at equal distances, one ring per beat, so the marble always has the same distance to travel. Also tempo, required pace, tolerances, palette. |
 | `src/render.js` | the look. A **software 3D rasterizer on Canvas 2D**: a tray of painter-sorted, normal-lit quads that tilts exactly with the phone (rotation applied to every point it draws — the grid, the rings, the marble, the rim), 3D rings drawn in projected space, a marble with a shadow, Babi, and a spirit level at the bottom. |
 | `src/audio.js` | the music. A generative waltz in A minor: pad, bass, harp arpeggio and a celesta melody, scheduled ahead of the audio clock, plus a generated hall reverb. All synthesised, no samples. |
@@ -128,6 +128,11 @@ A few notes on the design:
 
 * **Two sensor paths.** `DeviceOrientationEvent` is used when the browser reports it; if a phone only
   offers `DeviceMotionEvent`, the gravity vector is rebuilt from `accelerationIncludingGravity` instead.
+* **The tilt is a rotation, not a projection.** The old build projected gravity onto the screen plane, which
+  silently goes to zero when the phone is held upright — the exact way two people hold a phone to look at it.
+  The current build takes the rotation between the calibrated gravity and the live one, so every hold works.
+  The one thing no accelerometer can feel is a phone spun in its own plane while bolt upright, which is why
+  the game asks you to hold it 30–60° from flat.
 * **No failure state.** You cannot lose a dance; you can only leave with fewer stars.
 * **Balance is tested, not guessed.** `tests/smoke.js` plays every dance with a model of two skilled dancers
   and checks the score, and with models of lazy, one-sided and idle players to make sure they *don't* score.

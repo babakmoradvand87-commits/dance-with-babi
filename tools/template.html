@@ -76,7 +76,12 @@
           <span id="motion-label">Gyroscope: tap to switch it on</span>
         </button>
         <p class="motion-note hidden" id="motion-note"></p>
-        <p class="motion-tip">Tip the phone and the marble above will roll with it — that is the whole game.</p>
+        <div class="sensor" id="sensor">
+          <b id="sensor-state">sensor: off</b>
+          <span id="sensor-raw">no samples yet</span>
+          <span id="sensor-tilt">tilt —</span>
+        </div>
+        <p class="motion-tip">Tip the phone and the marble above will roll with it — that is the whole game. The numbers above should change as you move; if they stay at zero, the browser is not giving the page your sensor.</p>
         <p class="foot-note">inspired by <em>Bounden</em> · built with plain canvas &amp; web audio</p>
       </div>
     </section>
@@ -128,7 +133,7 @@
             <span class="num">2</span>
             <div>
               <h3>Tip it any way at all</h3>
-              <p>The gyroscope reads which way the phone is leaning — <em>both</em> directions, not just left and right. Tip the top edge down and the marble runs away from you; tip the right edge down and it runs right; tip it diagonally and it goes diagonally. Hold the phone flat and the marble coasts to a stop. Whatever pose you hold when the dance starts counts as flat, so get comfortable first — and tap the <b>gyroscope</b> chip in the top bar if the lean ever feels upside down. On a laptop: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> for one of you, the arrow keys for the other, and the tray only tips when you both push the same way.</p>
+              <p>The game measures how far the phone has <em>rotated</em> away from the pose you started in — both directions, in any hold. Tip the top edge down and the marble runs away from you; tip the right edge down and it runs right; tip it diagonally and it goes diagonally. Hold the phone flat and the marble coasts to a stop. Get comfortable first: <em>hold it around 30–60° from flat</em>, since a phone held bolt upright cannot feel a sideways roll (no accelerometer can). Whatever pose you hold when the dance starts counts as zero, and you can tap the <b>gyroscope</b> chip in the top bar to invert the lean. On a laptop: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> for one of you, the arrow keys for the other.</p>
             </div>
           </li>
           <li>
@@ -147,7 +152,7 @@
           </li>
         </ol>
         <div class="steps fa" dir="rtl" lang="fa">
-          <p><b>خلاصه به فارسی:</b> گوشی همان سینی است. یکی گوشی را از پایین و دیگری از بالا می‌گیرد و <b>هر کدام یک شست روی صفحه</b> می‌گذارد (یکی در نیمهٔ پایین، یکی در نیمهٔ بالا). اگر یکی شستش را بردارد سینی صاف می‌شود و امتیاز نمی‌گیرید. با ژیروسکوپ، کج کردن گوشی به <b>هر طرف</b> مروارید را همان طرف می‌غلتد: لبهٔ بالا را پایین بگیرید، مروارید دور می‌شود؛ سمت راست را پایین بگیرید، به راست می‌رود؛ کجِ مورب، مورب می‌رود. گوشی را صاف بگیرید تا مروارید بایستد. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد. اگر جهت برعکس بود، روی برچسب «gyroscope» در نوار بالا بزنید. روی لپ‌تاپ: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> و کلیدهای جهت‌دار، و سینی فقط وقتی کج می‌شود که هر دو یک طرف را فشار دهید.</p>
+          <p><b>خلاصه به فارسی:</b> گوشی همان سینی است. یکی گوشی را از پایین و دیگری از بالا می‌گیرد و <b>هر کدام یک شست روی صفحه</b> می‌گذارد (یکی در نیمهٔ پایین، یکی در نیمهٔ بالا). اگر یکی شستش را بردارد سینی صاف می‌شود و امتیاز نمی‌گیرید. با ژیروسکوپ، کج کردن گوشی به <b>هر طرف</b> مروارید را همان طرف می‌غلتد: لبهٔ بالا را پایین بگیرید، مروارید دور می‌شود؛ سمت راست را پایین بگیرید، به راست می‌رود؛ کجِ مورب، مورب می‌رود. گوشی را در حدود ۳۰ تا ۶۰ درجه بگیرید (نه کاملاً ایستاده، چون در حالت کاملاً عمودی هیچ گوشی‌ای چرخش جانبی را حس نمی‌کند). گوشی را صاف بگیرید تا مروارید بایستد. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد. اگر جهت برعکس بود، روی برچسب «gyroscope» در نوار بالا بزنید. روی لپ‌تاپ: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> و کلیدهای جهت‌دار، و سینی فقط وقتی کج می‌شود که هر دو یک طرف را فشار دهید.</p>
         </div>
         <div class="panel-foot">
           <div class="hint">Headphones help. Volume is your friend, the music is your metronome.</div>

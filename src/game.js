@@ -53,6 +53,10 @@
         motionBtn: document.getElementById("btn-motion"),
         motionLabel: document.getElementById("motion-label"),
         motionNote: document.getElementById("motion-note"),
+        sensor: document.getElementById("sensor"),
+        sensorState: document.getElementById("sensor-state"),
+        sensorRaw: document.getElementById("sensor-raw"),
+        sensorTilt: document.getElementById("sensor-tilt"),
         judge: document.getElementById("judge"),
         grid: document.getElementById("level-grid"),
         sound: document.getElementById("btn-sound"),
@@ -99,6 +103,7 @@
 
       this.bindUI();
       this.bindInput();
+      if (MOTION) MOTION.enable().then(() => this.syncMotionUI());
       this.renderLevels();
       this.setMode(this.mode);
       this.show("title");
@@ -308,6 +313,28 @@
     }
 
     setControlChip() { this.syncMotionUI(); }
+
+    /* a plain read-out so you can *see* whether the sensor is alive */
+    syncSensorPanel() {
+      if (!this.el.sensor) return;
+      const now = performance.now();
+      if (now - (this._sensorAt || 0) < 110) return;
+      this._sensorAt = now;
+      const live = this.gyroLive();
+      this.el.sensor.classList.toggle("live", live);
+      if (this.el.sensorState) this.el.sensorState.textContent = MOTION.statusText();
+      if (this.el.sensorRaw) {
+        this.el.sensorRaw.textContent = MOTION.has
+          ? "beta " + MOTION.raw.beta.toFixed(0) + "° · gamma " + MOTION.raw.gamma.toFixed(0) + "° · " + MOTION.raw.count + " samples"
+          : "no samples yet";
+      }
+      if (this.el.sensorTilt) {
+        const d = MOTION.degrees();
+        this.el.sensorTilt.textContent = MOTION.has
+          ? "tilt " + d[0].toFixed(0) + "° / " + d[1].toFixed(0) + "°"
+          : "tilt —";
+      }
+    }
 
     /* ── input: two thumbs, one at each end of the phone ───── */
     zoneFor(y) {
@@ -794,6 +821,7 @@
       if (sensing) MOTION.update(dt);
       const liveTilt = sensing && MOTION.has;
       this.syncMotionUI();
+      if (demo) this.syncSensorPanel();
 
       const scene = {
         level: demo ? demoLevel : this.level,
@@ -808,6 +836,7 @@
         nextGate: demo ? 0 : this.nextGate,
         phase: this.beatPhase >= 0 ? this.beatPhase : (this.demoT * 1.6) % 1,
         heldBy: demo ? [true, true] : this.heldBy,
+        sensor: this.gyroLive(),
         babiMood: demo ? 0.7 : this.babiMood,
         showBars: !demo,
         showHands: !demo && (this.state === "countin" || (this.state === "playing" && this.li === 0 && this.nextGate < 6)),

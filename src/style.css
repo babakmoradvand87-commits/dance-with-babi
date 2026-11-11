@@ -600,3 +600,29 @@ kbd {
   line-height: 1.7;
   color: rgba(236, 228, 255, 0.5);
 }
+
+/* ── the sensor read-out ─────────────────────────────────── */
+.sensor {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  margin: 12px auto 0;
+  padding: 9px 14px;
+  max-width: 22em;
+  border-radius: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  line-height: 1.65;
+  color: rgba(214, 206, 236, 0.6);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.sensor b {
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #ff9ecb;
+}
+.sensor.live b { color: #6fe3d0; }
+.sensor.live { border-color: rgba(143, 240, 226, 0.28); }

@@ -619,6 +619,28 @@
     /* ── a bubble level, like the one in the iPhone's Measure app ── */
     drawLevel(scene, pal) {
       const ctx = this.ctx;
+      if (!scene.sensor) {
+        /* no sensor: say so plainly, and never let this look draggable */
+        const w = 128, h = 24;
+        const x = this.w / 2 - w / 2;
+        const y = this.h - 58;
+        ctx.save();
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(x, y, w, h, 12);
+        else ctx.rect(x, y, w, h);
+        ctx.fillStyle = "rgba(255, 157, 107, 0.12)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255, 157, 107, 0.55)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255, 189, 154, 0.95)";
+        ctx.font = "600 9.5px ui-sans-serif, system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("TOUCH MODE · NO SENSOR", this.w / 2, y + h / 2);
+        ctx.restore();
+        return;
+      }
       const R = Math.min(54, this.w * 0.11);
       const cx = this.w / 2;
       const cy = this.h - R - 62;
