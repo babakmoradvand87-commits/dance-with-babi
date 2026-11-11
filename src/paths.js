@@ -17,8 +17,8 @@
     const sub = 6;                 /* samples per ring */
     const ds = step / sub;
     const want = Math.min(6000, Math.ceil((count * step * 1.35) / ds) + 8);
-    const a = 1.05, b = 0.62, c = 0.22;
-    const p1 = (seed * 1.91) % 6.28, p2 = (seed * 3.37) % 6.28;
+    const a = 1.05, b = 0.78, c = 0.22, zz = 0.72;
+    const p1 = (seed * 1.91) % 6.28, p2 = (seed * 3.37) % 6.28, p3 = (seed * 5.13) % 6.28;
     const xs = new Float64Array(want + 1);
     const zs = new Float64Array(want + 1);
     let x = 0, z = 0;
@@ -26,7 +26,11 @@
       xs[i] = x;
       zs[i] = z;
       const s = i * ds;
-      const heading = a * Math.sin(s * 0.55 + p1) + b * Math.sin(s * 1.05 + p2) + c * Math.sin(s * 0.12 + p1 * 0.5);
+      /* a sharp zig-zag on top of the smooth wander: the ribbon keeps
+         slaloming left/right, so the marble can never just coast — both
+         dancers have to keep rocking the phone to stay inside the rings */
+      const heading = a * Math.sin(s * 0.55 + p1) + b * Math.sin(s * 1.05 + p2) + c * Math.sin(s * 0.12 + p1 * 0.5)
+        + zz * Math.sign(Math.sin(s * 0.24 + p3));
       x += Math.cos(heading) * ds;
       z += Math.sin(heading) * ds;
     }

@@ -42,7 +42,7 @@
   DRUMS.break = DRUMS.dnb;
 
   /* the shape of a 2:24 dance: eight-bar sections that keep changing */
-  const ARR = ["intro", "drop", "verse", "build", "drop", "break", "build", "final"];
+  const ARR = ["drop", "verse", "build", "drop", "break", "build", "final", "drop"];
 
   class Sound {
     constructor() {
@@ -255,7 +255,8 @@
       const mel = L.mel || MELODY;
       const D = DRUMS[L.drums] || DRUMS.house;
 
-      const sec = ARR[Math.floor(bar / 8) % ARR.length];
+      /* only 4 bars of intro — the first drop lands within ~8 seconds */
+      const sec = bar < 4 ? "intro" : ARR[Math.floor((bar - 4) / 8) % ARR.length];
       const final = sec === "final";
       const drop = sec === "drop" || final;
       const build = sec === "build";
@@ -271,7 +272,7 @@
 
       if (st === 0) {
         if (drop) this._crash(when, final ? 0.22 : 0.15);
-        if ((intro && bar % 8 >= 4) || build) this._riser(when, e * per * (build ? 4 : 2));
+        if ((intro && bar >= 2) || build) this._riser(when, e * per * (build ? 4 : 2));
         this._pad(chord7, when, e * per * (brk ? 1.9 : 1.05),
           intro ? 0.75 : brk ? 1.2 : drop ? 1.3 : 0.95);
       }
@@ -295,9 +296,10 @@
         this._kick(when, 0.22);                /* half-time heartbeat in the break */
       }
 
-      /* bass follows the roots */
-      if (energetic && D.bass.indexOf(st) >= 0) {
-        this._bass(midi(root + (st % 4 === 2 ? 7 : 0)), when, e * 1.8, drop ? 0.17 : 0.14);
+      /* bass follows the roots — in drops it runs on EVERY eighth note,
+         the pumping offbeat bass that makes a track danceable */
+      if (energetic && (drop || D.bass.indexOf(st) >= 0)) {
+        this._bass(midi(root + (st % 4 === 2 ? 7 : 0)), when, e * (drop ? 0.95 : 1.8), drop ? 0.15 : 0.14);
       } else if (intro && st === 0) {
         this._bass(midi(root), when, e * 3, 0.1);
       }
@@ -310,10 +312,12 @@
         if (drop) {
           if (D.lead.indexOf(st) >= 0) {
             this._hookIdx++;
-            /* two-bar call & response: the even bar calls, the odd bar
-               answers an octave up — the rhythm is built for two dancers */
+            /* a real 4-note hook, repeated every bar — the even bar calls,
+               the odd bar answers an octave up: a rhythm built for two
+               dancers locking onto each other */
             const answer = bar % 2 === 1;
-            const note = mel[(bar * 2 + this._hookIdx) % mel.length] + (answer ? 12 : 0);
+            const motif = [mel[0], mel[1 % mel.length], mel[2 % mel.length], mel[3 % mel.length]];
+            const note = motif[this._hookIdx % 4] + (answer ? 12 : 0);
             this._lead(midi(note), when, e * (final ? 2.2 : 1.6), final ? 0.075 : 0.06);
           }
         } else if (verse) {
