@@ -13,7 +13,7 @@
 <p align="center">
   <img alt="no dependencies" src="https://img.shields.io/badge/dependencies-none-ff9ecb" />
   <img alt="no build step" src="https://img.shields.io/badge/build-none-8ff0e2" />
-  <img alt="vanilla js" src="https://img.shields.io/badge/canvas%202d%20%2B%20web%20audio-ffd28a" />
+  <img alt="vanilla js" src="https://img.shields.io/badge/3d%20rasterizer%20on%20canvas%202d-ffd28a" />
   <img alt="license mit" src="https://img.shields.io/badge/license-MIT-b993ff" />
 </p>
 
@@ -21,35 +21,47 @@
 
 ## فارسی
 
-**Dance with Babi** یک بازی رقص دونفره است که با الهام از بازی *Bounden* ساخته شده: دو بازیکن یک صفحه را
-بین خودشان تقسیم می‌کنند، هر کدام یک «دایل» (دایرهٔ چرخشی) دارند و باید هم‌زمان و هم‌جهت بچرخانند تا مروارید
-روی کرهٔ شیشه‌ای، مسیر طراحی‌شده را طی کند و درست روی ضربِ موسیقی از میان حلقه‌های طلایی بگذرد.
+**Dance with Babi** یک بازی رقص دونفره است با الهام از بازی *Bounden*: دو بازیکن یک صفحه را بین خودشان
+تقسیم می‌کنند و **دو سرِ یک تخته** را در دست دارند. هر کس سرِ خودش را بالا و پایین می‌برد؛ تخته کج می‌شود و
+مروارید روی آن می‌غلتد. حلقه‌ها یکی‌یکی روی ضربِ والس می‌آیند و باید مروارید دقیقاً همان لحظه داخل حلقه باشد.
 
-**قانون اصلی:** مروارید فقط با *میانگین* چرخش دو دایل حرکت می‌کند. یعنی هیچ‌کس نمی‌تواند تنهایی برقصد —
-این کل لذتِ بازی است. اگر دو نفر خلاف هم بچرخند، روبانِ بین‌شان پاره می‌شود و کمبو می‌شکند.
+**سه قانون، همین:**
+
+1. **یکی بالا، یکی پایین.** شیب تخته از *تفاضل* دو دست می‌آید. اگر هر دو با هم بالا ببرید، تخته صاف می‌ماند و
+   مروارید تکان نمی‌خورد؛ پس یک نفر تنها هم نمی‌تواند برقصاند — با یک دست حداکثر نصفِ شیبِ لازم را دارد.
+2. **شیب = سرعت.** هرچه تخته شیب‌دارتر، مروارید تندتر. مروارید با یک تأخیر کوتاه (۱۵ صدم ثانیه) جواب می‌دهد،
+   پس باید یک ضرب زودتر شروع کنید و برای ایستادن، تخته را صاف کنید.
+3. **روی ضرب داخل حلقه.** قضاوت لحظه‌ای است: همان‌جا که ضرب می‌خورد، فاصلهٔ مروارید تا حلقه اندازه گرفته
+   می‌شود — *perfect* / *good* / *on the edge*. اگر از سر تخته رد شوید، مروارید به دیواره می‌خورد و کمبو می‌شکند.
+
+همه‌چیز سه‌بعدی است: یک سالن با ستون‌ها، تخته‌ای که واقعاً کج می‌شود، دوربینی که با مروارید حرکت می‌کند و
+سایه و نور و مه — همه با یک رسترایزر نرم‌افزاری روی Canvas 2D، بدون هیچ کتابخانه‌ای.
 
 | | |
 |---|---|
-| 🎮 **دو نفره روی یک صفحه** | موبایل: هر نفر یک دایل را با شست بچرخاند · لپ‌تاپ: نفر اول `A`/`D` و نفر دوم `←`/`→` |
-| 🕺 **حالت تک‌نفره** | یک دایل در وسط صفحه؛ همان مکانیک، یک جفت دست |
-| 🎵 **موسیقی زنده** | والس در لا مینور که در همان لحظه با Web Audio ساخته می‌شود — هیچ فایل صوتی‌ای در ریپو نیست |
+| 🎮 **دو نفره روی یک صفحه** | موبایل/تبلت: هر نفر انگشتش را در نیمهٔ خودش بالا/پایین می‌برد · لپ‌تاپ: نفر اول `W`/`S`، نفر دوم `↑`/`↓` |
+| 🕺 **حالت تک‌نفره** | یک جفت دست، هر دو سر تخته با هم — برای تمرین |
+| 🎵 **موسیقی زنده** | والس در لا مینور که همان لحظه با Web Audio ساخته می‌شود؛ هیچ فایل صوتی در ریپو نیست |
 | 💃 **سه رقص** | First Bow (۸۴ bpm) · Moonlit Spin (۹۶ bpm) · Babi's Finale (۱۰۸ bpm) |
-| 🏅 **امتیاز و ستاره** | دقتِ ضرب، کمبو، بهترین رکورد و باز شدن رقص بعدی (در `localStorage`) |
+| 🏅 **امتیاز و ستاره** | دقت، کمبو، بهترین رکورد و باز شدن رقص بعدی (در `localStorage`) |
 
-نصب لازم نیست: فایل `index.html` را باز کنید (یا با یک سرور محلی سرو کنید) و تمام.
+نصب لازم نیست: `index.html` را باز کنید (یا با یک سرور محلی سرو کنید) و تمام.
 
 ---
 
 ## How to play
 
-1. **Take a dial each.** Two players share one device: player one owns the left dial, player two the right
-   one. On a keyboard, player one uses <kbd>A</kbd>/<kbd>D</kbd> and player two <kbd>←</kbd>/<kbd>→</kbd>.
-2. **Turn together.** The pearl only moves by the *average* of both dials, so nobody can carry the dance
-   alone. Turn clockwise to roll forward.
-3. **Meet the rings on the beat.** Every ring is one beat of the waltz. Pass it exactly when it sounds:
-   *perfect*, *good*, *on the edge* — or early/late.
-4. **Keep the ribbon.** Twist against each other and the ribbon between your dials frays and your combo
-   snaps.
+1. **One end each.** Two players share one device: player one holds the *left* end of the plank, player two
+   the *right* one. Lift a finger in your half of the screen, or on a keyboard player one uses
+   <kbd>W</kbd>/<kbd>S</kbd> and player two <kbd>↑</kbd>/<kbd>↓</kbd>.
+2. **One up, one down.** The plank's tilt is *half the difference* between your two hands, so the pearl only
+   rolls when the two of you disagree about height. Both lift together and nothing moves. One player alone
+   can reach at most half the tilt a swing needs — this dance genuinely takes two.
+3. **The slope is the speed.** Steeper means faster, and the pearl answers your hands about 150 ms late. You
+   are steering a pendulum, so *lead* the beat and level the plank to stop it.
+4. **Be in the ring on the beat.** Each ring is snapshotted the instant the beat lands: the closer the pearl
+   is to the ring's centre, the better — *perfect*, *good*, *on the edge*. Overshoot and the pearl slams
+   into the end of the plank and the streak snaps.
 
 <br/>
 <p align="center">
@@ -60,36 +72,39 @@
 
 ## The three dances
 
-| dance | tempo | rings | what happens |
-|---|---|---|---|
-| **First Bow** | 84 bpm | 24 | a single breathing ribbon around the sphere — one ring per beat, nothing hidden |
-| **Moonlit Spin** | 96 bpm | 30 | a figure eight: the choreography crosses itself, keep the count |
-| **Babi's Finale** | 108 bpm | 36 | three petals at speed, the fastest waltz of the evening |
+| dance | tempo | rings | swing | what happens |
+|---|---|---|---|---|
+| **First Bow** | 84 bpm | 24 | ±0.62 | a gentle bow: one ring per beat, alternating ends, plenty of room to breathe |
+| **Moonlit Spin** | 96 bpm | 30 | ±0.72 | faster music, wider swing — the plank has to be levelled on the off-beat |
+| **Babi's Finale** | 108 bpm | 36 | ±0.82 | the fastest waltz of the evening; the pearl needs 5.6 units a second |
 
 Finishing a dance with at least one star unlocks the next one.
 
 ## How it works
 
-The whole game is four small files, one stylesheet and zero dependencies:
+Five small scripts, one stylesheet, zero dependencies:
 
 | file | what's inside |
 |---|---|
-| `src/paths.js` | the choreography. Each dance is a closed curve on the unit sphere — a breathing ribbon, a stereographic figure eight, a three-petal rose — re-sampled by **arc length** so that one beat always equals one equal step along the path. |
-| `src/render.js` | the look. A 2D canvas is turned into a 3D-ish scene: the sphere is a glass ball, the choreography is a curve projected from the sphere surface, the rings are hoops perpendicular to the path's tangent, and the camera is rotated every frame so the pearl always sits at the front-centre — which is why the rings appear to sweep past you as you turn. |
+| `src/math3d.js` | the maths: vectors, a look-at camera with roll, perspective projection, and box/beam/sphere meshes. |
+| `src/paths.js` | the choreography and the physics of each dance: tempo, ring count, swing (`amp`), how fast the pearl rolls at full tilt (`speed`), how late it answers (`lag`), the glide curve of the plank, the palette. |
+| `src/render.js` | the look. A **software 3D rasterizer on Canvas 2D**: the plank is re-built every frame as a sheared beam whose two ends sit under each player's hand, faces are painter-sorted, lit by the face normal and faded into fog, and the rings are 3D hoops drawn in projected space. Camera follows the pearl and rocks with the tilt. |
 | `src/audio.js` | the music. A generative waltz in A minor: pad, bass, harp arpeggio and a celesta melody, scheduled ahead of the audio clock, plus a generated hall reverb. All synthesised, no samples. |
-| `src/game.js` | the rules. Judging, combo, the tangle between the two players, screens and persistence. |
+| `src/game.js` | the rules. Hand smoothing, the pearl's integration, beat-snapshot judging, combo, screens and persistence. |
 
 A few notes on the design:
 
+* **The plank is honest.** The pearl's speed is the plank's slope (with a little inertia), the two ends are
+  drawn exactly where your two hands are, and the camera rolls with the tilt — every change of your hand
+  changes the picture *and* the physics in the same frame.
 * **Timing** is measured against the audio clock (`AudioContext.currentTime`), not `requestAnimationFrame`,
-  so the rings stay true to the music even if the frame rate dips. With no audio available it falls back to
-  a `performance.now()` clock.
-* **The count-in happens in negative song time.** The waltz starts six beats before the first ring so that
-  both players can feel the tempo before anything is asked of them.
-* **Difficulty is a speed, not a rule.** Holding both dials at ~1.35 rad/s lands every ring perfectly, so
-  the game teaches a *tempo* rather than a sequence of button presses.
-* **No failure state.** You cannot lose a dance; you can only leave with fewer stars. The ribbon snaps and
-  the combo resets, that's all.
+  so the rings stay true to the music even if the frame rate dips. With no audio it falls back to
+  `performance.now()`.
+* **The count-in happens in negative song time.** The waltz starts six beats before the first ring so both
+  players can feel the tempo before anything is asked of them.
+* **No failure state.** You cannot lose a dance; you can only leave with fewer stars.
+* **Balance is tested, not guessed.** `tests/smoke.js` plays every dance with a model of two skilled dancers
+  and checks the score, and with models of lazy, one-sided and idle players to make sure they *don't* score.
 
 ## Run it locally
 
@@ -104,18 +119,29 @@ works from the filesystem, from a USB stick, or inside a sandboxed iframe with n
 It is generated from the sources:
 
 ```
-src/            editable sources (style.css + four scripts)
-tools/template.html   the HTML shell
+src/                  editable sources (style.css + five scripts)
+tools/template.html   the HTML shell (English + Persian copy)
 tools/build.py        welds src/ into index.html
 ```
 
 After editing anything in `src/`, rebuild:
 
 ```bash
-python3 tools/build.py      # writes index.html (~99 KB)
+python3 tools/build.py      # writes index.html (~100 KB)
 ```
 
 No bundler, no npm, no dependencies. Published with GitHub Pages straight from the `main` branch.
+
+## Tests
+
+```bash
+node ../tests/smoke.js    # headless playtest: balance, inputs, screens (jsdom)
+node ../tests/audio.js    # the synthesised waltz, with a mock AudioContext
+node ../tests/render.js   # renders stills of the 3D scene to ../tests/shots/ (@napi-rs/canvas)
+```
+
+The playtest reports, for each dance, what a pair of careful dancers score (they land every ring), what a
+sloppy pair scores, and that idle, both-lifting and one-sided players score nothing.
 
 ## Credits
 

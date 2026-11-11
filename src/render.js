@@ -1,15 +1,24 @@
 /* ──────────────────────────────────────────────────────────────
    Dance with Babi — render.js
-   Everything you see: a glass sphere, a choreography drawn on it,
-   rings, a pearl called Babi, and two dials.
+   A hand-rolled 3D scene on a 2D canvas: a plank floating in a
+   hall, a pearl that rolls on it, rings to pass through, and the
+   camera that swings with both of you.
    ────────────────────────────────────────────────────────────── */
 (function () {
   const DWB = window.DWB;
-  const V = DWB.V, M = DWB.M, clamp = DWB.clamp;
+  const V = DWB.V;
+  const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
-  const CAM_Z = 3.35;
+  const RAIL_HALF = DWB.RAIL_HALF;
+  const FOV = (52 * Math.PI) / 180;
+  const LIGHT = V.norm([0.42, 0.82, 0.44]);
+  const LIFT = 0.30;   /* how high a full lift raises one end */
 
-  /* ── colour helpers ───────────────────────────────────────── */
+  const isTouch = () =>
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+
   const C = {
     parse(hex) {
       const h = hex.replace("#", "");
@@ -20,29 +29,25 @@
       const c = C.parse(hex);
       return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + clamp(a, 0, 1).toFixed(3) + ")";
     },
-    mix(h1, h2, t) {
-      const a = C.parse(h1), b = C.parse(h2);
-      const f = (i) => Math.round(a[i] + (b[i] - a[i]) * clamp(t, 0, 1));
-      return "rgb(" + f(0) + "," + f(1) + "," + f(2) + ")";
+    mix(a, b, t) {
+      return [
+        Math.round(a[0] + (b[0] - a[0]) * t),
+        Math.round(a[1] + (b[1] - a[1]) * t),
+        Math.round(a[2] + (b[2] - a[2]) * t),
+      ];
     },
   };
-
-  const isTouch = () =>
-    typeof window !== "undefined" &&
-    window.matchMedia &&
-    window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 
   class Stage {
     constructor(canvas) {
       this.canvas = canvas;
       this.ctx = canvas.getContext("2d");
-      this.mode = "duet";
       this.w = 0; this.h = 0; this.dpr = 1;
       this.particles = [];
-      this.stars = [];
-      this.pathCache = { path: null, pts: null };
-      this.babi = { x: 0, y: 0, vx: 0, vy: 0, ready: false, spin: 0 };
+      this.motes = [];
       this.time = 0;
+      this.babi = { x: 0, y: 0, vx: 0, vy: 0, ready: false };
+      this.meshes = {};
       this.resize();
     }
 
@@ -55,97 +60,44 @@
       this.canvas.width = Math.max(1, Math.round(w * dpr));
       this.canvas.height = Math.max(1, Math.round(h * dpr));
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      this.layout();
-      this.makeStars();
-    }
 
-    layout() {
-      const w = this.w, h = this.h, m = Math.min(w, h);
       this.cx = w / 2;
-      this.cy = h * (h > w ? 0.41 : 0.44);
-      this.R = Math.min(w * (h > w ? 0.46 : 0.34), h * 0.32);
-      this.f = this.R * Math.sqrt(CAM_Z * CAM_Z - 1);
-      this.dialR = clamp(m * 0.085, 32, 54);
-      const dy = h - Math.max(this.dialR + 26, h * 0.115) - (isTouch() ? 10 : 0);
-      if (this.mode === "solo") {
-        this.dials = [{ x: w * 0.5, y: dy }];
-      } else {
-        const inset = Math.max(this.dialR + 20, w * 0.2);
-        this.dials = [
-          { x: clamp(inset, 20 + this.dialR, w / 2 - this.dialR - 24), y: dy },
-          { x: clamp(w - inset, w / 2 + this.dialR + 24, w - 20 - this.dialR), y: dy },
-        ];
-      }
-    }
+      this.cy = h * 0.53;
+      this.focal = (h / 2) / Math.tan(FOV / 2);
+      /* frame the plank so it fills most of the width, phone or desktop */
+      const need = (2 * RAIL_HALF * this.focal) / (0.62 * w);
+      this.dist = Math.max(1.62, need);
 
-    setMode(mode) {
-      this.mode = mode;
-      this.layout();
-    }
-
-    makeStars() {
-      const n = Math.round(clamp((this.w * this.h) / 22000, 40, 130));
-      this.stars = [];
+      this.bars = [
+        { x: Math.max(46, w * 0.13), y: h - Math.max(96, h * 0.13), len: Math.min(150, h * 0.26) },
+        { x: Math.min(w - 46, w * 0.87), y: h - Math.max(96, h * 0.13), len: Math.min(150, h * 0.26) },
+      ];
+      this.motes = [];
+      const n = Math.round(clamp((w * h) / 26000, 26, 90));
       for (let i = 0; i < n; i++) {
-        this.stars.push({
-          x: Math.random(), y: Math.random(),
-          r: Math.random() * 1.5 + 0.4,
+        this.motes.push({
+          a: Math.random() * TAU,
+          r: 0.6 + Math.random() * 2.4,
+          sp: 0.15 + Math.random() * 0.5,
+          z: 1.2 + Math.random() * 5,
+          y: (Math.random() - 0.5) * 2.6,
           ph: Math.random() * TAU,
-          sp: 0.4 + Math.random() * 1.4,
         });
       }
     }
 
-    projectRot(v) {
-      const depth = CAM_Z - v[2];
-      const s = this.f / depth;
-      return { x: this.cx + v[0] * s, y: this.cy - v[1] * s, z: v[2], s: s };
-    }
-
-    project(mat, v) {
-      return this.projectRot(M.apply(mat, v));
-    }
-
-    pts(path) {
-      if (this.pathCache.path === path) return this.pathCache.pts;
-      const N = 300;
-      const pts = new Array(N);
-      for (let i = 0; i < N; i++) pts[i] = path.pointAt(i / N);
-      this.pathCache = { path: path, pts: pts };
-      return pts;
-    }
-
-    gateFrame(level, path, s) {
-      let c = level.__gf;
-      if (!c || c.path !== path) c = level.__gf = { path: path, map: {} };
-      const k = s.toFixed(5);
-      let f = c.map[k];
-      if (!f) {
-        const p = path.pointAt(s);
-        const t = path.tangentAt(s);
-        let up = Math.abs(t[2]) > 0.9 ? [1, 0, 0] : [0, 0, 1];
-        const b1 = V.norm(V.cross(t, up));
-        const b2 = V.norm(V.cross(t, b1));
-        f = c.map[k] = { p: p, b1: b1, b2: b2 };
-      }
-      return f;
-    }
-
     /* ── particles ─────────────────────────────────────────── */
     burst(x, y, color, n, speed) {
-      const count = n || 16;
+      const count = n || 14;
       const sp = speed || 150;
       for (let i = 0; i < count; i++) {
         const a = Math.random() * TAU;
         const v = sp * (0.25 + Math.random() * 0.9);
         this.particles.push({
           x: x, y: y,
-          vx: Math.cos(a) * v,
-          vy: Math.sin(a) * v - sp * 0.12,
-          life: 0,
-          max: 0.5 + Math.random() * 0.7,
-          size: 0.9 + Math.random() * 2.4,
-          color: color,
+          vx: Math.cos(a) * v, vy: Math.sin(a) * v - sp * 0.15,
+          life: 0, max: 0.5 + Math.random() * 0.7,
+          size: 0.9 + Math.random() * 2.2, color: color,
         });
       }
     }
@@ -156,446 +108,513 @@
         const q = p[i];
         q.life += dt;
         if (q.life >= q.max) { p.splice(i, 1); continue; }
-        q.x += q.vx * dt;
-        q.y += q.vy * dt;
-        q.vx *= 1 - 2.4 * dt;
-        q.vy = q.vy * (1 - 2.4 * dt) + 42 * dt;
+        q.x += q.vx * dt; q.y += q.vy * dt;
+        q.vx *= 1 - 2.2 * dt;
+        q.vy = q.vy * (1 - 2.2 * dt) + 40 * dt;
       }
     }
 
-    /* ── master draw ───────────────────────────────────────── */
+    /* ── the frame ─────────────────────────────────────────── */
     draw(scene, dt) {
       const ctx = this.ctx;
-      const lv = scene.level;
-      const accent = lv ? lv.accent : "#ff9ecb";
-      const accent2 = lv ? lv.accent2 : "#ffd28a";
-
       this.time += dt;
       this.updateParticles(dt);
-
+      ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
       ctx.clearRect(0, 0, this.w, this.h);
-      this.drawBackdrop(scene, accent, accent2);
-
-      if (scene.path) {
-        const mat = M.mul(M.z(scene.sway || 0), M.align(scene.path.pointAt(scene.ballS), [0, 0, 1]));
-        this.drawSphere(scene, accent, accent2);
-        this.drawPath(scene, mat, accent, accent2);
-        this.drawGates(scene, mat, accent, accent2);
-
-        /* light & dust */
-        this.drawParticles(scene);
-        this.drawBall(scene, mat, accent2);
-      } else {
-        /* title screen: a slow idle sphere */
-        this.drawIdle(dt);
+      if (scene.shake > 0.01) {
+        const s2 = scene.shake * 9;
+        ctx.translate((Math.random() - 0.5) * s2, (Math.random() - 0.5) * s2);
       }
 
-      if (scene.showDials) this.drawDials(scene, accent, accent2, dt);
+      const pal = scene.level ? scene.level.pal : MENU_PAL;
+      const tilt = clamp(scene.tilt || 0, -1, 1);
+
+      /* camera: slides along the plank and rocks with it */
+      const px = clamp(scene.pearlU || 0, -1.2, 1.2);
+      const orbit = Math.sin(this.time * 0.22) * 0.22;
+      const eye = [
+        px * 0.34 + orbit * 0.6,
+        0.52 + tilt * 0.04,
+        this.dist + Math.abs(px) * 0.18,
+      ];
+      const target = [px * 0.26, 0.03 + tilt * 0.05, 0];
+      const cam = DWB.camera(eye, target, [0, 1, 0], -tilt * 0.045);
+      this.cam = cam;
+
+      this.drawBackdrop(scene, pal);
+      this.drawFloor(pal);
+      this.drawFloorGlow(pal, scene);
+      this.drawColumns(pal);
+      this.drawPlank(scene, pal);
+      this.drawGates(scene, pal);
+      this.drawPearl(scene, pal);
+      this.drawParticles();
+      if (scene.showBars) this.drawBars(scene, pal);
       this.drawVignette();
     }
 
-    drawIdle(dt) {
-      const ctx = this.ctx;
-      const R = this.R;
-      this.idleRot = (this.idleRot || 0) + dt * 0.12;
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      for (let i = 0; i < 3; i++) {
-        const a = this.idleRot + (i * TAU) / 3;
-        ctx.beginPath();
-        ctx.ellipse(
-          this.cx + Math.cos(a) * R * 0.32,
-          this.cy + Math.sin(a) * R * 0.26,
-          R * (0.5 + 0.06 * Math.sin(a * 2)),
-          R * (0.19 + 0.05 * Math.cos(a * 3)),
-          a * 0.6,
-          0, TAU
-        );
-        ctx.strokeStyle = C.rgba(i === 0 ? "#ff9ecb" : i === 1 ? "#8ff0e2" : "#ffd28a", 0.16);
-        ctx.lineWidth = 1.4;
-        ctx.stroke();
-      }
-      ctx.restore();
+    P(p) {
+      return DWB.project(this.cam, this.focal, this.cx, this.cy, p);
     }
 
-    drawBackdrop(scene, accent, accent2) {
+    /* ── environment ───────────────────────────────────────── */
+    drawBackdrop(scene, pal) {
       const ctx = this.ctx, w = this.w, h = this.h;
-      const g = ctx.createLinearGradient(0, 0, w * 0.3, h);
-      g.addColorStop(0, "#07050e");
-      g.addColorStop(0.55, "#0c0817");
-      g.addColorStop(1, "#100a1a");
+      const g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, pal.bg0);
+      g.addColorStop(0.55, pal.bg1);
+      g.addColorStop(1, pal.bg0);
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, w, h);
 
-      const rg = ctx.createRadialGradient(this.cx, this.cy, 0, this.cx, this.cy, this.R * 2.7);
-      rg.addColorStop(0, C.rgba(accent, 0.17));
-      rg.addColorStop(0.45, C.rgba(accent, 0.05));
+      /* the glow of the hall behind the plank */
+      const hy = this.cy - h * 0.04;
+      const rg = ctx.createRadialGradient(this.cx, hy, 0, this.cx, hy, Math.max(w, h) * 0.55);
+      rg.addColorStop(0, C.rgba(pal.halo, 0.20));
+      rg.addColorStop(0.4, C.rgba(pal.halo, 0.06));
       rg.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = rg;
       ctx.fillRect(0, 0, w, h);
 
-      const rg2 = ctx.createRadialGradient(w * 0.82, h * 0.14, 0, w * 0.82, h * 0.14, this.R * 1.7);
-      rg2.addColorStop(0, C.rgba(accent2, 0.07));
-      rg2.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = rg2;
-      ctx.fillRect(0, 0, w, h);
-
-      /* stars */
+      /* slow motes drifting in the light */
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
       const t = this.time;
-      for (let i = 0; i < this.stars.length; i++) {
-        const s = this.stars[i];
-        const a = 0.16 + 0.34 * (0.5 + 0.5 * Math.sin(t * s.sp + s.ph));
-        ctx.fillStyle = "rgba(255,245,255," + a.toFixed(3) + ")";
+      for (let i = 0; i < this.motes.length; i++) {
+        const m = this.motes[i];
+        m.a += m.sp * 0.0016;
+        m.y += Math.sin(t * 0.4 + m.ph) * 0.00035;
+        const p = this.P([Math.cos(m.a) * m.z * 0.55, m.y + 0.3, -Math.abs(Math.sin(m.a)) * 1.2 - 0.6]);
+        if (!p) continue;
+        const a = 0.06 + 0.14 * (0.5 + 0.5 * Math.sin(t * 1.3 + m.ph));
+        ctx.fillStyle = C.rgba(pal.halo, a);
         ctx.beginPath();
-        ctx.arc(s.x * w, s.y * h, s.r, 0, TAU);
+        ctx.arc(p.x, p.y, m.r, 0, TAU);
         ctx.fill();
       }
+      ctx.restore();
       void scene;
     }
 
-    drawSphere(scene, accent, accent2) {
-      const ctx = this.ctx, R = this.R, cx = this.cx, cy = this.cy;
+    /* the plank's height at u ∈ [-1, 1]: each end follows its own hand */
+    plankY(u, hands) {
+      const hA = clamp(hands ? hands[0] || 0 : 0, -1, 1);
+      const hB = clamp(hands ? hands[1] || 0 : 0, -1, 1);
+      const mean = (hA + hB) * 0.5;
+      const tilt = (hB - hA) * 0.5;
+      const bend = this.bendAt(u);
+      return LIFT * (mean + tilt * u) + bend;
+    }
 
-      /* outer halo */
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      const halo = ctx.createRadialGradient(cx, cy, R * 0.82, cx, cy, R * 1.5);
-      halo.addColorStop(0, C.rgba(accent, 0.10));
-      halo.addColorStop(0.35, C.rgba(accent, 0.045));
-      halo.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = halo;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R * 1.5, 0, TAU);
-      ctx.fill();
-      ctx.restore();
+    bendAt(u) {
+      const lv = this.curLevel;
+      return lv && lv.bend ? lv.bend(u * RAIL_HALF) : 0;
+    }
 
-      /* glass body */
-      const body = ctx.createRadialGradient(cx - R * 0.34, cy - R * 0.42, R * 0.02, cx, cy, R * 1.04);
-      body.addColorStop(0, "rgba(255,255,255,0.11)");
-      body.addColorStop(0.32, "rgba(190,170,235,0.055)");
-      body.addColorStop(0.72, "rgba(120,95,180,0.03)");
-      body.addColorStop(0.97, "rgba(90,60,140,0.075)");
-      body.addColorStop(1, "rgba(140,110,200,0.10)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, TAU);
-      ctx.fillStyle = body;
-      ctx.fill();
-
-      /* rim light — a thin edge that catches the light at the top left */
-      const rim = ctx.createLinearGradient(cx - R * 0.95, cy - R * 0.95, cx + R * 0.85, cy + R);
-      rim.addColorStop(0, C.rgba(accent2, 0.85));
-      rim.addColorStop(0.3, C.rgba(accent, 0.45));
-      rim.addColorStop(0.62, C.rgba(accent, 0.16));
-      rim.addColorStop(1, C.rgba(accent, 0.42));
-      ctx.beginPath();
-      ctx.arc(cx, cy, R - 0.75, 0, TAU);
-      ctx.strokeStyle = rim;
-      ctx.lineWidth = 1.7;
-      ctx.stroke();
-
-      /* a second, softer edge just inside it, so the glass has some thickness */
-      const rim2 = ctx.createLinearGradient(cx - R * 0.9, cy - R, cx + R, cy + R * 0.9);
-      rim2.addColorStop(0, C.rgba(accent2, 0.16));
-      rim2.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, R - 5, 0, TAU);
-      ctx.strokeStyle = rim2;
-      ctx.lineWidth = 3.4;
-      ctx.stroke();
-
-      /* specular sheen */
-      const sp = ctx.createRadialGradient(cx - R * 0.38, cy - R * 0.46, 0, cx - R * 0.38, cy - R * 0.46, R * 0.72);
-      sp.addColorStop(0, "rgba(255,255,255,0.07)");
-      sp.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.beginPath();
-      ctx.arc(cx - R * 0.38, cy - R * 0.46, R * 0.72, 0, TAU);
-      ctx.fillStyle = sp;
-      ctx.fill();
-
-      /* a soft equator, so the ball reads as a sphere */
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, TAU);
-      ctx.clip();
-      const eq = ctx.createLinearGradient(cx, cy - R, cx, cy + R);
-      eq.addColorStop(0, "rgba(0,0,0,0)");
-      eq.addColorStop(0.55, "rgba(0,0,0,0)");
-      eq.addColorStop(1, "rgba(6,3,14,0.42)");
-      ctx.fillStyle = eq;
-      ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-      ctx.restore();
-
-      /* beat pulse around the pearl */
-      if (scene.beatPhase != null && scene.beatPhase >= 0) {
-        const ph = scene.beatPhase;
-        const rad = R * (0.09 + ph * 0.42);
+    /** project + light + painter-sort a bag of quads */
+    quads(verts, faces, base, fog, pal, rim) {
+      const ctx = this.ctx;
+      const list = [];
+      for (let i = 0; i < faces.length; i++) {
+        const f = faces[i];
+        const q = [];
+        let zsum = 0, ok = true;
+        for (let k = 0; k < f.length; k++) {
+          const pr = this.P(verts[f[k]]);
+          if (!pr) { ok = false; break; }
+          q.push(pr);
+          zsum += pr.z;
+        }
+        if (!ok) continue;
+        const a = verts[f[0]], b = verts[f[1]], c = verts[f[2]];
+        const n = V.norm(V.cross(V.sub(b, a), V.sub(c, a)));
+        const diff = Math.abs(n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
+        const k2 = 0.30 + 0.72 * diff;
+        const z = zsum / f.length;
+        const fz = clamp((z - this.dist) / 6.5, 0, 1) * fog;
+        const col = C.mix(C.mix(base, C.parse(pal.fog), fz), [255, 255, 255], rim * 0.10);
+        list.push({
+          z: z,
+          c: "rgb(" + Math.round(col[0] * k2) + "," + Math.round(col[1] * k2) + "," + Math.round(col[2] * k2) + ")",
+          p: q,
+        });
+      }
+      list.sort((x, y) => y.z - x.z);
+      for (let i = 0; i < list.length; i++) {
+        const it = list[i];
         ctx.beginPath();
-        ctx.arc(cx, cy, rad, 0, TAU);
-        ctx.strokeStyle = C.rgba(accent2, 0.22 * (1 - ph) * (1 - ph));
-        ctx.lineWidth = 1.6;
+        ctx.moveTo(it.p[0].x, it.p[0].y);
+        for (let k = 1; k < it.p.length; k++) ctx.lineTo(it.p[k].x, it.p[k].y);
+        ctx.closePath();
+        ctx.fillStyle = it.c;
+        ctx.strokeStyle = it.c;
+        ctx.lineWidth = 0.8;
+        ctx.fill();
         ctx.stroke();
       }
     }
 
-    drawPath(scene, mat, accent, accent2) {
+    drawFloor(pal) {
       const ctx = this.ctx;
-      const pts = this.pts(scene.path);
-      const n = pts.length;
-      const proj = new Array(n);
-      for (let i = 0; i < n; i++) proj[i] = this.project(mat, pts[i]);
-      const frac = scene.ballS - Math.floor(scene.ballS);
-
-      /* the choreography, band by band: bright where the pearl is,
-         ghostly at the far end of the dance */
-      const BANDS = 26;
+      const y = -1.05;
       ctx.save();
-      ctx.globalCompositeOperation = "lighter";
       ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      for (let b = 0; b < BANDS; b++) {
-        const i0 = Math.floor((b * n) / BANDS);
-        const i1 = Math.floor(((b + 1) * n) / BANDS);
-        const mid = (i0 + i1) / 2 / n;
-        let d = Math.abs(mid - frac);
-        d = Math.min(d, 1 - d);
-        const fade = clamp(1 - d / 0.42, 0.09, 1);
-        const near = clamp(1 - d / 0.1, 0, 1);
-
-        for (let front = 0; front < 2; front++) {
-          let any = false;
-          ctx.beginPath();
-          for (let i = i0; i < i1; i++) {
-            const a = proj[i], bb = proj[(i + 1) % n];
-            const c = (a.z + bb.z) * 0.5;
-            if (front ? c < 0 : c >= 0) continue;
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(bb.x, bb.y);
-            any = true;
-          }
-          if (!any) continue;
-          ctx.strokeStyle = front ? accent : accent2;
-          ctx.globalAlpha = front ? 0.40 * fade + near * 0.55 : 0.16 * fade;
-          ctx.lineWidth = front ? 1.5 + near * 2.6 : 0.9;
-          ctx.stroke();
-        }
-      }
-      ctx.restore();
-
-      /* the tail of light the pearl drags behind it */
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.lineCap = "round";
-      const N = 18;
-      for (let b = 0; b < N; b++) {
-        const f0 = 1 - b / N, f1 = 1 - (b + 1) / N;
-        const s0 = frac - (b / N) * 0.07;
-        const s1 = frac - ((b + 1) / N) * 0.07;
-        const a = this.project(mat, scene.path.pointAt(s0));
-        const bb = this.project(mat, scene.path.pointAt(s1));
-        ctx.strokeStyle = accent2;
-        ctx.globalAlpha = 0.5 * f0 * f0;
-        ctx.lineWidth = 0.6 + 3.6 * f0 * f0;
+      for (let i = -7; i <= 7; i++) {
+        const x = i * 0.62;
+        const a = this.P([x, y, 2.2]);
+        const b = this.P([x * 1.35, y, -9]);
+        if (!a || !b) continue;
+        ctx.strokeStyle = C.rgba(pal.floor, 0.5);
+        ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
-        ctx.lineTo(bb.x, bb.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+      for (let j = 0; j < 12; j++) {
+        const z = 2.04 - j * j * 0.075;
+        const a = this.P([-8.7, y, z]);
+        const b = this.P([8.7, y, z]);
+        if (!a || !b) continue;
+        ctx.strokeStyle = C.rgba(pal.floor, clamp(0.5 - j * 0.035, 0.05, 0.5));
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
         ctx.stroke();
       }
       ctx.restore();
     }
 
-    drawGates(scene, mat, accent, accent2) {
+    drawFloorGlow(pal, scene) {
       const ctx = this.ctx;
-      const level = scene.level;
-      const path = scene.path;
-      const gates = scene.gates || [];
-      const SEG = 24;
+      const hands = scene.hands || [0, 0];
+      const c = this.P([0, -1.04, 0]);
+      const e = this.P([RAIL_HALF * 1.5, -1.04, 0]);
+      if (!c || !e) return;
+      const rx = Math.max(40, Math.abs(e.x - c.x));
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, rx);
+      g.addColorStop(0, C.rgba(pal.halo, 0.10));
+      g.addColorStop(0.5, C.rgba(pal.halo, 0.03));
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.ellipse(c.x, c.y, rx, rx * 0.14, 0, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+      void hands;
+    }
 
-      for (let i = 0; i < gates.length; i++) {
-        const g = gates[i];
-        const rel = i - scene.nextGate;
-        if (rel < -1 || rel > 5) continue;
-        const fr = this.gateFrame(level, path, g.s);
-        const center = M.apply(mat, fr.p);
-        const b1 = M.apply(mat, fr.b1);
-        const b2 = M.apply(mat, fr.b2);
-        const back = center[2] < -0.02;
-        const occl = back ? 0.10 : 1;
+    drawColumns(pal) {
+      if (!this.meshes.column) this.meshes.column = DWB.mesh.box(0.13, 1, 0.13);
+      const mesh = this.meshes.column;
+      const base = C.mix(C.parse(pal.column), C.parse(pal.rail), 0.42);
+      for (let i = 0; i < 10; i++) {
+        const side = i % 2 === 0 ? -1 : 1;
+        const row = Math.floor(i / 2);
+        if (row > 4) continue;
+        const x = side * (2.10 + row * 0.70);
+        const z = -1.9 - row * 2.3;
+        const hgt = 3.2 - row * 0.22;
+        const verts = mesh.verts.map((v) => [
+          v[0] * hgt + x,
+          v[1] * hgt + (-1.05 + hgt / 2),
+          v[2] * hgt + z,
+        ]);
+        this.quads(verts, mesh.faces, base, 0.9, pal, 0.3);
+      }
+    }
 
-        let rad = 0.118;
-        let color = accent;
-        let alpha = 0.3;
-        let width = 1.3;
-        let glow = 0;
+    /* ── the plank, and the two hands that hold it ─────────── */
+    drawPlank(scene, pal) {
+      const ctx = this.ctx;
+      const hands = scene.hands || [0, 0];
+      this.curLevel = scene.level;
 
-        if (g.state === 1) {
-          /* taken — a flash that expands and dies */
-          const fl = g.flash == null ? 0 : g.flash;
-          if (fl <= 0) continue;
-          rad = 0.118 + (1 - fl) * 0.16;
-          color = g.q === 3 ? "#fffaf0" : accent2;
-          alpha = fl * 0.95;
-          width = 2.6 * fl + 0.6;
-          glow = 18;
-        } else if (g.state === 2) {
-          color = "#8b7f96";
-          alpha = 0.10;
-          width = 1;
-        } else if (i === scene.nextGate) {
-          const pulse = 0.5 + 0.5 * Math.sin((scene.phase || 0) * TAU);
-          rad = 0.122 + 0.012 * pulse;
-          color = accent2;
-          alpha = 0.85;
-          width = 2.2 + pulse * 0.9;
-          glow = 16 + pulse * 10;
-        } else {
-          const d = Math.max(0, rel);
-          alpha = 0.34 * clamp(1 - d / 5.5, 0, 1);
-        }
+      const SEG = 18, W = 0.22, H = 0.07;
+      const verts = [];
+      const quads = [];
+      for (let i = 0; i <= SEG; i++) {
+        const u = -1 + (2 * i) / SEG;
+        const x = u * RAIL_HALF;
+        const y = this.plankY(u, hands);
+        verts.push([x, y - H / 2, -W / 2], [x, y + H / 2, -W / 2], [x, y + H / 2, W / 2], [x, y - H / 2, W / 2]);
+      }
+      for (let i = 0; i < SEG; i++) {
+        const a = i * 4, b = (i + 1) * 4;
+        quads.push([a + 2, a + 3, b + 3, b + 2]);
+        quads.push([a + 0, a + 1, b + 1, b + 0]);
+        quads.push([a + 1, a + 2, b + 2, b + 1]);
+        quads.push([a + 3, a + 0, b + 0, b + 3]);
+      }
+      quads.push([0, 1, 2, 3]);
+      quads.push([SEG * 4 + 3, SEG * 4 + 2, SEG * 4 + 1, SEG * 4 + 0]);
+      this.quads(verts, quads, C.parse(pal.rail), 0.5, pal, 0.5);
 
-        if (alpha * occl <= 0.012) continue;
+      /* a thread of light along the top edge */
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      let started = false;
+      for (let i = 0; i <= 26; i++) {
+        const u = -1 + (2 * i) / 26;
+        const pr = this.P([u * RAIL_HALF, this.plankY(u, hands) + H / 2 + 0.004, 0]);
+        if (!pr) { started = false; continue; }
+        if (!started) { ctx.moveTo(pr.x, pr.y); started = true; }
+        else ctx.lineTo(pr.x, pr.y);
+      }
+      ctx.strokeStyle = C.rgba(pal.railGlow, 0.34);
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+      ctx.restore();
+
+      /* the two grips */
+      for (let i = 0; i < 2; i++) {
+        const u = i === 0 ? -1 : 1;
+        const pr = this.P([u * RAIL_HALF, this.plankY(u, hands) + 0.02, 0]);
+        if (!pr) continue;
+        const tint = i === 0 ? "#ff9ecb" : "#8ff0e2";
+        const hand = clamp(hands[i] || 0, -1, 1);
+        const r = clamp((this.focal * 0.03) / pr.z, 3.5, 15);
 
         ctx.save();
         ctx.globalCompositeOperation = "lighter";
-        if (glow && !back) { ctx.shadowColor = color; ctx.shadowBlur = glow; }
-        ctx.strokeStyle = C.rgba(color, alpha * occl);
-        ctx.lineWidth = width;
+        const glow = ctx.createRadialGradient(pr.x, pr.y, 0, pr.x, pr.y, r * 4.4);
+        glow.addColorStop(0, C.rgba(tint, 0.36 + Math.abs(hand) * 0.34));
+        glow.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = glow;
         ctx.beginPath();
-        for (let k = 0; k <= SEG; k++) {
-          const th = (k / SEG) * TAU;
-          const c = Math.cos(th) * rad, s = Math.sin(th) * rad;
-          const v = [
-            center[0] + b1[0] * c + b2[0] * s,
-            center[1] + b1[1] * c + b2[1] * s,
-            center[2] + b1[2] * c + b2[2] * s,
-          ];
-          const q = this.projectRot(v);
-          if (k === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
-        }
-        ctx.stroke();
+        ctx.arc(pr.x, pr.y, r * 4.4, 0, TAU);
+        ctx.fill();
         ctx.restore();
 
-        /* a speck of light on the next ring, to make it sing */
-        if (i === scene.nextGate && !back) {
-          const q = this.projectRot(center);
-          const pulse = 0.5 + 0.5 * Math.sin((scene.phase || 0) * TAU);
+        ctx.beginPath();
+        ctx.arc(pr.x, pr.y, r, 0, TAU);
+        ctx.fillStyle = C.rgba(tint, 0.92);
+        ctx.fill();
+
+        if (scene.showHands) {
+          const dir = hand > 0.06 ? -1 : hand < -0.06 ? 1 : 0;
           ctx.save();
-          ctx.globalCompositeOperation = "lighter";
-          const gg = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, 16 + pulse * 9);
-          gg.addColorStop(0, C.rgba(accent2, 0.5));
-          gg.addColorStop(1, "rgba(0,0,0,0)");
-          ctx.fillStyle = gg;
-          ctx.beginPath();
-          ctx.arc(q.x, q.y, 16 + pulse * 9, 0, TAU);
-          ctx.fill();
+          ctx.globalAlpha = 0.45 + Math.abs(hand) * 0.55;
+          ctx.fillStyle = C.rgba(tint, 0.9);
+          if (dir !== 0) {
+            const y0 = pr.y + dir * (r + 6), y1 = pr.y + dir * (r + 21);
+            ctx.beginPath();
+            ctx.moveTo(pr.x, y1);
+            ctx.lineTo(pr.x - 6, y1 - dir * 7);
+            ctx.lineTo(pr.x + 6, y1 - dir * 7);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = C.rgba(tint, 0.5);
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(pr.x, y0);
+            ctx.lineTo(pr.x, y1 - dir * 4);
+            ctx.stroke();
+          }
           ctx.restore();
         }
       }
     }
 
-    drawBall(scene, mat, accent2) {
+    /* ── rings ─────────────────────────────────────────────── */
+    drawGates(scene, pal) {
+      if (!scene.gates || !scene.gates.length) return;
       const ctx = this.ctx;
-      const cx = this.cx, cy = this.cy;
-      const rs = this.R * 0.058;
-      const mood = scene.babiMood || 0;
+      const SEG = 26;
+      const hands = scene.hands || [0, 0];
+      const list = [];
+      for (let i = 0; i < scene.gates.length; i++) {
+        const g = scene.gates[i];
+        const rel = i - scene.nextGate;
+        if (rel < -1 || rel > 4) continue;
+        let rad = 0.16;
+        let alpha = 0.32 * clamp(1 - Math.max(0, rel) / 4.5, 0, 1);
+        let color = pal.ring;
+        let width = 2;
+        let glow = 0;
+
+        if (g.state === 1) {
+          const fl = g.flash == null ? 0 : g.flash;
+          if (fl <= 0) continue;
+          rad = 0.16 + (1 - fl) * 0.20;
+          color = g.q === 3 ? "#fffaf0" : pal.ringNext;
+          alpha = fl * 0.9;
+          width = 2.4 * fl + 0.8;
+          glow = 16;
+        } else if (g.state === 2) {
+          color = "#7d7288";
+          alpha = 0.09;
+          width = 1.3;
+        } else if (i === scene.nextGate) {
+          const pulse = 0.5 + 0.5 * Math.sin((scene.phase || 0) * TAU);
+          rad = 0.163 + 0.013 * pulse;
+          color = pal.ringNext;
+          alpha = 0.92;
+          width = 2.6 + pulse * 1.2;
+          glow = 15 + pulse * 9;
+        }
+
+        const cy = this.plankY(g.u, hands) + 0.10;
+        const pts = [];
+        let zsum = 0, ok = true;
+        for (let k = 0; k <= SEG; k++) {
+          const th = (k / SEG) * TAU;
+          const pr = this.P([g.u * RAIL_HALF, cy + Math.cos(th) * rad, Math.sin(th) * rad]);
+          if (!pr) { ok = false; break; }
+          pts.push(pr);
+          zsum += pr.z;
+        }
+        if (!ok) continue;
+        list.push({ z: zsum / pts.length, pts: pts, alpha: alpha, color: color, width: width, glow: glow });
+      }
+      list.sort((a, b) => b.z - a.z);
+      for (let i = 0; i < list.length; i++) {
+        const it = list[i];
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        if (it.glow) { ctx.shadowColor = it.color; ctx.shadowBlur = it.glow; }
+        ctx.strokeStyle = C.rgba(it.color, it.alpha);
+        ctx.lineWidth = clamp((it.width * this.focal) / (it.z * 300), 1, 7);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        for (let k = 0; k < it.pts.length; k++) {
+          if (k === 0) ctx.moveTo(it.pts[k].x, it.pts[k].y);
+          else ctx.lineTo(it.pts[k].x, it.pts[k].y);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    /* ── the pearl, and Babi beside it ─────────────────────── */
+    drawPearl(scene, pal, ca, sa) {
+      const ctx = this.ctx;
+      const u = clamp(scene.pearlU || 0, -1.15, 1.15);
+      this.curLevel = scene.level;
+      const p = [u * RAIL_HALF, this.plankY(u, scene.hands || [0, 0]) + 0.10, 0];
+      const pr = this.P(p);
+      if (!pr) return;
+      this.pearlScreen = { x: pr.x, y: pr.y };
+
+      const rs = clamp((this.focal * 0.052) / pr.z, 5, 22);
+
+      /* shadow on the plank */
+      const shadowP = this.P([p[0], p[1] - 0.10, p[2]]);
+      if (shadowP) {
+        ctx.save();
+        ctx.globalAlpha = 0.35;
+        const sg = ctx.createRadialGradient(shadowP.x, shadowP.y, 0, shadowP.x, shadowP.y, rs * 1.5);
+        sg.addColorStop(0, "rgba(0,0,0,0.85)");
+        sg.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = sg;
+        ctx.beginPath();
+        ctx.ellipse(shadowP.x, shadowP.y, rs * 1.35, rs * 0.5, 0, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+      }
 
       /* glow */
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
-      const gl = ctx.createRadialGradient(cx, cy, 0, cx, cy, rs * 5.2);
-      gl.addColorStop(0, "rgba(255,244,220,0.34)");
-      gl.addColorStop(0.22, C.rgba(accent2, 0.22));
+      const gl = ctx.createRadialGradient(pr.x, pr.y, 0, pr.x, pr.y, rs * 3.6);
+      gl.addColorStop(0, C.rgba(pal.pearl, 0.26));
+      gl.addColorStop(0.3, C.rgba(pal.pearl2, 0.20));
       gl.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = gl;
       ctx.beginPath();
-      ctx.arc(cx, cy, rs * 5.2, 0, TAU);
+      ctx.arc(pr.x, pr.y, rs * 3.6, 0, TAU);
       ctx.fill();
-      ctx.restore();
-
-      /* pearl */
-      const pg = ctx.createRadialGradient(cx - rs * 0.34, cy - rs * 0.38, rs * 0.06, cx, cy, rs);
-      pg.addColorStop(0, "#fffdf6");
-      pg.addColorStop(0.5, "#ffeccb");
-      pg.addColorStop(1, "#ffb877");
-      ctx.fillStyle = pg;
-      ctx.beginPath();
-      ctx.arc(cx, cy, rs, 0, TAU);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(cx - rs * 0.36, cy - rs * 0.4, rs * 0.19, 0, TAU);
-      ctx.fillStyle = "rgba(255,255,255,0.85)";
-      ctx.fill();
-
-      /* ── Babi, the little companion ───────────────────── */
-      const b = this.babi;
-      const t = this.time;
-      const targetX = cx + Math.cos(t * 0.9) * this.R * 0.16 + Math.cos(t * 2.3) * 5;
-      const targetY = cy + Math.sin(t * 0.9) * this.R * 0.13 + Math.sin(t * 1.7) * 5 + this.R * 0.05;
-      if (!b.ready) { b.x = targetX; b.y = targetY; b.ready = true; }
-      b.vx += (targetX - b.x) * 0.9;
-      b.vy += (targetY - b.y) * 0.9;
-      b.vx *= 0.88; b.vy *= 0.88;
-      b.x += b.vx; b.y += b.vy;
-
-      const rb = clamp(this.R * 0.05, 7, 12);
-      const bob = Math.sin(t * 3.1) * 1.8;
-      const spin = clamp(mood, 0, 1);
-
-      /* ribbons */
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.strokeStyle = "rgba(255,228,196,0.45)";
-      ctx.lineWidth = 1.6;
-      ctx.lineCap = "round";
-      for (let side = -1; side <= 1; side += 2) {
-        ctx.beginPath();
-        ctx.moveTo(b.x, b.y + bob);
-        ctx.bezierCurveTo(
-          b.x + side * rb * 1.9, b.y - rb * 1.5 + bob,
-          b.x + side * rb * 3.0, b.y + rb * 2.5 + bob,
-          b.x + side * rb * 1.7 + Math.sin(t * 2.4 + side) * 7, b.y + rb * 3.6 + bob
-        );
-        ctx.stroke();
-      }
       ctx.restore();
 
       /* body */
-      const bg = ctx.createRadialGradient(b.x - rb * 0.36, b.y - rb * 0.44 + bob, rb * 0.08, b.x, b.y + bob, rb);
-      bg.addColorStop(0, "#fffdfa");
-      bg.addColorStop(0.5, "#ffd8ea");
-      bg.addColorStop(1, "#ff8fc0");
-      ctx.save();
-      ctx.shadowColor = "rgba(255,150,195,0.75)";
-      ctx.shadowBlur = 14 + spin * 12;
+      const bg = ctx.createRadialGradient(pr.x - rs * 0.34, pr.y - rs * 0.38, rs * 0.08, pr.x, pr.y, rs);
+      bg.addColorStop(0, "#ffffff");
+      bg.addColorStop(0.45, pal.pearl);
+      bg.addColorStop(1, pal.pearl2);
       ctx.fillStyle = bg;
       ctx.beginPath();
-      ctx.arc(b.x, b.y + bob, rb, 0, TAU);
+      ctx.arc(pr.x, pr.y, rs, 0, TAU);
       ctx.fill();
-      ctx.restore();
+      ctx.beginPath();
+      ctx.arc(pr.x, pr.y, rs, 0, TAU);
+      ctx.strokeStyle = C.rgba(pal.pearl2, 0.55);
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(pr.x - rs * 0.34, pr.y - rs * 0.4, rs * 0.20, 0, TAU);
+      ctx.fillStyle = "rgba(255,255,255,0.95)";
+      ctx.fill();
 
-      /* face */
-      const happy = mood > 0.3;
-      const fy = b.y + bob;
-      ctx.strokeStyle = "rgba(72,32,64,0.85)";
-      ctx.lineWidth = Math.max(1.2, rb * 0.15);
-      ctx.lineCap = "round";
-      const ex = rb * 0.38, ey = fy - rb * 0.1;
-      for (let side = -1; side <= 1; side += 2) {
+      /* Babi trails along behind the pearl, in the air */
+      const b = this.babi;
+      const t = this.time;
+      const side = Math.sin(t * 0.7) > 0 ? 1 : -1;
+      const tp = this.P([p[0] + side * 0.17, p[1] + 0.09 + Math.sin(t * 2.2) * 0.02, p[2] + 0.04]);
+      if (tp) {
+        if (!b.ready) { b.x = tp.x; b.y = tp.y; b.ready = true; }
+        b.vx += (tp.x - b.x) * 0.30;
+        b.vy += (tp.y - b.y) * 0.30;
+        b.vx *= 0.86; b.vy *= 0.86;
+        b.x += b.vx; b.y += b.vy;
+
+        const rb = clamp(rs * 0.60, 6, 16);
+        const mood = scene.babiMood || 0;
+
+        /* little arms that wave with the music */
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,190,220,0.85)";
+        ctx.lineWidth = Math.max(1.2, rb * 0.22);
+        ctx.lineCap = "round";
+        for (let s2 = -1; s2 <= 1; s2 += 2) {
+          const wave = Math.sin(t * 2.6 + s2 * 1.1) * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(b.x + s2 * rb * 0.86, b.y + rb * 0.24);
+          ctx.lineTo(b.x + s2 * rb * (1.5 + wave * 0.25), b.y + rb * (0.05 - wave * 0.6));
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        const bgb = ctx.createRadialGradient(b.x - rb * 0.36, b.y - rb * 0.44, rb * 0.08, b.x, b.y, rb);
+        bgb.addColorStop(0, "#fffdfa");
+        bgb.addColorStop(0.5, "#ffd8ea");
+        bgb.addColorStop(1, "#ff8fc0");
+        ctx.save();
+        ctx.shadowColor = "rgba(255,150,195,0.8)";
+        ctx.shadowBlur = 12 + mood * 12;
+        ctx.fillStyle = bgb;
         ctx.beginPath();
-        if (happy) {
-          ctx.arc(b.x + side * ex, ey + rb * 0.12, rb * 0.24, Math.PI * 1.12, Math.PI * 1.88);
-        } else {
-          ctx.ellipse(b.x + side * ex, ey, rb * 0.15, rb * 0.21, 0, 0, TAU);
+        ctx.arc(b.x, b.y, rb, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+
+        /* face */
+        const happy = mood > 0.3;
+        ctx.strokeStyle = "rgba(72,32,64,0.85)";
+        ctx.lineWidth = Math.max(1.1, rb * 0.15);
+        ctx.lineCap = "round";
+        const ex = rb * 0.38, ey = b.y - rb * 0.1;
+        for (let s3 = -1; s3 <= 1; s3 += 2) {
+          ctx.beginPath();
+          if (happy) {
+            ctx.arc(b.x + s3 * ex, ey + rb * 0.12, rb * 0.24, Math.PI * 1.12, Math.PI * 1.88);
+          } else {
+            ctx.ellipse(b.x + s3 * ex, ey, rb * 0.15, rb * 0.21, 0, 0, TAU);
+          }
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        if (happy) ctx.arc(b.x, b.y + rb * 0.16, rb * 0.34, Math.PI * 0.16, Math.PI * 0.84);
+        else {
+          ctx.moveTo(b.x - rb * 0.24, b.y + rb * 0.42);
+          ctx.quadraticCurveTo(b.x, b.y + rb * 0.54, b.x + rb * 0.24, b.y + rb * 0.42);
         }
         ctx.stroke();
       }
-      ctx.beginPath();
-      if (happy) ctx.arc(b.x, fy + rb * 0.16, rb * 0.34, Math.PI * 0.16, Math.PI * 0.84);
-      else {
-        ctx.moveTo(b.x - rb * 0.24, fy + rb * 0.42);
-        ctx.quadraticCurveTo(b.x, fy + rb * 0.54, b.x + rb * 0.24, fy + rb * 0.42);
-      }
-      ctx.stroke();
-      void mat;
     }
 
     drawParticles() {
@@ -614,149 +633,95 @@
       ctx.restore();
     }
 
-    /* ── dials ─────────────────────────────────────────────── */
-    drawDials(scene, accent, accent2, dt) {
+    /* ── each player's hand, as a vertical bar ─────────────── */
+    drawBars(scene, pal) {
       const ctx = this.ctx;
-      const duet = this.mode !== "solo";
-      const showKeys = !isTouch();
+      const hands = scene.hands || [0, 0];
+      const duet = scene.mode !== "solo";
+      for (let i = 0; i < (duet ? 2 : 1); i++) {
+        const b = this.bars[duet ? i : 0];
+        const tint = i === 0 ? "#ff9ecb" : "#8ff0e2";
+        const raised = clamp(hands[i] || 0, -1, 1);
+        const top = b.y - b.len;
+        const midY = b.y - b.len / 2;
+        const thY = midY - raised * (b.len / 2);
 
-      if (duet) this.drawRibbon(scene, accent, accent2);
-
-      for (let z = 0; z < this.dials.length; z++) {
-        const d = this.dials[z];
-        const angle = scene.cum[z] || 0;
-        const held = scene.held && scene.held[z];
-        const tint = z === 0 ? accent : duet ? "#8ff0e2" : accent2;
-        const label = duet ? (z === 0 ? "player one" : "player two") : "your hands";
-        const keys = showKeys ? (z === 0 ? ["A", "D"] : ["←", "→"]) : null;
-
-        /* glow disc */
-        const pulse = held ? 1 : 0.55;
-        const gl = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, this.dialR * 2.1);
-        gl.addColorStop(0, C.rgba(tint, 0.20 * pulse));
-        gl.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = gl;
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, this.dialR * 2.1, 0, TAU);
-        ctx.fill();
-
-        /* dial face */
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, this.dialR, 0, TAU);
-        ctx.fillStyle = "rgba(255,255,255,0.045)";
-        ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,0.16)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        /* ticks */
-        for (let k = 0; k < 12; k++) {
-          const a = (k / 12) * TAU - Math.PI / 2;
-          const r0 = this.dialR * 0.84, r1 = this.dialR * (k % 3 === 0 ? 0.97 : 0.92);
-          ctx.beginPath();
-          ctx.moveTo(d.x + Math.cos(a) * r0, d.y + Math.sin(a) * r0);
-          ctx.lineTo(d.x + Math.cos(a) * r1, d.y + Math.sin(a) * r1);
-          ctx.strokeStyle = "rgba(255,255,255," + (k % 3 === 0 ? 0.28 : 0.14) + ")";
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
-
-        /* rotation arc + handle */
-        const spin = (angle % TAU + TAU) % TAU;
         ctx.save();
-        ctx.globalCompositeOperation = "lighter";
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, this.dialR * 0.68, -Math.PI / 2, -Math.PI / 2 + spin);
-        ctx.strokeStyle = C.rgba(tint, 0.9);
-        ctx.lineWidth = 3;
+        /* track */
+        ctx.strokeStyle = "rgba(255,255,255,0.10)";
+        ctx.lineWidth = 2;
         ctx.lineCap = "round";
-        ctx.shadowColor = tint;
-        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.moveTo(b.x, b.y);
+        ctx.lineTo(b.x, top);
         ctx.stroke();
+
+        /* centre tick */
+        ctx.strokeStyle = "rgba(255,255,255,0.16)";
+        ctx.beginPath();
+        ctx.moveTo(b.x - 8, midY);
+        ctx.lineTo(b.x + 8, midY);
+        ctx.stroke();
+
+        /* filled part */
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = C.rgba(tint, 0.75);
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(b.x, midY);
+        ctx.lineTo(b.x, thY);
+        ctx.stroke();
+
+        /* thumb */
+        const gr = ctx.createRadialGradient(b.x, thY, 0, b.x, thY, 22);
+        gr.addColorStop(0, C.rgba(tint, 0.55));
+        gr.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = gr;
+        ctx.beginPath();
+        ctx.arc(b.x, thY, 22, 0, TAU);
+        ctx.fill();
         ctx.restore();
 
-        const hx = d.x + Math.cos(-Math.PI / 2 + spin) * this.dialR * 0.68;
-        const hy = d.y + Math.sin(-Math.PI / 2 + spin) * this.dialR * 0.68;
         ctx.beginPath();
-        ctx.arc(hx, hy, 4.4, 0, TAU);
+        ctx.arc(b.x, thY, 5, 0, TAU);
         ctx.fillStyle = "#fffdf7";
         ctx.fill();
 
-        /* labels */
         ctx.save();
         ctx.textAlign = "center";
-        ctx.fillStyle = "rgba(255,255,255,0.5)";
-        ctx.font = "600 9.5px ui-sans-serif, system-ui, sans-serif";
-        ctx.fillText(label.toUpperCase(), d.x, d.y + this.dialR + 17);
-        if (keys) {
+        ctx.fillStyle = "rgba(255,255,255,0.45)";
+        ctx.font = "600 9px ui-sans-serif, system-ui, sans-serif";
+        ctx.fillText(duet ? (i === 0 ? "PLAYER ONE" : "PLAYER TWO") : "YOUR HANDS", b.x, b.y + 18);
+        if (!isTouch()) {
           ctx.fillStyle = "rgba(255,255,255,0.3)";
-          ctx.fillText(keys[0] + "  ·  " + keys[1], d.x, d.y + this.dialR + 30);
+          ctx.fillText(i === 0 ? "W  ·  S" : "↑  ·  ↓", b.x, b.y + 31);
         }
         ctx.restore();
-
-        /* turning hint */
-        if (scene.showHint) {
-          const a0 = -Math.PI * 0.72, a1 = -Math.PI * 0.05;
-          const pulseA = 0.25 + 0.35 * (0.5 + 0.5 * Math.sin(this.time * 3.2));
-          ctx.save();
-          ctx.strokeStyle = C.rgba(tint, pulseA);
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(d.x, d.y, this.dialR * 1.28, a0, a1);
-          ctx.stroke();
-          const ax = d.x + Math.cos(a1) * this.dialR * 1.28;
-          const ay = d.y + Math.sin(a1) * this.dialR * 1.28;
-          ctx.beginPath();
-          ctx.moveTo(ax - 5, ay - 5);
-          ctx.lineTo(ax + 3, ay + 1);
-          ctx.lineTo(ax - 6, ay + 4);
-          ctx.closePath();
-          ctx.fillStyle = C.rgba(tint, pulseA + 0.2);
-          ctx.fill();
-          ctx.restore();
-        }
       }
-      void dt;
-    }
-
-    drawRibbon(scene, accent, accent2) {
-      const ctx = this.ctx;
-      const a = this.dials[0], b = this.dials[1];
-      if (!a || !b) return;
-      const tangle = clamp(scene.tangle || 0, 0, 1);
-      const col = tangle > 0.02 ? C.mix(accent2, "#ff5d5d", tangle) : accent2;
-      const midX = (a.x + b.x) / 2;
-      const sag = 22 + tangle * 26;
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.strokeStyle = C.rgba("#ffd28a", 0) ;
-      ctx.strokeStyle = col;
-      ctx.globalAlpha = 0.18 + 0.4 * tangle;
-      ctx.lineWidth = 1.2 + tangle * 2.2;
-      ctx.setLineDash(tangle > 0.35 ? [2 + tangle * 5, 3 + tangle * 9] : []);
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      const wob = Math.sin(this.time * 6) * tangle * 7;
-      ctx.quadraticCurveTo(midX, a.y + sag + wob, b.x, b.y);
-      ctx.stroke();
-      ctx.restore();
-      void accent;
     }
 
     drawVignette() {
       const ctx = this.ctx;
       const g = ctx.createRadialGradient(
-        this.w / 2, this.h * 0.45, Math.min(this.w, this.h) * 0.22,
+        this.w / 2, this.h * 0.5, Math.min(this.w, this.h) * 0.24,
         this.w / 2, this.h * 0.5, Math.max(this.w, this.h) * 0.78
       );
       g.addColorStop(0, "rgba(0,0,0,0)");
-      g.addColorStop(1, "rgba(2,0,8,0.72)");
+      g.addColorStop(1, "rgba(2,0,8,0.76)");
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, this.w, this.h);
     }
   }
 
-  /* ── little previews for the level cards ──────────────────── */
+  const MENU_PAL = {
+    bg0: "#080611", bg1: "#150c22", fog: "#140c20",
+    rail: "#7b6a95", railTop: "#ffe3c0", railGlow: "#ffb877",
+    ring: "#ff9ecb", ringNext: "#ffd28a",
+    pearl: "#fff4dc", pearl2: "#ffb877",
+    floor: "#2a1f3d", column: "#241a35", halo: "#ff9ecb",
+  };
+
+  /* ── little side-view previews for the level cards ───────── */
   function drawLevelPreview(canvas, level) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const size = 58;
@@ -765,26 +730,41 @@
     const ctx = canvas.getContext("2d");
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, size, size);
-    const path = level.path;
-    const cx = size / 2, cy = size / 2, r = size * 0.42;
-    const rot = M.mul(M.axis([1, 0, 0], -0.5), M.axis([0, 1, 0], 0.6));
+
+    const cx = size / 2, cy = size * 0.62;
+    const half = size * 0.40;
+    const ang = 0.16;
+    const ca = Math.cos(ang), sa = Math.sin(ang);
+
+    /* the plank */
     ctx.beginPath();
-    for (let i = 0; i <= 220; i++) {
-      const p = M.apply(rot, path.pointAt(i / 220));
-      const depth = 1.9 - p[2];
-      const s = (r * 1.9) / depth;
-      const x = cx + p[0] * s * 0.62;
-      const y = cy - p[1] * s * 0.62;
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    }
-    ctx.strokeStyle = C.rgba(level.accent, 0.9);
-    ctx.lineWidth = 1.3;
+    ctx.moveTo(cx - half * ca, cy - half * sa);
+    ctx.lineTo(cx + half * ca, cy + half * sa);
+    ctx.strokeStyle = "rgba(255,255,255,0.45)";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
     ctx.stroke();
+
+    /* rings at both ends */
+    const amp = level.amp;
+    [-amp, amp].forEach((u, i) => {
+      const x = u * half;
+      const y = u * half * (sa / ca);
+      ctx.beginPath();
+      ctx.arc(cx + x, cy + y, size * 0.13, 0, TAU);
+      ctx.strokeStyle = i === 0 ? C.rgba(level.pal.ring, 0.85) : C.rgba(level.pal.ringNext, 0.85);
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    });
+
+    /* the pearl */
+    const gr = ctx.createRadialGradient(cx - 1, cy - 2, 0, cx, cy, size * 0.09);
+    gr.addColorStop(0, "#fffdf6");
+    gr.addColorStop(1, level.pal.pearl2);
+    ctx.fillStyle = gr;
     ctx.beginPath();
-    ctx.arc(cx, cy, r * 0.62, 0, TAU);
-    ctx.strokeStyle = "rgba(255,255,255,0.07)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    ctx.arc(cx, cy, size * 0.085, 0, TAU);
+    ctx.fill();
   }
 
   DWB.Stage = Stage;

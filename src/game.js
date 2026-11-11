@@ -1,6 +1,8 @@
 /* ──────────────────────────────────────────────────────────────
    Dance with Babi — game.js
-   State, input, judging, and the little bit of ritual in between.
+   Two players hold one plank. Raise your end and the pearl rolls
+   toward your partner; lower it and it comes back. The whole dance
+   is one long swing you have to keep in time.
    ────────────────────────────────────────────────────────────── */
 (function () {
   const DWB = window.DWB;
@@ -8,22 +10,18 @@
   const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
 
-  const GAIN = 1.75;       /* gesture radians → dial radians */
-  const KEY_RATE = 2.15;   /* keyboard radians per second */
-  const TANGLE_MAX = 3.0;  /* dial disagreement that counts as a tangle */
-  const TANGLE_HOLD = 0.28;
+  const KEY_RATE = 2.6;      /* how fast a key raises your end */
+  const GRAB_RANGE = 0.30;   /* fraction of the screen height for a full raise */
+  const SPRING = 5.5;        /* how quickly an end falls back when let go */
+  const END_BOUNCE = 0.34;
+  const END_PENALTY = 0.55;  /* how hard the pearl must hit the end to count */
 
+  /* judged on the beat: how close is the pearl to the ring when the music lands */
   const JUDGE = [
-    { t: 0.105, q: 3, points: 100, label: "perfect" },
-    { t: 0.205, q: 2, points: 60, label: "good" },
-    { t: 0.34, q: 1, points: 30, label: "on the edge" },
+    { d: 0.15, q: 3, points: 100, label: "perfect" },
+    { d: 0.30, q: 2, points: 60, label: "good" },
+    { d: 0.46, q: 1, points: 30, label: "on the edge" },
   ];
-
-  const wrapPi = (a) => {
-    let x = (a + Math.PI) % TAU;
-    if (x < 0) x += TAU;
-    return x - Math.PI;
-  };
 
   const store = {
     get(k, d) {
@@ -74,26 +72,23 @@
       this.level = null;
       this.gates = [];
       this.nextGate = 0;
-      this.ballS = 0;
-      this.prevBallS = 0;
+      this.hands = [0, 0];
+      this.heldBy = [false, false];
+      this.pearlU = 0;
+      this.pearlV = 0;
+      this.prevU = 0;
       this.prevT = -0.001;
-      this.cum = [0, 0];
-      this.prevShared = 0;
-      this.sharedVel = 0;
-      this.sway = 0;
       this.score = 0;
       this.combo = 0;
       this.maxCombo = 0;
       this.counts = { 3: 0, 2: 0, 1: 0, miss: 0 };
-      this.tangle = 0;
-      this.tangleHold = 0;
-      this.tangleWarned = false;
       this.babiMood = 0;
       this.beatPhase = -1;
       this.pointers = new Map();
-      this.keys = { a: 0, d: 0, l: 0, r: 0 };
+      this.keys = { w: 0, s: 0, up: 0, down: 0 };
       this.lastT = 0;
       this.resumeState = "playing";
+      this.shake = 0;
 
       this.bindUI();
       this.bindInput();
@@ -131,7 +126,6 @@
     setMode(mode) {
       this.mode = mode === "solo" ? "solo" : "duet";
       store.set("dwb.mode", this.mode);
-      this.stage.setMode(this.mode);
       document.querySelectorAll("[data-mode]").forEach((b) => {
         b.classList.toggle("active", b.dataset.mode === this.mode);
       });
@@ -139,13 +133,10 @@
 
     /* ── level list ────────────────────────────────────────── */
     unlocked() {
-      const n = store.get("dwb.unlocked", 1);
-      return clamp(Number(n) || 1, 1, LEVELS.length);
+      return clamp(Number(store.get("dwb.unlocked", 1)) || 1, 1, LEVELS.length);
     }
 
-    best(id) {
-      return store.get("dwb.best." + id, null);
-    }
+    best(id) { return store.get("dwb.best." + id, null); }
 
     renderLevels() {
       const grid = this.el.grid;
@@ -187,10 +178,10 @@
           }
           body.appendChild(stars);
         } else {
-          const meta2 = document.createElement("div");
-          meta2.className = "lc-meta";
-          meta2.textContent = locked ? "finish the dance before it" : "not danced yet";
-          body.appendChild(meta2);
+          const m2 = document.createElement("div");
+          m2.className = "lc-meta";
+          m2.textContent = locked ? "finish the dance before it" : "not danced yet";
+          body.appendChild(m2);
         }
 
         card.appendChild(body);
@@ -212,6 +203,7 @@
               this.sound.stop();
               this.state = "levels";
               this.el.topbar.classList.add("hidden");
+              this.el.hint.classList.add("hidden");
             }
             this.renderLevels();
           }
@@ -236,16 +228,14 @@
         }
         const card = e.target.closest("[data-level]");
         if (card) {
-          const i = Number(card.dataset.level);
           if (card.classList.contains("locked")) return;
           this.sound.ensure();
           this.sound.ui();
-          this.start(i);
+          this.start(Number(card.dataset.level));
         }
       });
 
       this.el.pause.addEventListener("click", () => this.togglePause());
-
       this.el.sound.addEventListener("click", () => {
         this.sound.setMuted(!this.sound.muted);
         store.set("dwb.muted", this.sound.muted);
@@ -254,10 +244,7 @@
       });
 
       this.el.again.addEventListener("click", () => this.start(this.li));
-      this.el.next.addEventListener("click", () => {
-        const n = Math.min(LEVELS.length - 1, this.li + 1);
-        this.start(n);
-      });
+      this.el.next.addEventListener("click", () => this.start(Math.min(LEVELS.length - 1, this.li + 1)));
 
       window.addEventListener("resize", () => this.stage.resize());
       window.addEventListener("orientationchange", () => setTimeout(() => this.stage.resize(), 250));
@@ -266,9 +253,9 @@
       });
     }
 
-    /* ── input ─────────────────────────────────────────────── */
+    /* ── input: raise and lower your end of the plank ──────── */
     zoneFor(x) {
-      if (this.mode === "solo" || this.stage.dials.length < 2) return 0;
+      if (this.mode === "solo") return 0;
       return x < this.stage.w / 2 ? 0 : 1;
     }
 
@@ -284,29 +271,37 @@
         if (this.state !== "playing" && this.state !== "countin") return;
         const p = pos(e);
         const zone = this.zoneFor(p.x);
-        const c = this.stage.dials[zone] || { x: this.stage.w / 2, y: this.stage.h / 2 };
-        const a = Math.atan2(p.y - c.y, p.x - c.x);
-        this.pointers.set(e.pointerId, { zone: zone, last: a });
+        this.pointers.set(e.pointerId, { zone: zone, anchorY: p.y, value: 0 });
+        this.heldBy[zone] = true;
+        if (this.mode === "solo") this.heldBy = [true, true];
         try { cv.setPointerCapture(e.pointerId); } catch (err) { /* noop */ }
         e.preventDefault();
       });
 
       cv.addEventListener("pointermove", (e) => {
-        const p = this.pointers.get(e.pointerId);
-        if (!p) return;
-        const q = pos(e);
-        const c = this.stage.dials[p.zone];
-        if (!c) return;
-        const dx = q.x - c.x, dy = q.y - c.y;
-        if (Math.hypot(dx, dy) < Math.min(14, this.stage.dialR * 0.34)) return;
-        const a = Math.atan2(dy, dx);
-        const d = wrapPi(a - p.last);
-        p.last = a;
-        if (this.state === "playing" || this.state === "countin") this.cum[p.zone] += d * GAIN;
+        const d = this.pointers.get(e.pointerId);
+        if (!d) return;
+        const p = pos(e);
+        const v = clamp((d.anchorY - p.y) / (this.stage.h * GRAB_RANGE), -1, 1);
+        d.value = v;
+        if (this.state !== "playing" && this.state !== "countin") return;
+        if (this.mode === "solo") {
+          this.hands[0] = -v;
+          this.hands[1] = v;
+        } else {
+          this.hands[d.zone] = v;
+        }
         e.preventDefault();
       });
 
-      const release = (e) => { this.pointers.delete(e.pointerId); };
+      const release = (e) => {
+        const d = this.pointers.get(e.pointerId);
+        if (d) {
+          this.heldBy[d.zone] = false;
+          if (this.mode === "solo") this.heldBy = [false, false];
+        }
+        this.pointers.delete(e.pointerId);
+      };
       cv.addEventListener("pointerup", release);
       cv.addEventListener("pointercancel", release);
       cv.addEventListener("pointerleave", release);
@@ -317,19 +312,16 @@
           return;
         }
         switch (e.code) {
-          case "KeyA": this.keys.a = 1; break;
-          case "KeyD": this.keys.d = 1; break;
-          case "ArrowLeft": this.keys.l = 1; e.preventDefault(); break;
-          case "ArrowRight": this.keys.r = 1; e.preventDefault(); break;
-          case "Escape":
-          case "KeyP":
+          case "KeyW": case "KeyA": this.keys.w = 1; break;
+          case "KeyS": case "KeyD": this.keys.s = 1; break;
+          case "ArrowUp": this.keys.up = 1; e.preventDefault(); break;
+          case "ArrowDown": this.keys.down = 1; e.preventDefault(); break;
+          case "Escape": case "KeyP":
             if (this.state === "playing" || this.state === "countin" || this.state === "paused") {
               this.togglePause();
             }
             break;
-          case "KeyM":
-            this.el.sound.click();
-            break;
+          case "KeyM": this.el.sound.click(); break;
           default: return;
         }
         this.sound.ensure();
@@ -337,16 +329,18 @@
 
       window.addEventListener("keyup", (e) => {
         switch (e.code) {
-          case "KeyA": this.keys.a = 0; break;
-          case "KeyD": this.keys.d = 0; break;
-          case "ArrowLeft": this.keys.l = 0; break;
-          case "ArrowRight": this.keys.r = 0; break;
+          case "KeyW": case "KeyA": this.keys.w = 0; break;
+          case "KeyS": case "KeyD": this.keys.s = 0; break;
+          case "ArrowUp": this.keys.up = 0; break;
+          case "ArrowDown": this.keys.down = 0; break;
           default: break;
         }
       });
 
       window.addEventListener("blur", () => {
-        this.keys.a = this.keys.d = this.keys.l = this.keys.r = 0;
+        this.keys.w = this.keys.s = this.keys.up = this.keys.down = 0;
+        this.pointers.clear();
+        this.heldBy = [false, false];
       });
     }
 
@@ -356,48 +350,43 @@
       if (!lv) return;
       this.li = i;
       this.level = lv;
-      this.stage.setMode(this.mode);
-      this.stage.pathCache = { path: null, pts: null };
       this.stage.particles.length = 0;
       this.stage.babi.ready = false;
 
       this.gates = [];
       for (let k = 0; k < lv.gates; k++) {
         this.gates.push({
-          s: (k + 1) * lv.interval,
-          expected: (k + 1) * lv.spb,
-          state: 0,
-          q: 0,
-          flash: 0,
+          u: lv.gateU(k),
+          expected: lv.gateAt(k),
+          state: 0, q: 0, flash: 0,
         });
       }
       this.nextGate = 0;
-      this.ballS = 0;
-      this.prevBallS = 0;
+      this.hands = [0, 0];
+      this.heldBy = [false, false];
+      this.pearlU = 0;
+      this.pearlV = 0;
+      this.prevU = 0;
       this.prevT = -0.001;
-      this.cum = [0, 0];
-      this.prevShared = 0;
-      this.sharedVel = 0;
-      this.sway = 0;
       this.score = 0;
       this.combo = 0;
       this.maxCombo = 0;
       this.counts = { 3: 0, 2: 0, 1: 0, miss: 0 };
-      this.tangle = 0;
-      this.tangleHold = 0;
-      this.tangleWarned = false;
       this.babiMood = 0;
       this.beatPhase = -1;
       this.pointers.clear();
-      this.keys = { a: 0, d: 0, l: 0, r: 0 };
+      this.keys = { w: 0, s: 0, up: 0, down: 0 };
       this.lastCount = null;
+      this.shake = 0;
 
       this.sound.ensure();
       this.sound.startLevel(lv);
       this.state = "countin";
       this.el.topbar.classList.remove("hidden");
       this.el.countin.classList.remove("hidden");
-      this.el.hint.textContent = this.mode === "solo" ? "turn the dial in a slow circle" : "turn both dials together — clockwise";
+      this.el.hint.textContent = this.mode === "solo"
+        ? "lift and lower — one long swing"
+        : "lift your own end, then let go";
       this.el.hint.classList.remove("hidden");
       this.el.hudLevel.textContent = lv.name;
       this.el.hudProgress.style.width = "0%";
@@ -421,7 +410,7 @@
         this.sound.resume();
         this.show(null);
         this.el.countin.classList.toggle("hidden", this.state !== "countin");
-      this.el.hint.classList.toggle("hidden", this.state !== "countin");
+        this.el.hint.classList.toggle("hidden", this.state !== "countin");
         return;
       }
       if (this.state !== "playing" && this.state !== "countin") return;
@@ -429,41 +418,64 @@
       this.state = "paused";
       this.sound.pause();
       this.pointers.clear();
+      this.heldBy = [false, false];
       this.show("pause");
     }
 
-    /* ── the beat of play ──────────────────────────────────── */
+    /* ── the swing of the dance ────────────────────────────── */
     update(dt) {
-      const kx = (this.keys.d - this.keys.a) * KEY_RATE * dt;
-      const ky = (this.keys.r - this.keys.l) * KEY_RATE * dt;
-      const live = this.state === "playing" || this.state === "countin";
-      if (live) {
-        if (this.mode === "solo") this.cum[0] += kx + ky;
-        else { this.cum[0] += kx; this.cum[1] += ky; }
-      }
-
-      /* gate flashes */
+      /* gates fade out after a hit */
       for (let i = 0; i < this.gates.length; i++) {
         const g = this.gates[i];
         if (g.flash > 0) g.flash = Math.max(0, g.flash - dt * 1.9);
       }
       this.babiMood = Math.max(0, this.babiMood - dt * 1.4);
+      this.shake = Math.max(0, this.shake - dt * 3.4);
 
+      const live = this.state === "playing" || this.state === "countin";
       if (!live) return;
 
+      /* ── hands ── */
+      const k1 = (this.keys.w ? 1 : 0) - (this.keys.s ? 1 : 0);
+      const k2 = (this.keys.up ? 1 : 0) - (this.keys.down ? 1 : 0);
+      const spring = Math.min(1, dt * SPRING);
+      for (let i = 0; i < 2; i++) {
+        if (this.heldBy[i]) continue;
+        const kd = this.mode === "solo" ? (k1 || k2) : i === 0 ? k1 : k2;
+        if (kd) {
+          this.hands[i] = clamp(this.hands[i] + kd * KEY_RATE * dt, -1, 1);
+          if (this.mode === "solo") {
+            this.hands[0] = -this.hands[1];
+          }
+        } else {
+          this.hands[i] += (0 - this.hands[i]) * spring;
+        }
+      }
+
       const lv = this.level;
+      /* the plank only tilts when the two of you disagree: half the
+         difference, so one player alone can never tilt it far enough */
+      const tilt = clamp((this.hands[1] - this.hands[0]) * 0.5, -1, 1);
       const t = this.sound.songTime();
       this.beatPhase = t < 0 ? -1 : (t / lv.spb) % 1;
 
-      const shared = this.mode === "solo" ? this.cum[0] : (this.cum[0] + this.cum[1]) * 0.5;
-      const dShared = shared - this.prevShared;
-      this.prevShared = shared;
-      this.sharedVel = dt > 0 ? dShared / dt : 0;
+      /* ── the pearl: the plank's slope sets its speed, and it
+         answers your hands with a short lag, so you must lead ── */
+      const wanted = -lv.speed * tilt;
+      this.pearlV += (wanted - this.pearlV) * Math.min(1, dt / lv.lag);
+      this.pearlU += this.pearlV * dt;
 
-      const targetSway = clamp(this.sharedVel * 0.10, -0.30, 0.30);
-      this.sway += (targetSway - this.sway) * Math.min(1, dt * 7);
+      if (this.pearlU > 1) {
+        this.pearlU = 1;
+        if (this.pearlV > END_PENALTY) this.hitTheEnd(1);
+        this.pearlV = -this.pearlV * END_BOUNCE;
+      } else if (this.pearlU < -1) {
+        this.pearlU = -1;
+        if (this.pearlV < -END_PENALTY) this.hitTheEnd(-1);
+        this.pearlV = -this.pearlV * END_BOUNCE;
+      }
 
-      /* count-in: 3 · 2 · 1 in the last three beats before the first ring */
+      /* count-in */
       if (this.state === "countin") {
         if (t > -3 * lv.spb && t < 0) {
           const n = Math.ceil(-t / lv.spb);
@@ -480,78 +492,36 @@
         }
       }
 
-      /* the pearl only moves by the average of both dials, and only
-         once the waltz has actually begun */
-      const prevT = this.prevT;
-      this.prevT = t;
-      this.prevBallS = this.ballS;
-      if (t >= 0) this.ballS += dShared * lv.speed;
-      this.judge(t, prevT);
+      if (t >= 0) this.judgeBeats(t);
 
-      /* the ribbon between you */
-      if (this.mode === "duet") {
-        const diff = Math.abs(wrapPi(this.cum[0] - this.cum[1]));
-        this.tangle = clamp(diff / TANGLE_MAX, 0, 1);
-        if (this.tangle > 0.92) {
-          this.tangleHold += dt;
-          if (this.tangleHold > TANGLE_HOLD && !this.tangleWarned) {
-            this.tangleWarned = true;
-            this.breakCombo("stay together");
-            this.sound.tangle();
-          }
-        } else {
-          this.tangleHold = 0;
-          if (this.tangle < 0.4) this.tangleWarned = false;
-        }
-      } else {
-        this.tangle = 0;
-      }
+      this.el.hudProgress.style.width = ((this.nextGate / this.gates.length) * 100).toFixed(1) + "%";
 
-      /* expire rings the music has already passed */
-      for (let i = 0; i < this.gates.length; i++) {
-        const g = this.gates[i];
-        if (g.state === 0 && t > g.expected + JUDGE[2].t + 0.06) {
-          this.missGate(i, "late");
-        }
-      }
-
-      /* progress */
-      const done = this.gates.filter((g) => g.state !== 0).length;
-      this.el.hudProgress.style.width = ((done / this.gates.length) * 100).toFixed(1) + "%";
-
-      /* the end of the dance */
       const last = this.gates[this.gates.length - 1];
-      if (done === this.gates.length && last && t > last.expected + 1.7) this.finish();
+      if (this.nextGate >= this.gates.length && last && t > last.expected + 1.7) this.finish();
     }
 
-    judge(t, prevT) {
-      const prev = this.prevBallS, cur = this.ballS;
-      if (prev === cur) return;
-      const lo = Math.min(prev, cur), hi = Math.max(prev, cur);
-      for (let i = 0; i < this.gates.length; i++) {
-        const g = this.gates[i];
-        if (g.state !== 0) continue;
-        const base = Math.floor(lo - g.s);
-        for (let k = base; k <= base + 2; k++) {
-          const gp = g.s + k;
-          if (gp > lo && gp <= hi) {
-            const f = (gp - prev) / (cur - prev);
-            this.resolveGate(i, prevT + f * (t - prevT));
-            break;
-          }
-        }
+    /** every ring is a snapshot: is the pearl inside it when the beat lands? */
+    judgeBeats(t) {
+      let guard = 0;
+      while (this.nextGate < this.gates.length && t >= this.gates[this.nextGate].expected && guard++ < 8) {
+        this.scoreGate(this.nextGate);
+        this.nextGate++;
       }
-      this.advance();
     }
 
-    resolveGate(i, tc) {
+    scoreGate(i) {
       const g = this.gates[i];
-      const err = tc - g.expected;
+      const lv = this.level;
+      const d = Math.abs(this.pearlU - g.u) / Math.max(0.35, lv.amp);
       let tier = null;
       for (let j = 0; j < JUDGE.length; j++) {
-        if (Math.abs(err) <= JUDGE[j].t) { tier = JUDGE[j]; break; }
+        if (d <= JUDGE[j].d) { tier = JUDGE[j]; break; }
       }
-      if (!tier) { this.missGate(i, err < 0 ? "early" : "late"); return; }
+      if (!tier) {
+        const past = (this.pearlV > 0 && this.pearlU > g.u) || (this.pearlV < 0 && this.pearlU < g.u);
+        this.missGate(i, past ? "early" : "late");
+        return;
+      }
 
       g.state = 1;
       g.q = tier.q;
@@ -565,10 +535,11 @@
 
       this.popJudge(tier.label, tier.q === 3 ? "perfect" : tier.q === 2 ? "good" : "soft");
       this.sound.hit(this.combo);
+      const ps = this.stage.pearlScreen || { x: this.stage.cx, y: this.stage.cy };
       this.stage.burst(
-        this.stage.cx, this.stage.cy,
+        ps.x, ps.y,
         tier.q === 3 ? "#fff3d6" : tier.q === 2 ? "#bfeee6" : "#c8b6e8",
-        tier.q === 3 ? 22 : 12,
+        tier.q === 3 ? 20 : 11,
         tier.q === 3 ? 210 : 140
       );
       this.setHud();
@@ -580,20 +551,22 @@
       g.state = 2;
       this.counts.miss += 1;
       this.breakCombo(why === "early" ? "a little early" : why === "late" ? "a little late" : why);
-      this.sound.soft(why);
+      this.sound.soft(why === "early" ? "early" : "late");
       this.setHud();
+    }
+
+    hitTheEnd(dir) {
+      this.shake = 1;
+      this.sound.tangle();
+      if (this.combo > 2) this.popJudge("too far", "bad");
+      this.breakCombo(null);
+      void dir;
     }
 
     breakCombo(word) {
       this.combo = 0;
       if (word) this.popJudge(word, "bad");
       this.setHud();
-    }
-
-    advance() {
-      let i = this.nextGate;
-      while (i < this.gates.length && this.gates[i].state !== 0) i++;
-      this.nextGate = i;
     }
 
     setHud() {
@@ -620,6 +593,7 @@
       this.sound.stop();
       this.sound.complete();
       this.pointers.clear();
+      this.heldBy = [false, false];
 
       const lv = this.level;
       const total = this.gates.length;
@@ -669,49 +643,31 @@
 
       this.update(dt);
 
-      const playing = this.state === "playing" || this.state === "countin";
-      const held = [false, false];
-      this.pointers.forEach((p) => { held[p.zone] = true; });
-
-      /* in the menus the sphere keeps dancing quietly to itself */
       const demo = !this.level || this.state === "title" || this.state === "levels" || this.state === "howto";
-      this.demoS = (this.demoS || 0) + dt * (this.state === "title" ? 0.035 : 0.05);
+      this.demoT = (this.demoT || 0) + dt;
+      const demoTilt = Math.sin(this.demoT * 1.6) * 0.85;
       const demoLevel = LEVELS[0];
 
-      const scene = demo
-        ? {
-            level: demoLevel,
-            path: demoLevel.path,
-            ballS: this.demoS,
-            gates: [],
-            nextGate: 0,
-            sway: Math.sin(this.demoS * 6) * 0.18,
-            beatPhase: -1,
-            phase: (this.demoS * 7) % 1,
-            tangle: 0,
-            cum: [this.demoS * 2, this.demoS * 2],
-            held: [false, false],
-            babiMood: 0.7,
-            showDials: false,
-            showHint: false,
-          }
-        : {
-            level: this.level,
-            path: this.level.path,
-            ballS: this.ballS,
-            gates: this.gates,
-            nextGate: this.nextGate,
-            sway: this.sway,
-            beatPhase: this.beatPhase,
-            phase: this.beatPhase >= 0 ? this.beatPhase : 0.5,
-            tangle: this.tangle,
-            cum: this.cum,
-            held: held,
-            babiMood: this.babiMood,
-            showDials: true,
-            showHint: this.state === "countin",
-          };
+      const tilt = demo ? demoTilt : clamp((this.hands[1] - this.hands[0]) * 0.5, -1, 1);
+      const scene = {
+        level: demo ? demoLevel : this.level,
+        tilt: tilt,
+        pearlU: demo ? Math.sin(this.demoT * 1.6) * 0.55 : this.pearlU,
+        pearlV: demo ? 0 : this.pearlV,
+        gates: demo ? [] : this.gates,
+        nextGate: demo ? 0 : this.nextGate,
+        phase: this.beatPhase >= 0 ? this.beatPhase : (this.demoT * 1.6) % 1,
+        hands: demo ? [-demoTilt, demoTilt] : this.hands,
+        babiMood: demo ? 0.7 : this.babiMood,
+        showBars: !demo,
+        showHands: this.state === "countin" || (this.state === "playing" && this.li === 0 && this.el.hudProgress.style.width.replace("%", "") < 25),
+        mode: this.mode,
+        pal0: "#ff9ecb",
+        pal1: "#8ff0e2",
+        shake: this.shake,
+      };
 
+      if (demo) scene.hands = [-demoTilt, demoTilt];
       this.stage.draw(scene, dt);
       requestAnimationFrame(this.frame);
     };

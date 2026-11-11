@@ -4,10 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
 <title>Dance with Babi — a duet for one screen</title>
-<meta name="description" content="Dance with Babi is a two-player dancing game for one screen. Each of you owns a dial: turn together, roll the pearl along the choreography and meet every ring exactly on the beat." />
+<meta name="description" content="Dance with Babi is a two-player dancing game for one screen. Each of you holds one end of a plank: one end up, one end down, and the pearl rolls along the choreography. Meet every ring exactly on the beat." />
 <meta name="theme-color" content="#08050f" />
 <meta property="og:title" content="Dance with Babi" />
-<meta property="og:description" content="A two-player dancing game for one screen. Turn together, follow the pearl, meet the rings on the beat." />
+<meta property="og:description" content="A two-player dancing game for one screen. Two hands on one plank, a 3D hall, and a pearl that rolls to the waltz." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0714'/%3E%3Ccircle cx='25' cy='32' r='13' fill='none' stroke='%23ff9ecb' stroke-width='3'/%3E%3Ccircle cx='39' cy='32' r='13' fill='none' stroke='%238ff0e2' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23ffd28a'/%3E%3C/svg%3E" />
 <!-- /* INLINE:STYLE */ -->
@@ -36,7 +36,7 @@
   </header>
 
   <div id="countin" class="hidden"><b>3</b></div>
-  <div id="hint" class="hidden">turn both dials together</div>
+  <div id="hint" class="hidden">one end up, the other down</div>
   <div id="judge" aria-live="polite"></div>
 
   <!-- ──────────────────────── SCREENS ──────────────────────── -->
@@ -64,7 +64,8 @@
           </svg>
         </div>
         <h1>Dance<span class="with">with</span>Babi</h1>
-        <p class="tagline">A duet for two players and one screen.<br/>Turn together, and the pearl will dance.</p>
+        <p class="tagline">A duet for two players and one screen.<br/>One plank, a hand on each end. Rock it, and the pearl dances.</p>
+        <p class="tagline fa" dir="rtl" lang="fa">یک تخته، دو سر، دو نفر. هرکس یک سر را بالا و پایین می‌برد و مروارید روی تخته می‌رقصد.</p>
         <div class="title-actions">
           <button class="btn primary" data-go="levels">Begin the dance</button>
           <button class="btn ghost" data-go="howto">How to play</button>
@@ -92,7 +93,7 @@
 
         <div class="panel-foot">
           <div class="hint">
-            <kbd>A</kbd><kbd>D</kbd> player one &nbsp;·&nbsp; <kbd>←</kbd><kbd>→</kbd> player two &nbsp;·&nbsp; on touch: turn your dial
+            <kbd>W</kbd><kbd>S</kbd> player one &nbsp;·&nbsp; <kbd>↑</kbd><kbd>↓</kbd> player two &nbsp;·&nbsp; on touch: lift your half of the screen
           </div>
           <button class="btn tiny ghost" data-go="howto">How to play</button>
         </div>
@@ -112,32 +113,35 @@
           <li>
             <span class="num">1</span>
             <div>
-              <h3>Take a dial each</h3>
-              <p>Hold one device with both hands: player one owns the left dial, player two the right one. On a keyboard, player one uses <kbd>A</kbd>/<kbd>D</kbd> and player two <kbd>←</kbd>/<kbd>→</kbd>.</p>
+              <h3>One end each</h3>
+              <p>You are both holding the same plank. Player one holds the <em>left</em> end, player two the <em>right</em> one. On touch: lift a finger in your half of the screen. On a keyboard: <kbd>W</kbd><kbd>S</kbd> and <kbd>↑</kbd><kbd>↓</kbd>.</p>
             </div>
           </li>
           <li>
             <span class="num">2</span>
             <div>
-              <h3>Turn together</h3>
-              <p>The pearl only moves by the <em>average</em> of both dials, so nobody can carry the dance alone. Turn both dials the same way — clockwise rolls forward.</p>
+              <h3>One up, one down</h3>
+              <p>The plank only tilts when the two of you <em>disagree</em>: your end up, your partner's end down. If you both lift together the plank stays level and the pearl does not move an inch — so no one can carry this dance alone.</p>
             </div>
           </li>
           <li>
             <span class="num">3</span>
             <div>
-              <h3>Meet the rings on the beat</h3>
-              <p>Every golden ring is one beat of the waltz. Pass a ring exactly when it sounds: <em>perfect</em>, <em>good</em>, <em>early</em>, <em>late</em>. Keep a steady, gentle turn and the whole piece lines up.</p>
+              <h3>The slope is the speed</h3>
+              <p>Steeper plank, faster pearl — and it answers your hands a heartbeat late, so you have to <em>lead</em>. Start the swing before you need it and level the plank to stop it.</p>
             </div>
           </li>
           <li>
             <span class="num">4</span>
             <div>
-              <h3>Keep the ribbon</h3>
-              <p>If you twist against each other the ribbon between you frays and your combo snaps. Stay together — that is the whole dance.</p>
+              <h3>Be in the ring on the beat</h3>
+              <p>Every ring is one beat of the waltz and they alternate between the two ends: one for you, one for your partner. It is judged the moment the drum lands — <em>perfect</em>, <em>good</em>, <em>on the edge</em>. Overshoot and the pearl slams into the end of the plank, and your streak snaps.</p>
             </div>
           </li>
         </ol>
+        <div class="steps fa" dir="rtl" lang="fa">
+          <p><b>خلاصه به فارسی:</b> هر بازیکن یک سر تخته را بالا می‌برد و پایین می‌آورد. اگر هر دو با هم بالا ببرید تخته صاف می‌ماند و مروارید حرکت نمی‌کند؛ پس باید یکی بالا و دیگری پایین باشد. شیب تخته سرعت مروارید است و مروارید با کمی تأخیر جواب می‌دهد، پس باید یک ضرب زودتر شروع کنید. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد.</p>
+        </div>
         <div class="panel-foot">
           <div class="hint">Headphones help. Volume is your friend, the music is your metronome.</div>
           <button class="btn primary" data-go="levels">I'm ready</button>

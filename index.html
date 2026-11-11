@@ -4,10 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
 <title>Dance with Babi — a duet for one screen</title>
-<meta name="description" content="Dance with Babi is a two-player dancing game for one screen. Each of you owns a dial: turn together, roll the pearl along the choreography and meet every ring exactly on the beat." />
+<meta name="description" content="Dance with Babi is a two-player dancing game for one screen. Each of you holds one end of a plank: one end up, one end down, and the pearl rolls along the choreography. Meet every ring exactly on the beat." />
 <meta name="theme-color" content="#08050f" />
 <meta property="og:title" content="Dance with Babi" />
-<meta property="og:description" content="A two-player dancing game for one screen. Turn together, follow the pearl, meet the rings on the beat." />
+<meta property="og:description" content="A two-player dancing game for one screen. Two hands on one plank, a 3D hall, and a pearl that rolls to the waltz." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0714'/%3E%3Ccircle cx='25' cy='32' r='13' fill='none' stroke='%23ff9ecb' stroke-width='3'/%3E%3Ccircle cx='39' cy='32' r='13' fill='none' stroke='%238ff0e2' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23ffd28a'/%3E%3C/svg%3E" />
 <style>
@@ -525,6 +525,28 @@ kbd {
 @media (max-width: 420px) {
   .level-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Persian notes ───────────────────────────────────────── */
+.tagline.fa {
+  margin-top: 10px;
+  font-size: 13px;
+  opacity: 0.72;
+  line-height: 1.9;
+}
+.steps.fa {
+  margin: 4px 0 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.steps.fa p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 2;
+  color: rgba(240, 232, 255, 0.82);
+}
+.steps.fa b { color: #ffd28a; }
 </style>
 </head>
 <body>
@@ -551,7 +573,7 @@ kbd {
   </header>
 
   <div id="countin" class="hidden"><b>3</b></div>
-  <div id="hint" class="hidden">turn both dials together</div>
+  <div id="hint" class="hidden">one end up, the other down</div>
   <div id="judge" aria-live="polite"></div>
 
   <!-- ──────────────────────── SCREENS ──────────────────────── -->
@@ -579,7 +601,8 @@ kbd {
           </svg>
         </div>
         <h1>Dance<span class="with">with</span>Babi</h1>
-        <p class="tagline">A duet for two players and one screen.<br/>Turn together, and the pearl will dance.</p>
+        <p class="tagline">A duet for two players and one screen.<br/>One plank, a hand on each end. Rock it, and the pearl dances.</p>
+        <p class="tagline fa" dir="rtl" lang="fa">یک تخته، دو سر، دو نفر. هرکس یک سر را بالا و پایین می‌برد و مروارید روی تخته می‌رقصد.</p>
         <div class="title-actions">
           <button class="btn primary" data-go="levels">Begin the dance</button>
           <button class="btn ghost" data-go="howto">How to play</button>
@@ -607,7 +630,7 @@ kbd {
 
         <div class="panel-foot">
           <div class="hint">
-            <kbd>A</kbd><kbd>D</kbd> player one &nbsp;·&nbsp; <kbd>←</kbd><kbd>→</kbd> player two &nbsp;·&nbsp; on touch: turn your dial
+            <kbd>W</kbd><kbd>S</kbd> player one &nbsp;·&nbsp; <kbd>↑</kbd><kbd>↓</kbd> player two &nbsp;·&nbsp; on touch: lift your half of the screen
           </div>
           <button class="btn tiny ghost" data-go="howto">How to play</button>
         </div>
@@ -627,32 +650,35 @@ kbd {
           <li>
             <span class="num">1</span>
             <div>
-              <h3>Take a dial each</h3>
-              <p>Hold one device with both hands: player one owns the left dial, player two the right one. On a keyboard, player one uses <kbd>A</kbd>/<kbd>D</kbd> and player two <kbd>←</kbd>/<kbd>→</kbd>.</p>
+              <h3>One end each</h3>
+              <p>You are both holding the same plank. Player one holds the <em>left</em> end, player two the <em>right</em> one. On touch: lift a finger in your half of the screen. On a keyboard: <kbd>W</kbd><kbd>S</kbd> and <kbd>↑</kbd><kbd>↓</kbd>.</p>
             </div>
           </li>
           <li>
             <span class="num">2</span>
             <div>
-              <h3>Turn together</h3>
-              <p>The pearl only moves by the <em>average</em> of both dials, so nobody can carry the dance alone. Turn both dials the same way — clockwise rolls forward.</p>
+              <h3>One up, one down</h3>
+              <p>The plank only tilts when the two of you <em>disagree</em>: your end up, your partner's end down. If you both lift together the plank stays level and the pearl does not move an inch — so no one can carry this dance alone.</p>
             </div>
           </li>
           <li>
             <span class="num">3</span>
             <div>
-              <h3>Meet the rings on the beat</h3>
-              <p>Every golden ring is one beat of the waltz. Pass a ring exactly when it sounds: <em>perfect</em>, <em>good</em>, <em>early</em>, <em>late</em>. Keep a steady, gentle turn and the whole piece lines up.</p>
+              <h3>The slope is the speed</h3>
+              <p>Steeper plank, faster pearl — and it answers your hands a heartbeat late, so you have to <em>lead</em>. Start the swing before you need it and level the plank to stop it.</p>
             </div>
           </li>
           <li>
             <span class="num">4</span>
             <div>
-              <h3>Keep the ribbon</h3>
-              <p>If you twist against each other the ribbon between you frays and your combo snaps. Stay together — that is the whole dance.</p>
+              <h3>Be in the ring on the beat</h3>
+              <p>Every ring is one beat of the waltz and they alternate between the two ends: one for you, one for your partner. It is judged the moment the drum lands — <em>perfect</em>, <em>good</em>, <em>on the edge</em>. Overshoot and the pearl slams into the end of the plank, and your streak snaps.</p>
             </div>
           </li>
         </ol>
+        <div class="steps fa" dir="rtl" lang="fa">
+          <p><b>خلاصه به فارسی:</b> هر بازیکن یک سر تخته را بالا می‌برد و پایین می‌آورد. اگر هر دو با هم بالا ببرید تخته صاف می‌ماند و مروارید حرکت نمی‌کند؛ پس باید یکی بالا و دیگری پایین باشد. شیب تخته سرعت مروارید است و مروارید با کمی تأخیر جواب می‌دهد، پس باید یک ضرب زودتر شروع کنید. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد.</p>
+        </div>
         <div class="panel-foot">
           <div class="hint">Headphones help. Volume is your friend, the music is your metronome.</div>
           <button class="btn primary" data-go="levels">I'm ready</button>
@@ -697,234 +723,257 @@ kbd {
 </div>
 
 <script>
+/* ==== src/math3d.js ==== */
+/* ──────────────────────────────────────────────────────────────
+   Dance with Babi — math3d.js
+   A very small 3D kit: vectors, a look-at camera with roll,
+   perspective projection, and mesh builders.
+   No WebGL — every triangle is filled on a 2D canvas.
+   ────────────────────────────────────────────────────────────── */
+(function () {
+  const DWB = (window.DWB = window.DWB || {});
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+
+  const V = {
+    sub: (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]],
+    add: (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]],
+    mul: (a, s) => [a[0] * s, a[1] * s, a[2] * s],
+    dot: (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2],
+    cross: (a, b) => [
+      a[1] * b[2] - a[2] * b[1],
+      a[2] * b[0] - a[0] * b[2],
+      a[0] * b[1] - a[1] * b[0],
+    ],
+    norm(a) {
+      const l = Math.hypot(a[0], a[1], a[2]) || 1;
+      return [a[0] / l, a[1] / l, a[2] / l];
+    },
+  };
+
+  /* ── camera ───────────────────────────────────────────────── */
+  function camera(eye, target, up, roll) {
+    const fwd = V.norm(V.sub(target, eye));
+    let right = V.norm(V.cross(fwd, up || [0, 1, 0]));
+    let u = V.norm(V.cross(right, fwd));
+    if (roll) {
+      const c = Math.cos(roll), s = Math.sin(roll);
+      const r2 = [right[0] * c + u[0] * s, right[1] * c + u[1] * s, right[2] * c + u[2] * s];
+      const u2 = [u[0] * c - right[0] * s, u[1] * c - right[1] * s, u[2] * c - right[2] * s];
+      right = r2;
+      u = u2;
+    }
+    return { eye: eye, fwd: fwd, right: right, up: u };
+  }
+
+  /** world point → {x, y screen, z depth}, or null when behind the eye */
+  function project(cam, focal, cx, cy, p) {
+    const rx = p[0] - cam.eye[0], ry = p[1] - cam.eye[1], rz = p[2] - cam.eye[2];
+    const z = rx * cam.fwd[0] + ry * cam.fwd[1] + rz * cam.fwd[2];
+    if (z < 0.12) return null;
+    const x = rx * cam.right[0] + ry * cam.right[1] + rz * cam.right[2];
+    const y = rx * cam.up[0] + ry * cam.up[1] + rz * cam.up[2];
+    return { x: cx + (x / z) * focal, y: cy - (y / z) * focal, z: z };
+  }
+
+  /* ── meshes: verts + triangle faces, with local normals ───── */
+  function finalize(mesh) {
+    const faces = [];
+    for (let i = 0; i < mesh.quads.length; i++) {
+      const q = mesh.quads[i];
+      faces.push([q[0], q[1], q[2]]);
+      faces.push([q[0], q[2], q[3]]);
+    }
+    mesh.faces = faces;
+    const v = mesh.verts;
+    mesh.normals = mesh.quads.map((q) => {
+      const a = v[q[0]], b = v[q[1]], c = v[q[2]];
+      return V.norm(V.cross(V.sub(b, a), V.sub(c, a)));
+    });
+    delete mesh.quads;
+    return mesh;
+  }
+
+  /** an axis-aligned box, centred on the origin */
+  function box(w, h, d) {
+    const x = w / 2, y = h / 2, z = d / 2;
+    const verts = [
+      [-x, -y, -z], [x, -y, -z], [x, y, -z], [-x, y, -z],
+      [-x, -y, z], [x, -y, z], [x, y, z], [-x, y, z],
+    ];
+    const quads = [
+      [0, 1, 2, 3], [5, 4, 7, 6], [4, 0, 3, 7],
+      [1, 5, 6, 2], [3, 2, 6, 7], [4, 5, 1, 0],
+    ];
+    return finalize({ verts: verts, quads: quads });
+  }
+
+  /** a beam along x, from -len/2 to +len/2, used as the plank */
+  function beam(len, w, h, shapeFn) {
+    const verts = [];
+    const quads = [];
+    const SEG = 14;
+    for (let i = 0; i <= SEG; i++) {
+      const u = i / SEG;
+      const x = (u - 0.5) * len;
+      const bendY = shapeFn ? shapeFn(x) : 0;
+      verts.push([x, -h / 2 + bendY, -w / 2]);
+      verts.push([x, h / 2 + bendY, -w / 2]);
+      verts.push([x, h / 2 + bendY, w / 2]);
+      verts.push([x, -h / 2 + bendY, w / 2]);
+    }
+    for (let i = 0; i < SEG; i++) {
+      const a = i * 4, b = (i + 1) * 4;
+      quads.push([a + 2, a + 3, b + 3, b + 2]); /* top */
+      quads.push([a + 0, a + 1, b + 1, b + 0]); /* bottom */
+      quads.push([a + 1, a + 2, b + 2, b + 1]); /* back */
+      quads.push([a + 3, a + 0, b + 0, b + 3]); /* front */
+    }
+    quads.push([0, 1, 2, 3]);
+    quads.push([SEG * 4 + 3, SEG * 4 + 2, SEG * 4 + 1, SEG * 4 + 0]);
+    return finalize({ verts: verts, quads: quads });
+  }
+
+  /** a sphere, used only for anything that needs real shading */
+  function sphere(r, seg, rings) {
+    const verts = [];
+    const quads = [];
+    for (let j = 0; j <= rings; j++) {
+      const v = (j / rings) * Math.PI;
+      for (let i = 0; i < seg; i++) {
+        const u = (i / seg) * Math.PI * 2;
+        verts.push([
+          r * Math.sin(v) * Math.cos(u),
+          r * Math.cos(v),
+          r * Math.sin(v) * Math.sin(u),
+        ]);
+      }
+    }
+    for (let j = 0; j < rings; j++) {
+      for (let i = 0; i < seg; i++) {
+        const n = (i + 1) % seg;
+        quads.push([j * seg + i, j * seg + n, (j + 1) * seg + n, (j + 1) * seg + i]);
+      }
+    }
+    return finalize({ verts: verts, quads: quads });
+  }
+
+  /** rotation about z, applied to a point */
+  function rotZ(p, c, s) {
+    return [p[0] * c - p[1] * s, p[0] * s + p[1] * c, p[2]];
+  }
+
+  DWB.V = V;
+  DWB.camera = camera;
+  DWB.project = project;
+  DWB.mesh = { box: box, beam: beam, sphere: sphere };
+  DWB.rotZ = rotZ;
+  DWB.clamp = clamp;
+  DWB.TAU = Math.PI * 2;
+})();
+
 /* ==== src/paths.js ==== */
 /* ──────────────────────────────────────────────────────────────
    Dance with Babi — paths.js
-   The choreography: closed curves painted on a unit sphere,
-   re-sampled by arc length so beats map to even steps.
+   The three dances: tempo, swinging distance, light, and the
+   shape of the plank. Everything else is computed from these.
    ────────────────────────────────────────────────────────────── */
 (function () {
   const DWB = (window.DWB = window.DWB || {});
   const TAU = Math.PI * 2;
 
-  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  /* the rail is a function u ∈ [-1, 1] → world position */
+  const RAIL_HALF = 0.86;
 
-  const V = {
-    norm(a) {
-      const l = Math.hypot(a[0], a[1], a[2]) || 1;
-      return [a[0] / l, a[1] / l, a[2] / l];
-    },
-    cross(a, b) {
-      return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-    },
-    dot(a, b) {
-      return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-    },
-    len(a) {
-      return Math.hypot(a[0], a[1], a[2]);
-    },
-    /** Rodrigues rotation of v around unit axis by ang */
-    rot(v, axis, ang) {
-      const c = Math.cos(ang), s = Math.sin(ang);
-      const kv = V.cross(axis, v);
-      const kd = V.dot(axis, v) * (1 - c);
-      return [
-        v[0] * c + kv[0] * s + axis[0] * kd,
-        v[1] * c + kv[1] * s + axis[1] * kd,
-        v[2] * c + kv[2] * s + axis[2] * kd,
-      ];
-    },
-  };
-
-  /* row-major 3x3 matrices */
-  const M = {
-    identity: [1, 0, 0, 0, 1, 0, 0, 0, 1],
-    mul(A, B) {
-      const R = new Array(9);
-      for (let r = 0; r < 3; r++) {
-        for (let c = 0; c < 3; c++) {
-          R[r * 3 + c] = A[r * 3] * B[c] + A[r * 3 + 1] * B[3 + c] + A[r * 3 + 2] * B[6 + c];
-        }
-      }
-      return R;
-    },
-    apply(A, v) {
-      return [
-        A[0] * v[0] + A[1] * v[1] + A[2] * v[2],
-        A[3] * v[0] + A[4] * v[1] + A[5] * v[2],
-        A[6] * v[0] + A[7] * v[1] + A[8] * v[2],
-      ];
-    },
-    axis(ax, ang) {
-      const x = ax[0], y = ax[1], z = ax[2];
-      const c = Math.cos(ang), s = Math.sin(ang), t = 1 - c;
-      return [
-        t * x * x + c, t * x * y - s * z, t * x * z + s * y,
-        t * x * y + s * z, t * y * y + c, t * y * z - s * x,
-        t * x * z - s * y, t * y * z + s * x, t * z * z + c,
-      ];
-    },
-    z(ang) {
-      const c = Math.cos(ang), s = Math.sin(ang);
-      return [c, -s, 0, s, c, 0, 0, 0, 1];
-    },
-    /** rotation that carries unit vector `from` onto unit vector `to` */
-    align(from, to) {
-      const d = clamp(V.dot(from, to), -1, 1);
-      if (d > 0.9999999) return M.identity;
-      if (d < -0.9999999) return M.axis([1, 0, 0], Math.PI);
-      const ax = V.norm(V.cross(from, to));
-      return M.axis(ax, Math.acos(d));
-    },
-  };
-
-  DWB.V = V;
-  DWB.M = M;
-  DWB.clamp = clamp;
-
-  /* ── arc-length re-sampled path on the unit sphere ─────────── */
-  function buildPath(raw, opts) {
-    const M_ = (opts && opts.samples) || 3600;
-    const pts = new Array(M_);
-    for (let i = 0; i < M_; i++) pts[i] = V.norm(raw(i / M_));
-
-    /* nudge the whole curve so its centre of mass faces the camera,
-       unless it is (nearly) a great circle — then leave it alone. */
-    let mx = 0, my = 0, mz = 0;
-    for (let i = 0; i < M_; i++) { mx += pts[i][0]; my += pts[i][1]; mz += pts[i][2]; }
-    mx /= M_; my /= M_; mz /= M_;
-    const ml = Math.hypot(mx, my, mz);
-    if (ml > 0.2) {
-      const rot = M.align([mx / ml, my / ml, mz / ml], [0, 0, 1]);
-      for (let i = 0; i < M_; i++) pts[i] = V.norm(M.apply(rot, pts[i]));
-    }
-
-    /* cumulative arc length, closing the loop */
-    const cum = new Float64Array(M_ + 1);
-    for (let i = 0; i < M_; i++) {
-      const a = pts[i], b = pts[(i + 1) % M_];
-      cum[i + 1] = cum[i] + Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
-    }
-    const total = cum[M_];
-
-    function pointAt(s) {
-      const wrapped = s - Math.floor(s);
-      const target = wrapped * total;
-      let lo = 0, hi = M_;
-      while (lo + 1 < hi) {
-        const mid = (lo + hi) >> 1;
-        if (cum[mid] <= target) lo = mid; else hi = mid;
-      }
-      const a = pts[lo], b = pts[(lo + 1) % M_];
-      const seg = cum[lo + 1] - cum[lo] || 1e-9;
-      const f = clamp((target - cum[lo]) / seg, 0, 1);
-      return V.norm([
-        a[0] + (b[0] - a[0]) * f,
-        a[1] + (b[1] - a[1]) * f,
-        a[2] + (b[2] - a[2]) * f,
-      ]);
-    }
-
-    function tangentAt(s) {
-      const e = 0.0022;
-      const a = pointAt(s - e), b = pointAt(s + e);
-      return V.norm([b[0] - a[0], b[1] - a[1], b[2] - a[2]]);
-    }
-
-    return { pointAt, tangentAt, total, samples: pts };
-  }
-
-  /* ── the raw curves ────────────────────────────────────────── */
-
-  /** a ring around the sphere whose latitude breathes `amp` times `freq` */
-  function ribbon(amp, freq, twist) {
-    twist = twist || 0;
-    return function (u) {
-      const phi = TAU * u;
-      const psi = Math.PI / 2 + amp * Math.cos(freq * phi + twist);
-      return [Math.sin(psi) * Math.cos(phi), Math.sin(psi) * Math.sin(phi), Math.cos(psi)];
-    };
-  }
-
-  /** inverse stereographic projection of a plane curve onto the sphere */
-  function stereo(x, y) {
-    const r2 = x * x + y * y;
-    const d = 1 + r2;
-    return [(2 * x) / d, (2 * y) / d, (r2 - 1) / d];
-  }
-
-  /** Gerono's lemniscate — a figure eight, one graceful crossing */
-  function figureEight(scale) {
-    scale = scale || 0.9;
-    return function (u) {
-      const a = TAU * u;
-      return stereo(Math.cos(a) * scale, Math.sin(a) * Math.cos(a) * scale * 1.15);
-    };
-  }
-
-  /** three petals, closing after half a turn */
-  function rose(petals, scale) {
-    return function (u) {
-      const phi = Math.PI * u;
-      const r = scale * Math.cos(petals * phi);
-      return stereo(r * Math.cos(phi), r * Math.sin(phi));
-    };
-  }
-
-  /* ── the repertory ─────────────────────────────────────────── */
   const LEVELS = [
     {
       id: "first-bow",
       name: "First Bow",
-      subtitle: "Two bars to find each other",
-      blurb: "A slow waltz in A minor. One ring per beat, nothing hidden.",
+      subtitle: "Raise, lower, find the sway",
+      blurb: "A slow waltz. One ring at each end, one beat apart.",
       bpm: 84,
       gates: 24,
       intro: 6,
-      accent: "#ff9ecb",
-      accent2: "#ffd28a",
+      amp: 0.62,       /* how far along the plank each ring sits */
+      speed: 3.3,      /* units/s the pearl rolls at a full tilt */
+      lag: 0.16,       /* how long the pearl takes to answer your hands */
+      maxTilt: 0.26,   /* how far the plank visually rotates (rad) */
       difficulty: 1,
-      raw: ribbon(0.34, 2, 0),
+      curve: 0.16,
+      pal: {
+        bg0: "#080611", bg1: "#150c22", fog: "#140c20",
+        rail: "#7b6a95", railTop: "#ffe3c0", railGlow: "#ffb877",
+        ring: "#ff9ecb", ringNext: "#ffd28a",
+        pearl: "#fff4dc", pearl2: "#ffb877",
+        floor: "#2a1f3d", column: "#241a35", halo: "#ff9ecb",
+      },
     },
     {
       id: "moonlit-spin",
       name: "Moonlit Spin",
-      subtitle: "The figure eight",
-      blurb: "The path crosses itself — keep turning, trust the count.",
+      subtitle: "Wider, slower, watch the far end",
+      blurb: "The plank is longer now. Lead the swing a beat early.",
       bpm: 96,
       gates: 30,
       intro: 6,
-      accent: "#9fd0ff",
-      accent2: "#c9b6ff",
+      amp: 0.72,
+      speed: 4.4,
+      lag: 0.15,
+      maxTilt: 0.30,
       difficulty: 2,
-      raw: figureEight(0.86),
+      curve: 0.26,
+      pal: {
+        bg0: "#05070f", bg1: "#0b1226", fog: "#0a1120",
+        rail: "#5f7595", railTop: "#d9f0ff", railGlow: "#8fd0ff",
+        ring: "#9fd0ff", ringNext: "#c9b6ff",
+        pearl: "#f4fbff", pearl2: "#8fd0ff",
+        floor: "#16233a", column: "#132033", halo: "#6fa8ff",
+      },
     },
     {
       id: "babis-finale",
       name: "Babi's Finale",
-      subtitle: "Three petals, one breath",
-      blurb: "The fastest waltz, and Babi's favourite. Steady hands.",
+      subtitle: "Both arms, all the way",
+      blurb: "Fastest waltz of the evening. Full swings, no hesitation.",
       bpm: 108,
       gates: 36,
       intro: 6,
-      accent: "#e0bdff",
-      accent2: "#ffd28a",
+      amp: 0.82,
+      speed: 5.6,
+      lag: 0.14,
+      maxTilt: 0.34,
       difficulty: 3,
-      raw: ribbon(0.55, 3, 0.45),
+      curve: 0.34,
+      pal: {
+        bg0: "#0a0612", bg1: "#1a0d24", fog: "#170b20",
+        rail: "#8a6d9c", railTop: "#fff0d0", railGlow: "#ffd28a",
+        ring: "#e0bdff", ringNext: "#ffd28a",
+        pearl: "#fffaef", pearl2: "#ffc48a",
+        floor: "#2a1a33", column: "#241530", halo: "#c9a0ff",
+      },
     },
   ];
 
   LEVELS.forEach(function (lv) {
-    lv.path = buildPath(lv.raw);
-    lv.spb = 60 / lv.bpm;                       /* seconds per beat */
-    lv.interval = 1 / (lv.gates + 1);           /* path fraction per gate */
-    /* rotation (radians) that advances the pearl by one unit of path */
-    lv.speed = lv.interval / (lv.spb * 1.35);
-    lv.brush = "rgba(255,255,255,0.9)";
+    lv.spb = 60 / lv.bpm;                 /* seconds per beat */
+    /* the plank bows gently towards the camera, so it reads as 3D */
+    lv.rail = function (u) {
+      return [u * RAIL_HALF, 0, lv.curve * Math.cos(u * Math.PI * 0.75)];
+    };
+    lv.bend = function (x) {
+      const u = x / RAIL_HALF;
+      return lv.curve * 0.14 * Math.cos(u * Math.PI * 0.75);
+    };
+    /* rings sit alternately at either end of the swing */
+    lv.gateU = function (i) {
+      return i % 2 === 0 ? lv.amp : -lv.amp;
+    };
+    lv.gateAt = function (i) {
+      return (i + 1) * lv.spb;
+    };
   });
 
   DWB.LEVELS = LEVELS;
-  DWB.buildPath = buildPath;
+  DWB.RAIL_HALF = RAIL_HALF;
   DWB.TAU = TAU;
 })();
 
@@ -1373,16 +1422,25 @@ kbd {
 /* ==== src/render.js ==== */
 /* ──────────────────────────────────────────────────────────────
    Dance with Babi — render.js
-   Everything you see: a glass sphere, a choreography drawn on it,
-   rings, a pearl called Babi, and two dials.
+   A hand-rolled 3D scene on a 2D canvas: a plank floating in a
+   hall, a pearl that rolls on it, rings to pass through, and the
+   camera that swings with both of you.
    ────────────────────────────────────────────────────────────── */
 (function () {
   const DWB = window.DWB;
-  const V = DWB.V, M = DWB.M, clamp = DWB.clamp;
+  const V = DWB.V;
+  const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
-  const CAM_Z = 3.35;
+  const RAIL_HALF = DWB.RAIL_HALF;
+  const FOV = (52 * Math.PI) / 180;
+  const LIGHT = V.norm([0.42, 0.82, 0.44]);
+  const LIFT = 0.30;   /* how high a full lift raises one end */
 
-  /* ── colour helpers ───────────────────────────────────────── */
+  const isTouch = () =>
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+
   const C = {
     parse(hex) {
       const h = hex.replace("#", "");
@@ -1393,29 +1451,25 @@ kbd {
       const c = C.parse(hex);
       return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + clamp(a, 0, 1).toFixed(3) + ")";
     },
-    mix(h1, h2, t) {
-      const a = C.parse(h1), b = C.parse(h2);
-      const f = (i) => Math.round(a[i] + (b[i] - a[i]) * clamp(t, 0, 1));
-      return "rgb(" + f(0) + "," + f(1) + "," + f(2) + ")";
+    mix(a, b, t) {
+      return [
+        Math.round(a[0] + (b[0] - a[0]) * t),
+        Math.round(a[1] + (b[1] - a[1]) * t),
+        Math.round(a[2] + (b[2] - a[2]) * t),
+      ];
     },
   };
-
-  const isTouch = () =>
-    typeof window !== "undefined" &&
-    window.matchMedia &&
-    window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 
   class Stage {
     constructor(canvas) {
       this.canvas = canvas;
       this.ctx = canvas.getContext("2d");
-      this.mode = "duet";
       this.w = 0; this.h = 0; this.dpr = 1;
       this.particles = [];
-      this.stars = [];
-      this.pathCache = { path: null, pts: null };
-      this.babi = { x: 0, y: 0, vx: 0, vy: 0, ready: false, spin: 0 };
+      this.motes = [];
       this.time = 0;
+      this.babi = { x: 0, y: 0, vx: 0, vy: 0, ready: false };
+      this.meshes = {};
       this.resize();
     }
 
@@ -1428,97 +1482,44 @@ kbd {
       this.canvas.width = Math.max(1, Math.round(w * dpr));
       this.canvas.height = Math.max(1, Math.round(h * dpr));
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      this.layout();
-      this.makeStars();
-    }
 
-    layout() {
-      const w = this.w, h = this.h, m = Math.min(w, h);
       this.cx = w / 2;
-      this.cy = h * (h > w ? 0.41 : 0.44);
-      this.R = Math.min(w * (h > w ? 0.46 : 0.34), h * 0.32);
-      this.f = this.R * Math.sqrt(CAM_Z * CAM_Z - 1);
-      this.dialR = clamp(m * 0.085, 32, 54);
-      const dy = h - Math.max(this.dialR + 26, h * 0.115) - (isTouch() ? 10 : 0);
-      if (this.mode === "solo") {
-        this.dials = [{ x: w * 0.5, y: dy }];
-      } else {
-        const inset = Math.max(this.dialR + 20, w * 0.2);
-        this.dials = [
-          { x: clamp(inset, 20 + this.dialR, w / 2 - this.dialR - 24), y: dy },
-          { x: clamp(w - inset, w / 2 + this.dialR + 24, w - 20 - this.dialR), y: dy },
-        ];
-      }
-    }
+      this.cy = h * 0.53;
+      this.focal = (h / 2) / Math.tan(FOV / 2);
+      /* frame the plank so it fills most of the width, phone or desktop */
+      const need = (2 * RAIL_HALF * this.focal) / (0.62 * w);
+      this.dist = Math.max(1.62, need);
 
-    setMode(mode) {
-      this.mode = mode;
-      this.layout();
-    }
-
-    makeStars() {
-      const n = Math.round(clamp((this.w * this.h) / 22000, 40, 130));
-      this.stars = [];
+      this.bars = [
+        { x: Math.max(46, w * 0.13), y: h - Math.max(96, h * 0.13), len: Math.min(150, h * 0.26) },
+        { x: Math.min(w - 46, w * 0.87), y: h - Math.max(96, h * 0.13), len: Math.min(150, h * 0.26) },
+      ];
+      this.motes = [];
+      const n = Math.round(clamp((w * h) / 26000, 26, 90));
       for (let i = 0; i < n; i++) {
-        this.stars.push({
-          x: Math.random(), y: Math.random(),
-          r: Math.random() * 1.5 + 0.4,
+        this.motes.push({
+          a: Math.random() * TAU,
+          r: 0.6 + Math.random() * 2.4,
+          sp: 0.15 + Math.random() * 0.5,
+          z: 1.2 + Math.random() * 5,
+          y: (Math.random() - 0.5) * 2.6,
           ph: Math.random() * TAU,
-          sp: 0.4 + Math.random() * 1.4,
         });
       }
     }
 
-    projectRot(v) {
-      const depth = CAM_Z - v[2];
-      const s = this.f / depth;
-      return { x: this.cx + v[0] * s, y: this.cy - v[1] * s, z: v[2], s: s };
-    }
-
-    project(mat, v) {
-      return this.projectRot(M.apply(mat, v));
-    }
-
-    pts(path) {
-      if (this.pathCache.path === path) return this.pathCache.pts;
-      const N = 300;
-      const pts = new Array(N);
-      for (let i = 0; i < N; i++) pts[i] = path.pointAt(i / N);
-      this.pathCache = { path: path, pts: pts };
-      return pts;
-    }
-
-    gateFrame(level, path, s) {
-      let c = level.__gf;
-      if (!c || c.path !== path) c = level.__gf = { path: path, map: {} };
-      const k = s.toFixed(5);
-      let f = c.map[k];
-      if (!f) {
-        const p = path.pointAt(s);
-        const t = path.tangentAt(s);
-        let up = Math.abs(t[2]) > 0.9 ? [1, 0, 0] : [0, 0, 1];
-        const b1 = V.norm(V.cross(t, up));
-        const b2 = V.norm(V.cross(t, b1));
-        f = c.map[k] = { p: p, b1: b1, b2: b2 };
-      }
-      return f;
-    }
-
     /* ── particles ─────────────────────────────────────────── */
     burst(x, y, color, n, speed) {
-      const count = n || 16;
+      const count = n || 14;
       const sp = speed || 150;
       for (let i = 0; i < count; i++) {
         const a = Math.random() * TAU;
         const v = sp * (0.25 + Math.random() * 0.9);
         this.particles.push({
           x: x, y: y,
-          vx: Math.cos(a) * v,
-          vy: Math.sin(a) * v - sp * 0.12,
-          life: 0,
-          max: 0.5 + Math.random() * 0.7,
-          size: 0.9 + Math.random() * 2.4,
-          color: color,
+          vx: Math.cos(a) * v, vy: Math.sin(a) * v - sp * 0.15,
+          life: 0, max: 0.5 + Math.random() * 0.7,
+          size: 0.9 + Math.random() * 2.2, color: color,
         });
       }
     }
@@ -1529,446 +1530,513 @@ kbd {
         const q = p[i];
         q.life += dt;
         if (q.life >= q.max) { p.splice(i, 1); continue; }
-        q.x += q.vx * dt;
-        q.y += q.vy * dt;
-        q.vx *= 1 - 2.4 * dt;
-        q.vy = q.vy * (1 - 2.4 * dt) + 42 * dt;
+        q.x += q.vx * dt; q.y += q.vy * dt;
+        q.vx *= 1 - 2.2 * dt;
+        q.vy = q.vy * (1 - 2.2 * dt) + 40 * dt;
       }
     }
 
-    /* ── master draw ───────────────────────────────────────── */
+    /* ── the frame ─────────────────────────────────────────── */
     draw(scene, dt) {
       const ctx = this.ctx;
-      const lv = scene.level;
-      const accent = lv ? lv.accent : "#ff9ecb";
-      const accent2 = lv ? lv.accent2 : "#ffd28a";
-
       this.time += dt;
       this.updateParticles(dt);
-
+      ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
       ctx.clearRect(0, 0, this.w, this.h);
-      this.drawBackdrop(scene, accent, accent2);
-
-      if (scene.path) {
-        const mat = M.mul(M.z(scene.sway || 0), M.align(scene.path.pointAt(scene.ballS), [0, 0, 1]));
-        this.drawSphere(scene, accent, accent2);
-        this.drawPath(scene, mat, accent, accent2);
-        this.drawGates(scene, mat, accent, accent2);
-
-        /* light & dust */
-        this.drawParticles(scene);
-        this.drawBall(scene, mat, accent2);
-      } else {
-        /* title screen: a slow idle sphere */
-        this.drawIdle(dt);
+      if (scene.shake > 0.01) {
+        const s2 = scene.shake * 9;
+        ctx.translate((Math.random() - 0.5) * s2, (Math.random() - 0.5) * s2);
       }
 
-      if (scene.showDials) this.drawDials(scene, accent, accent2, dt);
+      const pal = scene.level ? scene.level.pal : MENU_PAL;
+      const tilt = clamp(scene.tilt || 0, -1, 1);
+
+      /* camera: slides along the plank and rocks with it */
+      const px = clamp(scene.pearlU || 0, -1.2, 1.2);
+      const orbit = Math.sin(this.time * 0.22) * 0.22;
+      const eye = [
+        px * 0.34 + orbit * 0.6,
+        0.52 + tilt * 0.04,
+        this.dist + Math.abs(px) * 0.18,
+      ];
+      const target = [px * 0.26, 0.03 + tilt * 0.05, 0];
+      const cam = DWB.camera(eye, target, [0, 1, 0], -tilt * 0.045);
+      this.cam = cam;
+
+      this.drawBackdrop(scene, pal);
+      this.drawFloor(pal);
+      this.drawFloorGlow(pal, scene);
+      this.drawColumns(pal);
+      this.drawPlank(scene, pal);
+      this.drawGates(scene, pal);
+      this.drawPearl(scene, pal);
+      this.drawParticles();
+      if (scene.showBars) this.drawBars(scene, pal);
       this.drawVignette();
     }
 
-    drawIdle(dt) {
-      const ctx = this.ctx;
-      const R = this.R;
-      this.idleRot = (this.idleRot || 0) + dt * 0.12;
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      for (let i = 0; i < 3; i++) {
-        const a = this.idleRot + (i * TAU) / 3;
-        ctx.beginPath();
-        ctx.ellipse(
-          this.cx + Math.cos(a) * R * 0.32,
-          this.cy + Math.sin(a) * R * 0.26,
-          R * (0.5 + 0.06 * Math.sin(a * 2)),
-          R * (0.19 + 0.05 * Math.cos(a * 3)),
-          a * 0.6,
-          0, TAU
-        );
-        ctx.strokeStyle = C.rgba(i === 0 ? "#ff9ecb" : i === 1 ? "#8ff0e2" : "#ffd28a", 0.16);
-        ctx.lineWidth = 1.4;
-        ctx.stroke();
-      }
-      ctx.restore();
+    P(p) {
+      return DWB.project(this.cam, this.focal, this.cx, this.cy, p);
     }
 
-    drawBackdrop(scene, accent, accent2) {
+    /* ── environment ───────────────────────────────────────── */
+    drawBackdrop(scene, pal) {
       const ctx = this.ctx, w = this.w, h = this.h;
-      const g = ctx.createLinearGradient(0, 0, w * 0.3, h);
-      g.addColorStop(0, "#07050e");
-      g.addColorStop(0.55, "#0c0817");
-      g.addColorStop(1, "#100a1a");
+      const g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, pal.bg0);
+      g.addColorStop(0.55, pal.bg1);
+      g.addColorStop(1, pal.bg0);
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, w, h);
 
-      const rg = ctx.createRadialGradient(this.cx, this.cy, 0, this.cx, this.cy, this.R * 2.7);
-      rg.addColorStop(0, C.rgba(accent, 0.17));
-      rg.addColorStop(0.45, C.rgba(accent, 0.05));
+      /* the glow of the hall behind the plank */
+      const hy = this.cy - h * 0.04;
+      const rg = ctx.createRadialGradient(this.cx, hy, 0, this.cx, hy, Math.max(w, h) * 0.55);
+      rg.addColorStop(0, C.rgba(pal.halo, 0.20));
+      rg.addColorStop(0.4, C.rgba(pal.halo, 0.06));
       rg.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = rg;
       ctx.fillRect(0, 0, w, h);
 
-      const rg2 = ctx.createRadialGradient(w * 0.82, h * 0.14, 0, w * 0.82, h * 0.14, this.R * 1.7);
-      rg2.addColorStop(0, C.rgba(accent2, 0.07));
-      rg2.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = rg2;
-      ctx.fillRect(0, 0, w, h);
-
-      /* stars */
+      /* slow motes drifting in the light */
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
       const t = this.time;
-      for (let i = 0; i < this.stars.length; i++) {
-        const s = this.stars[i];
-        const a = 0.16 + 0.34 * (0.5 + 0.5 * Math.sin(t * s.sp + s.ph));
-        ctx.fillStyle = "rgba(255,245,255," + a.toFixed(3) + ")";
+      for (let i = 0; i < this.motes.length; i++) {
+        const m = this.motes[i];
+        m.a += m.sp * 0.0016;
+        m.y += Math.sin(t * 0.4 + m.ph) * 0.00035;
+        const p = this.P([Math.cos(m.a) * m.z * 0.55, m.y + 0.3, -Math.abs(Math.sin(m.a)) * 1.2 - 0.6]);
+        if (!p) continue;
+        const a = 0.06 + 0.14 * (0.5 + 0.5 * Math.sin(t * 1.3 + m.ph));
+        ctx.fillStyle = C.rgba(pal.halo, a);
         ctx.beginPath();
-        ctx.arc(s.x * w, s.y * h, s.r, 0, TAU);
+        ctx.arc(p.x, p.y, m.r, 0, TAU);
         ctx.fill();
       }
+      ctx.restore();
       void scene;
     }
 
-    drawSphere(scene, accent, accent2) {
-      const ctx = this.ctx, R = this.R, cx = this.cx, cy = this.cy;
+    /* the plank's height at u ∈ [-1, 1]: each end follows its own hand */
+    plankY(u, hands) {
+      const hA = clamp(hands ? hands[0] || 0 : 0, -1, 1);
+      const hB = clamp(hands ? hands[1] || 0 : 0, -1, 1);
+      const mean = (hA + hB) * 0.5;
+      const tilt = (hB - hA) * 0.5;
+      const bend = this.bendAt(u);
+      return LIFT * (mean + tilt * u) + bend;
+    }
 
-      /* outer halo */
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      const halo = ctx.createRadialGradient(cx, cy, R * 0.82, cx, cy, R * 1.5);
-      halo.addColorStop(0, C.rgba(accent, 0.10));
-      halo.addColorStop(0.35, C.rgba(accent, 0.045));
-      halo.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = halo;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R * 1.5, 0, TAU);
-      ctx.fill();
-      ctx.restore();
+    bendAt(u) {
+      const lv = this.curLevel;
+      return lv && lv.bend ? lv.bend(u * RAIL_HALF) : 0;
+    }
 
-      /* glass body */
-      const body = ctx.createRadialGradient(cx - R * 0.34, cy - R * 0.42, R * 0.02, cx, cy, R * 1.04);
-      body.addColorStop(0, "rgba(255,255,255,0.11)");
-      body.addColorStop(0.32, "rgba(190,170,235,0.055)");
-      body.addColorStop(0.72, "rgba(120,95,180,0.03)");
-      body.addColorStop(0.97, "rgba(90,60,140,0.075)");
-      body.addColorStop(1, "rgba(140,110,200,0.10)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, TAU);
-      ctx.fillStyle = body;
-      ctx.fill();
-
-      /* rim light — a thin edge that catches the light at the top left */
-      const rim = ctx.createLinearGradient(cx - R * 0.95, cy - R * 0.95, cx + R * 0.85, cy + R);
-      rim.addColorStop(0, C.rgba(accent2, 0.85));
-      rim.addColorStop(0.3, C.rgba(accent, 0.45));
-      rim.addColorStop(0.62, C.rgba(accent, 0.16));
-      rim.addColorStop(1, C.rgba(accent, 0.42));
-      ctx.beginPath();
-      ctx.arc(cx, cy, R - 0.75, 0, TAU);
-      ctx.strokeStyle = rim;
-      ctx.lineWidth = 1.7;
-      ctx.stroke();
-
-      /* a second, softer edge just inside it, so the glass has some thickness */
-      const rim2 = ctx.createLinearGradient(cx - R * 0.9, cy - R, cx + R, cy + R * 0.9);
-      rim2.addColorStop(0, C.rgba(accent2, 0.16));
-      rim2.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, R - 5, 0, TAU);
-      ctx.strokeStyle = rim2;
-      ctx.lineWidth = 3.4;
-      ctx.stroke();
-
-      /* specular sheen */
-      const sp = ctx.createRadialGradient(cx - R * 0.38, cy - R * 0.46, 0, cx - R * 0.38, cy - R * 0.46, R * 0.72);
-      sp.addColorStop(0, "rgba(255,255,255,0.07)");
-      sp.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.beginPath();
-      ctx.arc(cx - R * 0.38, cy - R * 0.46, R * 0.72, 0, TAU);
-      ctx.fillStyle = sp;
-      ctx.fill();
-
-      /* a soft equator, so the ball reads as a sphere */
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, TAU);
-      ctx.clip();
-      const eq = ctx.createLinearGradient(cx, cy - R, cx, cy + R);
-      eq.addColorStop(0, "rgba(0,0,0,0)");
-      eq.addColorStop(0.55, "rgba(0,0,0,0)");
-      eq.addColorStop(1, "rgba(6,3,14,0.42)");
-      ctx.fillStyle = eq;
-      ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-      ctx.restore();
-
-      /* beat pulse around the pearl */
-      if (scene.beatPhase != null && scene.beatPhase >= 0) {
-        const ph = scene.beatPhase;
-        const rad = R * (0.09 + ph * 0.42);
+    /** project + light + painter-sort a bag of quads */
+    quads(verts, faces, base, fog, pal, rim) {
+      const ctx = this.ctx;
+      const list = [];
+      for (let i = 0; i < faces.length; i++) {
+        const f = faces[i];
+        const q = [];
+        let zsum = 0, ok = true;
+        for (let k = 0; k < f.length; k++) {
+          const pr = this.P(verts[f[k]]);
+          if (!pr) { ok = false; break; }
+          q.push(pr);
+          zsum += pr.z;
+        }
+        if (!ok) continue;
+        const a = verts[f[0]], b = verts[f[1]], c = verts[f[2]];
+        const n = V.norm(V.cross(V.sub(b, a), V.sub(c, a)));
+        const diff = Math.abs(n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
+        const k2 = 0.30 + 0.72 * diff;
+        const z = zsum / f.length;
+        const fz = clamp((z - this.dist) / 6.5, 0, 1) * fog;
+        const col = C.mix(C.mix(base, C.parse(pal.fog), fz), [255, 255, 255], rim * 0.10);
+        list.push({
+          z: z,
+          c: "rgb(" + Math.round(col[0] * k2) + "," + Math.round(col[1] * k2) + "," + Math.round(col[2] * k2) + ")",
+          p: q,
+        });
+      }
+      list.sort((x, y) => y.z - x.z);
+      for (let i = 0; i < list.length; i++) {
+        const it = list[i];
         ctx.beginPath();
-        ctx.arc(cx, cy, rad, 0, TAU);
-        ctx.strokeStyle = C.rgba(accent2, 0.22 * (1 - ph) * (1 - ph));
-        ctx.lineWidth = 1.6;
+        ctx.moveTo(it.p[0].x, it.p[0].y);
+        for (let k = 1; k < it.p.length; k++) ctx.lineTo(it.p[k].x, it.p[k].y);
+        ctx.closePath();
+        ctx.fillStyle = it.c;
+        ctx.strokeStyle = it.c;
+        ctx.lineWidth = 0.8;
+        ctx.fill();
         ctx.stroke();
       }
     }
 
-    drawPath(scene, mat, accent, accent2) {
+    drawFloor(pal) {
       const ctx = this.ctx;
-      const pts = this.pts(scene.path);
-      const n = pts.length;
-      const proj = new Array(n);
-      for (let i = 0; i < n; i++) proj[i] = this.project(mat, pts[i]);
-      const frac = scene.ballS - Math.floor(scene.ballS);
-
-      /* the choreography, band by band: bright where the pearl is,
-         ghostly at the far end of the dance */
-      const BANDS = 26;
+      const y = -1.05;
       ctx.save();
-      ctx.globalCompositeOperation = "lighter";
       ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      for (let b = 0; b < BANDS; b++) {
-        const i0 = Math.floor((b * n) / BANDS);
-        const i1 = Math.floor(((b + 1) * n) / BANDS);
-        const mid = (i0 + i1) / 2 / n;
-        let d = Math.abs(mid - frac);
-        d = Math.min(d, 1 - d);
-        const fade = clamp(1 - d / 0.42, 0.09, 1);
-        const near = clamp(1 - d / 0.1, 0, 1);
-
-        for (let front = 0; front < 2; front++) {
-          let any = false;
-          ctx.beginPath();
-          for (let i = i0; i < i1; i++) {
-            const a = proj[i], bb = proj[(i + 1) % n];
-            const c = (a.z + bb.z) * 0.5;
-            if (front ? c < 0 : c >= 0) continue;
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(bb.x, bb.y);
-            any = true;
-          }
-          if (!any) continue;
-          ctx.strokeStyle = front ? accent : accent2;
-          ctx.globalAlpha = front ? 0.40 * fade + near * 0.55 : 0.16 * fade;
-          ctx.lineWidth = front ? 1.5 + near * 2.6 : 0.9;
-          ctx.stroke();
-        }
-      }
-      ctx.restore();
-
-      /* the tail of light the pearl drags behind it */
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.lineCap = "round";
-      const N = 18;
-      for (let b = 0; b < N; b++) {
-        const f0 = 1 - b / N, f1 = 1 - (b + 1) / N;
-        const s0 = frac - (b / N) * 0.07;
-        const s1 = frac - ((b + 1) / N) * 0.07;
-        const a = this.project(mat, scene.path.pointAt(s0));
-        const bb = this.project(mat, scene.path.pointAt(s1));
-        ctx.strokeStyle = accent2;
-        ctx.globalAlpha = 0.5 * f0 * f0;
-        ctx.lineWidth = 0.6 + 3.6 * f0 * f0;
+      for (let i = -7; i <= 7; i++) {
+        const x = i * 0.62;
+        const a = this.P([x, y, 2.2]);
+        const b = this.P([x * 1.35, y, -9]);
+        if (!a || !b) continue;
+        ctx.strokeStyle = C.rgba(pal.floor, 0.5);
+        ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
-        ctx.lineTo(bb.x, bb.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+      for (let j = 0; j < 12; j++) {
+        const z = 2.04 - j * j * 0.075;
+        const a = this.P([-8.7, y, z]);
+        const b = this.P([8.7, y, z]);
+        if (!a || !b) continue;
+        ctx.strokeStyle = C.rgba(pal.floor, clamp(0.5 - j * 0.035, 0.05, 0.5));
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
         ctx.stroke();
       }
       ctx.restore();
     }
 
-    drawGates(scene, mat, accent, accent2) {
+    drawFloorGlow(pal, scene) {
       const ctx = this.ctx;
-      const level = scene.level;
-      const path = scene.path;
-      const gates = scene.gates || [];
-      const SEG = 24;
+      const hands = scene.hands || [0, 0];
+      const c = this.P([0, -1.04, 0]);
+      const e = this.P([RAIL_HALF * 1.5, -1.04, 0]);
+      if (!c || !e) return;
+      const rx = Math.max(40, Math.abs(e.x - c.x));
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, rx);
+      g.addColorStop(0, C.rgba(pal.halo, 0.10));
+      g.addColorStop(0.5, C.rgba(pal.halo, 0.03));
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.ellipse(c.x, c.y, rx, rx * 0.14, 0, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+      void hands;
+    }
 
-      for (let i = 0; i < gates.length; i++) {
-        const g = gates[i];
-        const rel = i - scene.nextGate;
-        if (rel < -1 || rel > 5) continue;
-        const fr = this.gateFrame(level, path, g.s);
-        const center = M.apply(mat, fr.p);
-        const b1 = M.apply(mat, fr.b1);
-        const b2 = M.apply(mat, fr.b2);
-        const back = center[2] < -0.02;
-        const occl = back ? 0.10 : 1;
+    drawColumns(pal) {
+      if (!this.meshes.column) this.meshes.column = DWB.mesh.box(0.13, 1, 0.13);
+      const mesh = this.meshes.column;
+      const base = C.mix(C.parse(pal.column), C.parse(pal.rail), 0.42);
+      for (let i = 0; i < 10; i++) {
+        const side = i % 2 === 0 ? -1 : 1;
+        const row = Math.floor(i / 2);
+        if (row > 4) continue;
+        const x = side * (2.10 + row * 0.70);
+        const z = -1.9 - row * 2.3;
+        const hgt = 3.2 - row * 0.22;
+        const verts = mesh.verts.map((v) => [
+          v[0] * hgt + x,
+          v[1] * hgt + (-1.05 + hgt / 2),
+          v[2] * hgt + z,
+        ]);
+        this.quads(verts, mesh.faces, base, 0.9, pal, 0.3);
+      }
+    }
 
-        let rad = 0.118;
-        let color = accent;
-        let alpha = 0.3;
-        let width = 1.3;
-        let glow = 0;
+    /* ── the plank, and the two hands that hold it ─────────── */
+    drawPlank(scene, pal) {
+      const ctx = this.ctx;
+      const hands = scene.hands || [0, 0];
+      this.curLevel = scene.level;
 
-        if (g.state === 1) {
-          /* taken — a flash that expands and dies */
-          const fl = g.flash == null ? 0 : g.flash;
-          if (fl <= 0) continue;
-          rad = 0.118 + (1 - fl) * 0.16;
-          color = g.q === 3 ? "#fffaf0" : accent2;
-          alpha = fl * 0.95;
-          width = 2.6 * fl + 0.6;
-          glow = 18;
-        } else if (g.state === 2) {
-          color = "#8b7f96";
-          alpha = 0.10;
-          width = 1;
-        } else if (i === scene.nextGate) {
-          const pulse = 0.5 + 0.5 * Math.sin((scene.phase || 0) * TAU);
-          rad = 0.122 + 0.012 * pulse;
-          color = accent2;
-          alpha = 0.85;
-          width = 2.2 + pulse * 0.9;
-          glow = 16 + pulse * 10;
-        } else {
-          const d = Math.max(0, rel);
-          alpha = 0.34 * clamp(1 - d / 5.5, 0, 1);
-        }
+      const SEG = 18, W = 0.22, H = 0.07;
+      const verts = [];
+      const quads = [];
+      for (let i = 0; i <= SEG; i++) {
+        const u = -1 + (2 * i) / SEG;
+        const x = u * RAIL_HALF;
+        const y = this.plankY(u, hands);
+        verts.push([x, y - H / 2, -W / 2], [x, y + H / 2, -W / 2], [x, y + H / 2, W / 2], [x, y - H / 2, W / 2]);
+      }
+      for (let i = 0; i < SEG; i++) {
+        const a = i * 4, b = (i + 1) * 4;
+        quads.push([a + 2, a + 3, b + 3, b + 2]);
+        quads.push([a + 0, a + 1, b + 1, b + 0]);
+        quads.push([a + 1, a + 2, b + 2, b + 1]);
+        quads.push([a + 3, a + 0, b + 0, b + 3]);
+      }
+      quads.push([0, 1, 2, 3]);
+      quads.push([SEG * 4 + 3, SEG * 4 + 2, SEG * 4 + 1, SEG * 4 + 0]);
+      this.quads(verts, quads, C.parse(pal.rail), 0.5, pal, 0.5);
 
-        if (alpha * occl <= 0.012) continue;
+      /* a thread of light along the top edge */
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      let started = false;
+      for (let i = 0; i <= 26; i++) {
+        const u = -1 + (2 * i) / 26;
+        const pr = this.P([u * RAIL_HALF, this.plankY(u, hands) + H / 2 + 0.004, 0]);
+        if (!pr) { started = false; continue; }
+        if (!started) { ctx.moveTo(pr.x, pr.y); started = true; }
+        else ctx.lineTo(pr.x, pr.y);
+      }
+      ctx.strokeStyle = C.rgba(pal.railGlow, 0.34);
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+      ctx.restore();
+
+      /* the two grips */
+      for (let i = 0; i < 2; i++) {
+        const u = i === 0 ? -1 : 1;
+        const pr = this.P([u * RAIL_HALF, this.plankY(u, hands) + 0.02, 0]);
+        if (!pr) continue;
+        const tint = i === 0 ? "#ff9ecb" : "#8ff0e2";
+        const hand = clamp(hands[i] || 0, -1, 1);
+        const r = clamp((this.focal * 0.03) / pr.z, 3.5, 15);
 
         ctx.save();
         ctx.globalCompositeOperation = "lighter";
-        if (glow && !back) { ctx.shadowColor = color; ctx.shadowBlur = glow; }
-        ctx.strokeStyle = C.rgba(color, alpha * occl);
-        ctx.lineWidth = width;
+        const glow = ctx.createRadialGradient(pr.x, pr.y, 0, pr.x, pr.y, r * 4.4);
+        glow.addColorStop(0, C.rgba(tint, 0.36 + Math.abs(hand) * 0.34));
+        glow.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = glow;
         ctx.beginPath();
-        for (let k = 0; k <= SEG; k++) {
-          const th = (k / SEG) * TAU;
-          const c = Math.cos(th) * rad, s = Math.sin(th) * rad;
-          const v = [
-            center[0] + b1[0] * c + b2[0] * s,
-            center[1] + b1[1] * c + b2[1] * s,
-            center[2] + b1[2] * c + b2[2] * s,
-          ];
-          const q = this.projectRot(v);
-          if (k === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
-        }
-        ctx.stroke();
+        ctx.arc(pr.x, pr.y, r * 4.4, 0, TAU);
+        ctx.fill();
         ctx.restore();
 
-        /* a speck of light on the next ring, to make it sing */
-        if (i === scene.nextGate && !back) {
-          const q = this.projectRot(center);
-          const pulse = 0.5 + 0.5 * Math.sin((scene.phase || 0) * TAU);
+        ctx.beginPath();
+        ctx.arc(pr.x, pr.y, r, 0, TAU);
+        ctx.fillStyle = C.rgba(tint, 0.92);
+        ctx.fill();
+
+        if (scene.showHands) {
+          const dir = hand > 0.06 ? -1 : hand < -0.06 ? 1 : 0;
           ctx.save();
-          ctx.globalCompositeOperation = "lighter";
-          const gg = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, 16 + pulse * 9);
-          gg.addColorStop(0, C.rgba(accent2, 0.5));
-          gg.addColorStop(1, "rgba(0,0,0,0)");
-          ctx.fillStyle = gg;
-          ctx.beginPath();
-          ctx.arc(q.x, q.y, 16 + pulse * 9, 0, TAU);
-          ctx.fill();
+          ctx.globalAlpha = 0.45 + Math.abs(hand) * 0.55;
+          ctx.fillStyle = C.rgba(tint, 0.9);
+          if (dir !== 0) {
+            const y0 = pr.y + dir * (r + 6), y1 = pr.y + dir * (r + 21);
+            ctx.beginPath();
+            ctx.moveTo(pr.x, y1);
+            ctx.lineTo(pr.x - 6, y1 - dir * 7);
+            ctx.lineTo(pr.x + 6, y1 - dir * 7);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = C.rgba(tint, 0.5);
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(pr.x, y0);
+            ctx.lineTo(pr.x, y1 - dir * 4);
+            ctx.stroke();
+          }
           ctx.restore();
         }
       }
     }
 
-    drawBall(scene, mat, accent2) {
+    /* ── rings ─────────────────────────────────────────────── */
+    drawGates(scene, pal) {
+      if (!scene.gates || !scene.gates.length) return;
       const ctx = this.ctx;
-      const cx = this.cx, cy = this.cy;
-      const rs = this.R * 0.058;
-      const mood = scene.babiMood || 0;
+      const SEG = 26;
+      const hands = scene.hands || [0, 0];
+      const list = [];
+      for (let i = 0; i < scene.gates.length; i++) {
+        const g = scene.gates[i];
+        const rel = i - scene.nextGate;
+        if (rel < -1 || rel > 4) continue;
+        let rad = 0.16;
+        let alpha = 0.32 * clamp(1 - Math.max(0, rel) / 4.5, 0, 1);
+        let color = pal.ring;
+        let width = 2;
+        let glow = 0;
+
+        if (g.state === 1) {
+          const fl = g.flash == null ? 0 : g.flash;
+          if (fl <= 0) continue;
+          rad = 0.16 + (1 - fl) * 0.20;
+          color = g.q === 3 ? "#fffaf0" : pal.ringNext;
+          alpha = fl * 0.9;
+          width = 2.4 * fl + 0.8;
+          glow = 16;
+        } else if (g.state === 2) {
+          color = "#7d7288";
+          alpha = 0.09;
+          width = 1.3;
+        } else if (i === scene.nextGate) {
+          const pulse = 0.5 + 0.5 * Math.sin((scene.phase || 0) * TAU);
+          rad = 0.163 + 0.013 * pulse;
+          color = pal.ringNext;
+          alpha = 0.92;
+          width = 2.6 + pulse * 1.2;
+          glow = 15 + pulse * 9;
+        }
+
+        const cy = this.plankY(g.u, hands) + 0.10;
+        const pts = [];
+        let zsum = 0, ok = true;
+        for (let k = 0; k <= SEG; k++) {
+          const th = (k / SEG) * TAU;
+          const pr = this.P([g.u * RAIL_HALF, cy + Math.cos(th) * rad, Math.sin(th) * rad]);
+          if (!pr) { ok = false; break; }
+          pts.push(pr);
+          zsum += pr.z;
+        }
+        if (!ok) continue;
+        list.push({ z: zsum / pts.length, pts: pts, alpha: alpha, color: color, width: width, glow: glow });
+      }
+      list.sort((a, b) => b.z - a.z);
+      for (let i = 0; i < list.length; i++) {
+        const it = list[i];
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        if (it.glow) { ctx.shadowColor = it.color; ctx.shadowBlur = it.glow; }
+        ctx.strokeStyle = C.rgba(it.color, it.alpha);
+        ctx.lineWidth = clamp((it.width * this.focal) / (it.z * 300), 1, 7);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        for (let k = 0; k < it.pts.length; k++) {
+          if (k === 0) ctx.moveTo(it.pts[k].x, it.pts[k].y);
+          else ctx.lineTo(it.pts[k].x, it.pts[k].y);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    /* ── the pearl, and Babi beside it ─────────────────────── */
+    drawPearl(scene, pal, ca, sa) {
+      const ctx = this.ctx;
+      const u = clamp(scene.pearlU || 0, -1.15, 1.15);
+      this.curLevel = scene.level;
+      const p = [u * RAIL_HALF, this.plankY(u, scene.hands || [0, 0]) + 0.10, 0];
+      const pr = this.P(p);
+      if (!pr) return;
+      this.pearlScreen = { x: pr.x, y: pr.y };
+
+      const rs = clamp((this.focal * 0.052) / pr.z, 5, 22);
+
+      /* shadow on the plank */
+      const shadowP = this.P([p[0], p[1] - 0.10, p[2]]);
+      if (shadowP) {
+        ctx.save();
+        ctx.globalAlpha = 0.35;
+        const sg = ctx.createRadialGradient(shadowP.x, shadowP.y, 0, shadowP.x, shadowP.y, rs * 1.5);
+        sg.addColorStop(0, "rgba(0,0,0,0.85)");
+        sg.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = sg;
+        ctx.beginPath();
+        ctx.ellipse(shadowP.x, shadowP.y, rs * 1.35, rs * 0.5, 0, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+      }
 
       /* glow */
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
-      const gl = ctx.createRadialGradient(cx, cy, 0, cx, cy, rs * 5.2);
-      gl.addColorStop(0, "rgba(255,244,220,0.34)");
-      gl.addColorStop(0.22, C.rgba(accent2, 0.22));
+      const gl = ctx.createRadialGradient(pr.x, pr.y, 0, pr.x, pr.y, rs * 3.6);
+      gl.addColorStop(0, C.rgba(pal.pearl, 0.26));
+      gl.addColorStop(0.3, C.rgba(pal.pearl2, 0.20));
       gl.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = gl;
       ctx.beginPath();
-      ctx.arc(cx, cy, rs * 5.2, 0, TAU);
+      ctx.arc(pr.x, pr.y, rs * 3.6, 0, TAU);
       ctx.fill();
-      ctx.restore();
-
-      /* pearl */
-      const pg = ctx.createRadialGradient(cx - rs * 0.34, cy - rs * 0.38, rs * 0.06, cx, cy, rs);
-      pg.addColorStop(0, "#fffdf6");
-      pg.addColorStop(0.5, "#ffeccb");
-      pg.addColorStop(1, "#ffb877");
-      ctx.fillStyle = pg;
-      ctx.beginPath();
-      ctx.arc(cx, cy, rs, 0, TAU);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(cx - rs * 0.36, cy - rs * 0.4, rs * 0.19, 0, TAU);
-      ctx.fillStyle = "rgba(255,255,255,0.85)";
-      ctx.fill();
-
-      /* ── Babi, the little companion ───────────────────── */
-      const b = this.babi;
-      const t = this.time;
-      const targetX = cx + Math.cos(t * 0.9) * this.R * 0.16 + Math.cos(t * 2.3) * 5;
-      const targetY = cy + Math.sin(t * 0.9) * this.R * 0.13 + Math.sin(t * 1.7) * 5 + this.R * 0.05;
-      if (!b.ready) { b.x = targetX; b.y = targetY; b.ready = true; }
-      b.vx += (targetX - b.x) * 0.9;
-      b.vy += (targetY - b.y) * 0.9;
-      b.vx *= 0.88; b.vy *= 0.88;
-      b.x += b.vx; b.y += b.vy;
-
-      const rb = clamp(this.R * 0.05, 7, 12);
-      const bob = Math.sin(t * 3.1) * 1.8;
-      const spin = clamp(mood, 0, 1);
-
-      /* ribbons */
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.strokeStyle = "rgba(255,228,196,0.45)";
-      ctx.lineWidth = 1.6;
-      ctx.lineCap = "round";
-      for (let side = -1; side <= 1; side += 2) {
-        ctx.beginPath();
-        ctx.moveTo(b.x, b.y + bob);
-        ctx.bezierCurveTo(
-          b.x + side * rb * 1.9, b.y - rb * 1.5 + bob,
-          b.x + side * rb * 3.0, b.y + rb * 2.5 + bob,
-          b.x + side * rb * 1.7 + Math.sin(t * 2.4 + side) * 7, b.y + rb * 3.6 + bob
-        );
-        ctx.stroke();
-      }
       ctx.restore();
 
       /* body */
-      const bg = ctx.createRadialGradient(b.x - rb * 0.36, b.y - rb * 0.44 + bob, rb * 0.08, b.x, b.y + bob, rb);
-      bg.addColorStop(0, "#fffdfa");
-      bg.addColorStop(0.5, "#ffd8ea");
-      bg.addColorStop(1, "#ff8fc0");
-      ctx.save();
-      ctx.shadowColor = "rgba(255,150,195,0.75)";
-      ctx.shadowBlur = 14 + spin * 12;
+      const bg = ctx.createRadialGradient(pr.x - rs * 0.34, pr.y - rs * 0.38, rs * 0.08, pr.x, pr.y, rs);
+      bg.addColorStop(0, "#ffffff");
+      bg.addColorStop(0.45, pal.pearl);
+      bg.addColorStop(1, pal.pearl2);
       ctx.fillStyle = bg;
       ctx.beginPath();
-      ctx.arc(b.x, b.y + bob, rb, 0, TAU);
+      ctx.arc(pr.x, pr.y, rs, 0, TAU);
       ctx.fill();
-      ctx.restore();
+      ctx.beginPath();
+      ctx.arc(pr.x, pr.y, rs, 0, TAU);
+      ctx.strokeStyle = C.rgba(pal.pearl2, 0.55);
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(pr.x - rs * 0.34, pr.y - rs * 0.4, rs * 0.20, 0, TAU);
+      ctx.fillStyle = "rgba(255,255,255,0.95)";
+      ctx.fill();
 
-      /* face */
-      const happy = mood > 0.3;
-      const fy = b.y + bob;
-      ctx.strokeStyle = "rgba(72,32,64,0.85)";
-      ctx.lineWidth = Math.max(1.2, rb * 0.15);
-      ctx.lineCap = "round";
-      const ex = rb * 0.38, ey = fy - rb * 0.1;
-      for (let side = -1; side <= 1; side += 2) {
+      /* Babi trails along behind the pearl, in the air */
+      const b = this.babi;
+      const t = this.time;
+      const side = Math.sin(t * 0.7) > 0 ? 1 : -1;
+      const tp = this.P([p[0] + side * 0.17, p[1] + 0.09 + Math.sin(t * 2.2) * 0.02, p[2] + 0.04]);
+      if (tp) {
+        if (!b.ready) { b.x = tp.x; b.y = tp.y; b.ready = true; }
+        b.vx += (tp.x - b.x) * 0.30;
+        b.vy += (tp.y - b.y) * 0.30;
+        b.vx *= 0.86; b.vy *= 0.86;
+        b.x += b.vx; b.y += b.vy;
+
+        const rb = clamp(rs * 0.60, 6, 16);
+        const mood = scene.babiMood || 0;
+
+        /* little arms that wave with the music */
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,190,220,0.85)";
+        ctx.lineWidth = Math.max(1.2, rb * 0.22);
+        ctx.lineCap = "round";
+        for (let s2 = -1; s2 <= 1; s2 += 2) {
+          const wave = Math.sin(t * 2.6 + s2 * 1.1) * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(b.x + s2 * rb * 0.86, b.y + rb * 0.24);
+          ctx.lineTo(b.x + s2 * rb * (1.5 + wave * 0.25), b.y + rb * (0.05 - wave * 0.6));
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        const bgb = ctx.createRadialGradient(b.x - rb * 0.36, b.y - rb * 0.44, rb * 0.08, b.x, b.y, rb);
+        bgb.addColorStop(0, "#fffdfa");
+        bgb.addColorStop(0.5, "#ffd8ea");
+        bgb.addColorStop(1, "#ff8fc0");
+        ctx.save();
+        ctx.shadowColor = "rgba(255,150,195,0.8)";
+        ctx.shadowBlur = 12 + mood * 12;
+        ctx.fillStyle = bgb;
         ctx.beginPath();
-        if (happy) {
-          ctx.arc(b.x + side * ex, ey + rb * 0.12, rb * 0.24, Math.PI * 1.12, Math.PI * 1.88);
-        } else {
-          ctx.ellipse(b.x + side * ex, ey, rb * 0.15, rb * 0.21, 0, 0, TAU);
+        ctx.arc(b.x, b.y, rb, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+
+        /* face */
+        const happy = mood > 0.3;
+        ctx.strokeStyle = "rgba(72,32,64,0.85)";
+        ctx.lineWidth = Math.max(1.1, rb * 0.15);
+        ctx.lineCap = "round";
+        const ex = rb * 0.38, ey = b.y - rb * 0.1;
+        for (let s3 = -1; s3 <= 1; s3 += 2) {
+          ctx.beginPath();
+          if (happy) {
+            ctx.arc(b.x + s3 * ex, ey + rb * 0.12, rb * 0.24, Math.PI * 1.12, Math.PI * 1.88);
+          } else {
+            ctx.ellipse(b.x + s3 * ex, ey, rb * 0.15, rb * 0.21, 0, 0, TAU);
+          }
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        if (happy) ctx.arc(b.x, b.y + rb * 0.16, rb * 0.34, Math.PI * 0.16, Math.PI * 0.84);
+        else {
+          ctx.moveTo(b.x - rb * 0.24, b.y + rb * 0.42);
+          ctx.quadraticCurveTo(b.x, b.y + rb * 0.54, b.x + rb * 0.24, b.y + rb * 0.42);
         }
         ctx.stroke();
       }
-      ctx.beginPath();
-      if (happy) ctx.arc(b.x, fy + rb * 0.16, rb * 0.34, Math.PI * 0.16, Math.PI * 0.84);
-      else {
-        ctx.moveTo(b.x - rb * 0.24, fy + rb * 0.42);
-        ctx.quadraticCurveTo(b.x, fy + rb * 0.54, b.x + rb * 0.24, fy + rb * 0.42);
-      }
-      ctx.stroke();
-      void mat;
     }
 
     drawParticles() {
@@ -1987,149 +2055,95 @@ kbd {
       ctx.restore();
     }
 
-    /* ── dials ─────────────────────────────────────────────── */
-    drawDials(scene, accent, accent2, dt) {
+    /* ── each player's hand, as a vertical bar ─────────────── */
+    drawBars(scene, pal) {
       const ctx = this.ctx;
-      const duet = this.mode !== "solo";
-      const showKeys = !isTouch();
+      const hands = scene.hands || [0, 0];
+      const duet = scene.mode !== "solo";
+      for (let i = 0; i < (duet ? 2 : 1); i++) {
+        const b = this.bars[duet ? i : 0];
+        const tint = i === 0 ? "#ff9ecb" : "#8ff0e2";
+        const raised = clamp(hands[i] || 0, -1, 1);
+        const top = b.y - b.len;
+        const midY = b.y - b.len / 2;
+        const thY = midY - raised * (b.len / 2);
 
-      if (duet) this.drawRibbon(scene, accent, accent2);
-
-      for (let z = 0; z < this.dials.length; z++) {
-        const d = this.dials[z];
-        const angle = scene.cum[z] || 0;
-        const held = scene.held && scene.held[z];
-        const tint = z === 0 ? accent : duet ? "#8ff0e2" : accent2;
-        const label = duet ? (z === 0 ? "player one" : "player two") : "your hands";
-        const keys = showKeys ? (z === 0 ? ["A", "D"] : ["←", "→"]) : null;
-
-        /* glow disc */
-        const pulse = held ? 1 : 0.55;
-        const gl = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, this.dialR * 2.1);
-        gl.addColorStop(0, C.rgba(tint, 0.20 * pulse));
-        gl.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = gl;
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, this.dialR * 2.1, 0, TAU);
-        ctx.fill();
-
-        /* dial face */
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, this.dialR, 0, TAU);
-        ctx.fillStyle = "rgba(255,255,255,0.045)";
-        ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,0.16)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        /* ticks */
-        for (let k = 0; k < 12; k++) {
-          const a = (k / 12) * TAU - Math.PI / 2;
-          const r0 = this.dialR * 0.84, r1 = this.dialR * (k % 3 === 0 ? 0.97 : 0.92);
-          ctx.beginPath();
-          ctx.moveTo(d.x + Math.cos(a) * r0, d.y + Math.sin(a) * r0);
-          ctx.lineTo(d.x + Math.cos(a) * r1, d.y + Math.sin(a) * r1);
-          ctx.strokeStyle = "rgba(255,255,255," + (k % 3 === 0 ? 0.28 : 0.14) + ")";
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
-
-        /* rotation arc + handle */
-        const spin = (angle % TAU + TAU) % TAU;
         ctx.save();
-        ctx.globalCompositeOperation = "lighter";
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, this.dialR * 0.68, -Math.PI / 2, -Math.PI / 2 + spin);
-        ctx.strokeStyle = C.rgba(tint, 0.9);
-        ctx.lineWidth = 3;
+        /* track */
+        ctx.strokeStyle = "rgba(255,255,255,0.10)";
+        ctx.lineWidth = 2;
         ctx.lineCap = "round";
-        ctx.shadowColor = tint;
-        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.moveTo(b.x, b.y);
+        ctx.lineTo(b.x, top);
         ctx.stroke();
+
+        /* centre tick */
+        ctx.strokeStyle = "rgba(255,255,255,0.16)";
+        ctx.beginPath();
+        ctx.moveTo(b.x - 8, midY);
+        ctx.lineTo(b.x + 8, midY);
+        ctx.stroke();
+
+        /* filled part */
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = C.rgba(tint, 0.75);
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(b.x, midY);
+        ctx.lineTo(b.x, thY);
+        ctx.stroke();
+
+        /* thumb */
+        const gr = ctx.createRadialGradient(b.x, thY, 0, b.x, thY, 22);
+        gr.addColorStop(0, C.rgba(tint, 0.55));
+        gr.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = gr;
+        ctx.beginPath();
+        ctx.arc(b.x, thY, 22, 0, TAU);
+        ctx.fill();
         ctx.restore();
 
-        const hx = d.x + Math.cos(-Math.PI / 2 + spin) * this.dialR * 0.68;
-        const hy = d.y + Math.sin(-Math.PI / 2 + spin) * this.dialR * 0.68;
         ctx.beginPath();
-        ctx.arc(hx, hy, 4.4, 0, TAU);
+        ctx.arc(b.x, thY, 5, 0, TAU);
         ctx.fillStyle = "#fffdf7";
         ctx.fill();
 
-        /* labels */
         ctx.save();
         ctx.textAlign = "center";
-        ctx.fillStyle = "rgba(255,255,255,0.5)";
-        ctx.font = "600 9.5px ui-sans-serif, system-ui, sans-serif";
-        ctx.fillText(label.toUpperCase(), d.x, d.y + this.dialR + 17);
-        if (keys) {
+        ctx.fillStyle = "rgba(255,255,255,0.45)";
+        ctx.font = "600 9px ui-sans-serif, system-ui, sans-serif";
+        ctx.fillText(duet ? (i === 0 ? "PLAYER ONE" : "PLAYER TWO") : "YOUR HANDS", b.x, b.y + 18);
+        if (!isTouch()) {
           ctx.fillStyle = "rgba(255,255,255,0.3)";
-          ctx.fillText(keys[0] + "  ·  " + keys[1], d.x, d.y + this.dialR + 30);
+          ctx.fillText(i === 0 ? "W  ·  S" : "↑  ·  ↓", b.x, b.y + 31);
         }
         ctx.restore();
-
-        /* turning hint */
-        if (scene.showHint) {
-          const a0 = -Math.PI * 0.72, a1 = -Math.PI * 0.05;
-          const pulseA = 0.25 + 0.35 * (0.5 + 0.5 * Math.sin(this.time * 3.2));
-          ctx.save();
-          ctx.strokeStyle = C.rgba(tint, pulseA);
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.arc(d.x, d.y, this.dialR * 1.28, a0, a1);
-          ctx.stroke();
-          const ax = d.x + Math.cos(a1) * this.dialR * 1.28;
-          const ay = d.y + Math.sin(a1) * this.dialR * 1.28;
-          ctx.beginPath();
-          ctx.moveTo(ax - 5, ay - 5);
-          ctx.lineTo(ax + 3, ay + 1);
-          ctx.lineTo(ax - 6, ay + 4);
-          ctx.closePath();
-          ctx.fillStyle = C.rgba(tint, pulseA + 0.2);
-          ctx.fill();
-          ctx.restore();
-        }
       }
-      void dt;
-    }
-
-    drawRibbon(scene, accent, accent2) {
-      const ctx = this.ctx;
-      const a = this.dials[0], b = this.dials[1];
-      if (!a || !b) return;
-      const tangle = clamp(scene.tangle || 0, 0, 1);
-      const col = tangle > 0.02 ? C.mix(accent2, "#ff5d5d", tangle) : accent2;
-      const midX = (a.x + b.x) / 2;
-      const sag = 22 + tangle * 26;
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.strokeStyle = C.rgba("#ffd28a", 0) ;
-      ctx.strokeStyle = col;
-      ctx.globalAlpha = 0.18 + 0.4 * tangle;
-      ctx.lineWidth = 1.2 + tangle * 2.2;
-      ctx.setLineDash(tangle > 0.35 ? [2 + tangle * 5, 3 + tangle * 9] : []);
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      const wob = Math.sin(this.time * 6) * tangle * 7;
-      ctx.quadraticCurveTo(midX, a.y + sag + wob, b.x, b.y);
-      ctx.stroke();
-      ctx.restore();
-      void accent;
     }
 
     drawVignette() {
       const ctx = this.ctx;
       const g = ctx.createRadialGradient(
-        this.w / 2, this.h * 0.45, Math.min(this.w, this.h) * 0.22,
+        this.w / 2, this.h * 0.5, Math.min(this.w, this.h) * 0.24,
         this.w / 2, this.h * 0.5, Math.max(this.w, this.h) * 0.78
       );
       g.addColorStop(0, "rgba(0,0,0,0)");
-      g.addColorStop(1, "rgba(2,0,8,0.72)");
+      g.addColorStop(1, "rgba(2,0,8,0.76)");
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, this.w, this.h);
     }
   }
 
-  /* ── little previews for the level cards ──────────────────── */
+  const MENU_PAL = {
+    bg0: "#080611", bg1: "#150c22", fog: "#140c20",
+    rail: "#7b6a95", railTop: "#ffe3c0", railGlow: "#ffb877",
+    ring: "#ff9ecb", ringNext: "#ffd28a",
+    pearl: "#fff4dc", pearl2: "#ffb877",
+    floor: "#2a1f3d", column: "#241a35", halo: "#ff9ecb",
+  };
+
+  /* ── little side-view previews for the level cards ───────── */
   function drawLevelPreview(canvas, level) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const size = 58;
@@ -2138,26 +2152,41 @@ kbd {
     const ctx = canvas.getContext("2d");
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, size, size);
-    const path = level.path;
-    const cx = size / 2, cy = size / 2, r = size * 0.42;
-    const rot = M.mul(M.axis([1, 0, 0], -0.5), M.axis([0, 1, 0], 0.6));
+
+    const cx = size / 2, cy = size * 0.62;
+    const half = size * 0.40;
+    const ang = 0.16;
+    const ca = Math.cos(ang), sa = Math.sin(ang);
+
+    /* the plank */
     ctx.beginPath();
-    for (let i = 0; i <= 220; i++) {
-      const p = M.apply(rot, path.pointAt(i / 220));
-      const depth = 1.9 - p[2];
-      const s = (r * 1.9) / depth;
-      const x = cx + p[0] * s * 0.62;
-      const y = cy - p[1] * s * 0.62;
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    }
-    ctx.strokeStyle = C.rgba(level.accent, 0.9);
-    ctx.lineWidth = 1.3;
+    ctx.moveTo(cx - half * ca, cy - half * sa);
+    ctx.lineTo(cx + half * ca, cy + half * sa);
+    ctx.strokeStyle = "rgba(255,255,255,0.45)";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
     ctx.stroke();
+
+    /* rings at both ends */
+    const amp = level.amp;
+    [-amp, amp].forEach((u, i) => {
+      const x = u * half;
+      const y = u * half * (sa / ca);
+      ctx.beginPath();
+      ctx.arc(cx + x, cy + y, size * 0.13, 0, TAU);
+      ctx.strokeStyle = i === 0 ? C.rgba(level.pal.ring, 0.85) : C.rgba(level.pal.ringNext, 0.85);
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    });
+
+    /* the pearl */
+    const gr = ctx.createRadialGradient(cx - 1, cy - 2, 0, cx, cy, size * 0.09);
+    gr.addColorStop(0, "#fffdf6");
+    gr.addColorStop(1, level.pal.pearl2);
+    ctx.fillStyle = gr;
     ctx.beginPath();
-    ctx.arc(cx, cy, r * 0.62, 0, TAU);
-    ctx.strokeStyle = "rgba(255,255,255,0.07)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    ctx.arc(cx, cy, size * 0.085, 0, TAU);
+    ctx.fill();
   }
 
   DWB.Stage = Stage;
@@ -2168,7 +2197,9 @@ kbd {
 /* ==== src/game.js ==== */
 /* ──────────────────────────────────────────────────────────────
    Dance with Babi — game.js
-   State, input, judging, and the little bit of ritual in between.
+   Two players hold one plank. Raise your end and the pearl rolls
+   toward your partner; lower it and it comes back. The whole dance
+   is one long swing you have to keep in time.
    ────────────────────────────────────────────────────────────── */
 (function () {
   const DWB = window.DWB;
@@ -2176,22 +2207,18 @@ kbd {
   const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
 
-  const GAIN = 1.75;       /* gesture radians → dial radians */
-  const KEY_RATE = 2.15;   /* keyboard radians per second */
-  const TANGLE_MAX = 3.0;  /* dial disagreement that counts as a tangle */
-  const TANGLE_HOLD = 0.28;
+  const KEY_RATE = 2.6;      /* how fast a key raises your end */
+  const GRAB_RANGE = 0.30;   /* fraction of the screen height for a full raise */
+  const SPRING = 5.5;        /* how quickly an end falls back when let go */
+  const END_BOUNCE = 0.34;
+  const END_PENALTY = 0.55;  /* how hard the pearl must hit the end to count */
 
+  /* judged on the beat: how close is the pearl to the ring when the music lands */
   const JUDGE = [
-    { t: 0.105, q: 3, points: 100, label: "perfect" },
-    { t: 0.205, q: 2, points: 60, label: "good" },
-    { t: 0.34, q: 1, points: 30, label: "on the edge" },
+    { d: 0.15, q: 3, points: 100, label: "perfect" },
+    { d: 0.30, q: 2, points: 60, label: "good" },
+    { d: 0.46, q: 1, points: 30, label: "on the edge" },
   ];
-
-  const wrapPi = (a) => {
-    let x = (a + Math.PI) % TAU;
-    if (x < 0) x += TAU;
-    return x - Math.PI;
-  };
 
   const store = {
     get(k, d) {
@@ -2242,26 +2269,23 @@ kbd {
       this.level = null;
       this.gates = [];
       this.nextGate = 0;
-      this.ballS = 0;
-      this.prevBallS = 0;
+      this.hands = [0, 0];
+      this.heldBy = [false, false];
+      this.pearlU = 0;
+      this.pearlV = 0;
+      this.prevU = 0;
       this.prevT = -0.001;
-      this.cum = [0, 0];
-      this.prevShared = 0;
-      this.sharedVel = 0;
-      this.sway = 0;
       this.score = 0;
       this.combo = 0;
       this.maxCombo = 0;
       this.counts = { 3: 0, 2: 0, 1: 0, miss: 0 };
-      this.tangle = 0;
-      this.tangleHold = 0;
-      this.tangleWarned = false;
       this.babiMood = 0;
       this.beatPhase = -1;
       this.pointers = new Map();
-      this.keys = { a: 0, d: 0, l: 0, r: 0 };
+      this.keys = { w: 0, s: 0, up: 0, down: 0 };
       this.lastT = 0;
       this.resumeState = "playing";
+      this.shake = 0;
 
       this.bindUI();
       this.bindInput();
@@ -2299,7 +2323,6 @@ kbd {
     setMode(mode) {
       this.mode = mode === "solo" ? "solo" : "duet";
       store.set("dwb.mode", this.mode);
-      this.stage.setMode(this.mode);
       document.querySelectorAll("[data-mode]").forEach((b) => {
         b.classList.toggle("active", b.dataset.mode === this.mode);
       });
@@ -2307,13 +2330,10 @@ kbd {
 
     /* ── level list ────────────────────────────────────────── */
     unlocked() {
-      const n = store.get("dwb.unlocked", 1);
-      return clamp(Number(n) || 1, 1, LEVELS.length);
+      return clamp(Number(store.get("dwb.unlocked", 1)) || 1, 1, LEVELS.length);
     }
 
-    best(id) {
-      return store.get("dwb.best." + id, null);
-    }
+    best(id) { return store.get("dwb.best." + id, null); }
 
     renderLevels() {
       const grid = this.el.grid;
@@ -2355,10 +2375,10 @@ kbd {
           }
           body.appendChild(stars);
         } else {
-          const meta2 = document.createElement("div");
-          meta2.className = "lc-meta";
-          meta2.textContent = locked ? "finish the dance before it" : "not danced yet";
-          body.appendChild(meta2);
+          const m2 = document.createElement("div");
+          m2.className = "lc-meta";
+          m2.textContent = locked ? "finish the dance before it" : "not danced yet";
+          body.appendChild(m2);
         }
 
         card.appendChild(body);
@@ -2380,6 +2400,7 @@ kbd {
               this.sound.stop();
               this.state = "levels";
               this.el.topbar.classList.add("hidden");
+              this.el.hint.classList.add("hidden");
             }
             this.renderLevels();
           }
@@ -2404,16 +2425,14 @@ kbd {
         }
         const card = e.target.closest("[data-level]");
         if (card) {
-          const i = Number(card.dataset.level);
           if (card.classList.contains("locked")) return;
           this.sound.ensure();
           this.sound.ui();
-          this.start(i);
+          this.start(Number(card.dataset.level));
         }
       });
 
       this.el.pause.addEventListener("click", () => this.togglePause());
-
       this.el.sound.addEventListener("click", () => {
         this.sound.setMuted(!this.sound.muted);
         store.set("dwb.muted", this.sound.muted);
@@ -2422,10 +2441,7 @@ kbd {
       });
 
       this.el.again.addEventListener("click", () => this.start(this.li));
-      this.el.next.addEventListener("click", () => {
-        const n = Math.min(LEVELS.length - 1, this.li + 1);
-        this.start(n);
-      });
+      this.el.next.addEventListener("click", () => this.start(Math.min(LEVELS.length - 1, this.li + 1)));
 
       window.addEventListener("resize", () => this.stage.resize());
       window.addEventListener("orientationchange", () => setTimeout(() => this.stage.resize(), 250));
@@ -2434,9 +2450,9 @@ kbd {
       });
     }
 
-    /* ── input ─────────────────────────────────────────────── */
+    /* ── input: raise and lower your end of the plank ──────── */
     zoneFor(x) {
-      if (this.mode === "solo" || this.stage.dials.length < 2) return 0;
+      if (this.mode === "solo") return 0;
       return x < this.stage.w / 2 ? 0 : 1;
     }
 
@@ -2452,29 +2468,37 @@ kbd {
         if (this.state !== "playing" && this.state !== "countin") return;
         const p = pos(e);
         const zone = this.zoneFor(p.x);
-        const c = this.stage.dials[zone] || { x: this.stage.w / 2, y: this.stage.h / 2 };
-        const a = Math.atan2(p.y - c.y, p.x - c.x);
-        this.pointers.set(e.pointerId, { zone: zone, last: a });
+        this.pointers.set(e.pointerId, { zone: zone, anchorY: p.y, value: 0 });
+        this.heldBy[zone] = true;
+        if (this.mode === "solo") this.heldBy = [true, true];
         try { cv.setPointerCapture(e.pointerId); } catch (err) { /* noop */ }
         e.preventDefault();
       });
 
       cv.addEventListener("pointermove", (e) => {
-        const p = this.pointers.get(e.pointerId);
-        if (!p) return;
-        const q = pos(e);
-        const c = this.stage.dials[p.zone];
-        if (!c) return;
-        const dx = q.x - c.x, dy = q.y - c.y;
-        if (Math.hypot(dx, dy) < Math.min(14, this.stage.dialR * 0.34)) return;
-        const a = Math.atan2(dy, dx);
-        const d = wrapPi(a - p.last);
-        p.last = a;
-        if (this.state === "playing" || this.state === "countin") this.cum[p.zone] += d * GAIN;
+        const d = this.pointers.get(e.pointerId);
+        if (!d) return;
+        const p = pos(e);
+        const v = clamp((d.anchorY - p.y) / (this.stage.h * GRAB_RANGE), -1, 1);
+        d.value = v;
+        if (this.state !== "playing" && this.state !== "countin") return;
+        if (this.mode === "solo") {
+          this.hands[0] = -v;
+          this.hands[1] = v;
+        } else {
+          this.hands[d.zone] = v;
+        }
         e.preventDefault();
       });
 
-      const release = (e) => { this.pointers.delete(e.pointerId); };
+      const release = (e) => {
+        const d = this.pointers.get(e.pointerId);
+        if (d) {
+          this.heldBy[d.zone] = false;
+          if (this.mode === "solo") this.heldBy = [false, false];
+        }
+        this.pointers.delete(e.pointerId);
+      };
       cv.addEventListener("pointerup", release);
       cv.addEventListener("pointercancel", release);
       cv.addEventListener("pointerleave", release);
@@ -2485,19 +2509,16 @@ kbd {
           return;
         }
         switch (e.code) {
-          case "KeyA": this.keys.a = 1; break;
-          case "KeyD": this.keys.d = 1; break;
-          case "ArrowLeft": this.keys.l = 1; e.preventDefault(); break;
-          case "ArrowRight": this.keys.r = 1; e.preventDefault(); break;
-          case "Escape":
-          case "KeyP":
+          case "KeyW": case "KeyA": this.keys.w = 1; break;
+          case "KeyS": case "KeyD": this.keys.s = 1; break;
+          case "ArrowUp": this.keys.up = 1; e.preventDefault(); break;
+          case "ArrowDown": this.keys.down = 1; e.preventDefault(); break;
+          case "Escape": case "KeyP":
             if (this.state === "playing" || this.state === "countin" || this.state === "paused") {
               this.togglePause();
             }
             break;
-          case "KeyM":
-            this.el.sound.click();
-            break;
+          case "KeyM": this.el.sound.click(); break;
           default: return;
         }
         this.sound.ensure();
@@ -2505,16 +2526,18 @@ kbd {
 
       window.addEventListener("keyup", (e) => {
         switch (e.code) {
-          case "KeyA": this.keys.a = 0; break;
-          case "KeyD": this.keys.d = 0; break;
-          case "ArrowLeft": this.keys.l = 0; break;
-          case "ArrowRight": this.keys.r = 0; break;
+          case "KeyW": case "KeyA": this.keys.w = 0; break;
+          case "KeyS": case "KeyD": this.keys.s = 0; break;
+          case "ArrowUp": this.keys.up = 0; break;
+          case "ArrowDown": this.keys.down = 0; break;
           default: break;
         }
       });
 
       window.addEventListener("blur", () => {
-        this.keys.a = this.keys.d = this.keys.l = this.keys.r = 0;
+        this.keys.w = this.keys.s = this.keys.up = this.keys.down = 0;
+        this.pointers.clear();
+        this.heldBy = [false, false];
       });
     }
 
@@ -2524,48 +2547,43 @@ kbd {
       if (!lv) return;
       this.li = i;
       this.level = lv;
-      this.stage.setMode(this.mode);
-      this.stage.pathCache = { path: null, pts: null };
       this.stage.particles.length = 0;
       this.stage.babi.ready = false;
 
       this.gates = [];
       for (let k = 0; k < lv.gates; k++) {
         this.gates.push({
-          s: (k + 1) * lv.interval,
-          expected: (k + 1) * lv.spb,
-          state: 0,
-          q: 0,
-          flash: 0,
+          u: lv.gateU(k),
+          expected: lv.gateAt(k),
+          state: 0, q: 0, flash: 0,
         });
       }
       this.nextGate = 0;
-      this.ballS = 0;
-      this.prevBallS = 0;
+      this.hands = [0, 0];
+      this.heldBy = [false, false];
+      this.pearlU = 0;
+      this.pearlV = 0;
+      this.prevU = 0;
       this.prevT = -0.001;
-      this.cum = [0, 0];
-      this.prevShared = 0;
-      this.sharedVel = 0;
-      this.sway = 0;
       this.score = 0;
       this.combo = 0;
       this.maxCombo = 0;
       this.counts = { 3: 0, 2: 0, 1: 0, miss: 0 };
-      this.tangle = 0;
-      this.tangleHold = 0;
-      this.tangleWarned = false;
       this.babiMood = 0;
       this.beatPhase = -1;
       this.pointers.clear();
-      this.keys = { a: 0, d: 0, l: 0, r: 0 };
+      this.keys = { w: 0, s: 0, up: 0, down: 0 };
       this.lastCount = null;
+      this.shake = 0;
 
       this.sound.ensure();
       this.sound.startLevel(lv);
       this.state = "countin";
       this.el.topbar.classList.remove("hidden");
       this.el.countin.classList.remove("hidden");
-      this.el.hint.textContent = this.mode === "solo" ? "turn the dial in a slow circle" : "turn both dials together — clockwise";
+      this.el.hint.textContent = this.mode === "solo"
+        ? "lift and lower — one long swing"
+        : "lift your own end, then let go";
       this.el.hint.classList.remove("hidden");
       this.el.hudLevel.textContent = lv.name;
       this.el.hudProgress.style.width = "0%";
@@ -2589,7 +2607,7 @@ kbd {
         this.sound.resume();
         this.show(null);
         this.el.countin.classList.toggle("hidden", this.state !== "countin");
-      this.el.hint.classList.toggle("hidden", this.state !== "countin");
+        this.el.hint.classList.toggle("hidden", this.state !== "countin");
         return;
       }
       if (this.state !== "playing" && this.state !== "countin") return;
@@ -2597,41 +2615,64 @@ kbd {
       this.state = "paused";
       this.sound.pause();
       this.pointers.clear();
+      this.heldBy = [false, false];
       this.show("pause");
     }
 
-    /* ── the beat of play ──────────────────────────────────── */
+    /* ── the swing of the dance ────────────────────────────── */
     update(dt) {
-      const kx = (this.keys.d - this.keys.a) * KEY_RATE * dt;
-      const ky = (this.keys.r - this.keys.l) * KEY_RATE * dt;
-      const live = this.state === "playing" || this.state === "countin";
-      if (live) {
-        if (this.mode === "solo") this.cum[0] += kx + ky;
-        else { this.cum[0] += kx; this.cum[1] += ky; }
-      }
-
-      /* gate flashes */
+      /* gates fade out after a hit */
       for (let i = 0; i < this.gates.length; i++) {
         const g = this.gates[i];
         if (g.flash > 0) g.flash = Math.max(0, g.flash - dt * 1.9);
       }
       this.babiMood = Math.max(0, this.babiMood - dt * 1.4);
+      this.shake = Math.max(0, this.shake - dt * 3.4);
 
+      const live = this.state === "playing" || this.state === "countin";
       if (!live) return;
 
+      /* ── hands ── */
+      const k1 = (this.keys.w ? 1 : 0) - (this.keys.s ? 1 : 0);
+      const k2 = (this.keys.up ? 1 : 0) - (this.keys.down ? 1 : 0);
+      const spring = Math.min(1, dt * SPRING);
+      for (let i = 0; i < 2; i++) {
+        if (this.heldBy[i]) continue;
+        const kd = this.mode === "solo" ? (k1 || k2) : i === 0 ? k1 : k2;
+        if (kd) {
+          this.hands[i] = clamp(this.hands[i] + kd * KEY_RATE * dt, -1, 1);
+          if (this.mode === "solo") {
+            this.hands[0] = -this.hands[1];
+          }
+        } else {
+          this.hands[i] += (0 - this.hands[i]) * spring;
+        }
+      }
+
       const lv = this.level;
+      /* the plank only tilts when the two of you disagree: half the
+         difference, so one player alone can never tilt it far enough */
+      const tilt = clamp((this.hands[1] - this.hands[0]) * 0.5, -1, 1);
       const t = this.sound.songTime();
       this.beatPhase = t < 0 ? -1 : (t / lv.spb) % 1;
 
-      const shared = this.mode === "solo" ? this.cum[0] : (this.cum[0] + this.cum[1]) * 0.5;
-      const dShared = shared - this.prevShared;
-      this.prevShared = shared;
-      this.sharedVel = dt > 0 ? dShared / dt : 0;
+      /* ── the pearl: the plank's slope sets its speed, and it
+         answers your hands with a short lag, so you must lead ── */
+      const wanted = -lv.speed * tilt;
+      this.pearlV += (wanted - this.pearlV) * Math.min(1, dt / lv.lag);
+      this.pearlU += this.pearlV * dt;
 
-      const targetSway = clamp(this.sharedVel * 0.10, -0.30, 0.30);
-      this.sway += (targetSway - this.sway) * Math.min(1, dt * 7);
+      if (this.pearlU > 1) {
+        this.pearlU = 1;
+        if (this.pearlV > END_PENALTY) this.hitTheEnd(1);
+        this.pearlV = -this.pearlV * END_BOUNCE;
+      } else if (this.pearlU < -1) {
+        this.pearlU = -1;
+        if (this.pearlV < -END_PENALTY) this.hitTheEnd(-1);
+        this.pearlV = -this.pearlV * END_BOUNCE;
+      }
 
-      /* count-in: 3 · 2 · 1 in the last three beats before the first ring */
+      /* count-in */
       if (this.state === "countin") {
         if (t > -3 * lv.spb && t < 0) {
           const n = Math.ceil(-t / lv.spb);
@@ -2648,78 +2689,36 @@ kbd {
         }
       }
 
-      /* the pearl only moves by the average of both dials, and only
-         once the waltz has actually begun */
-      const prevT = this.prevT;
-      this.prevT = t;
-      this.prevBallS = this.ballS;
-      if (t >= 0) this.ballS += dShared * lv.speed;
-      this.judge(t, prevT);
+      if (t >= 0) this.judgeBeats(t);
 
-      /* the ribbon between you */
-      if (this.mode === "duet") {
-        const diff = Math.abs(wrapPi(this.cum[0] - this.cum[1]));
-        this.tangle = clamp(diff / TANGLE_MAX, 0, 1);
-        if (this.tangle > 0.92) {
-          this.tangleHold += dt;
-          if (this.tangleHold > TANGLE_HOLD && !this.tangleWarned) {
-            this.tangleWarned = true;
-            this.breakCombo("stay together");
-            this.sound.tangle();
-          }
-        } else {
-          this.tangleHold = 0;
-          if (this.tangle < 0.4) this.tangleWarned = false;
-        }
-      } else {
-        this.tangle = 0;
-      }
+      this.el.hudProgress.style.width = ((this.nextGate / this.gates.length) * 100).toFixed(1) + "%";
 
-      /* expire rings the music has already passed */
-      for (let i = 0; i < this.gates.length; i++) {
-        const g = this.gates[i];
-        if (g.state === 0 && t > g.expected + JUDGE[2].t + 0.06) {
-          this.missGate(i, "late");
-        }
-      }
-
-      /* progress */
-      const done = this.gates.filter((g) => g.state !== 0).length;
-      this.el.hudProgress.style.width = ((done / this.gates.length) * 100).toFixed(1) + "%";
-
-      /* the end of the dance */
       const last = this.gates[this.gates.length - 1];
-      if (done === this.gates.length && last && t > last.expected + 1.7) this.finish();
+      if (this.nextGate >= this.gates.length && last && t > last.expected + 1.7) this.finish();
     }
 
-    judge(t, prevT) {
-      const prev = this.prevBallS, cur = this.ballS;
-      if (prev === cur) return;
-      const lo = Math.min(prev, cur), hi = Math.max(prev, cur);
-      for (let i = 0; i < this.gates.length; i++) {
-        const g = this.gates[i];
-        if (g.state !== 0) continue;
-        const base = Math.floor(lo - g.s);
-        for (let k = base; k <= base + 2; k++) {
-          const gp = g.s + k;
-          if (gp > lo && gp <= hi) {
-            const f = (gp - prev) / (cur - prev);
-            this.resolveGate(i, prevT + f * (t - prevT));
-            break;
-          }
-        }
+    /** every ring is a snapshot: is the pearl inside it when the beat lands? */
+    judgeBeats(t) {
+      let guard = 0;
+      while (this.nextGate < this.gates.length && t >= this.gates[this.nextGate].expected && guard++ < 8) {
+        this.scoreGate(this.nextGate);
+        this.nextGate++;
       }
-      this.advance();
     }
 
-    resolveGate(i, tc) {
+    scoreGate(i) {
       const g = this.gates[i];
-      const err = tc - g.expected;
+      const lv = this.level;
+      const d = Math.abs(this.pearlU - g.u) / Math.max(0.35, lv.amp);
       let tier = null;
       for (let j = 0; j < JUDGE.length; j++) {
-        if (Math.abs(err) <= JUDGE[j].t) { tier = JUDGE[j]; break; }
+        if (d <= JUDGE[j].d) { tier = JUDGE[j]; break; }
       }
-      if (!tier) { this.missGate(i, err < 0 ? "early" : "late"); return; }
+      if (!tier) {
+        const past = (this.pearlV > 0 && this.pearlU > g.u) || (this.pearlV < 0 && this.pearlU < g.u);
+        this.missGate(i, past ? "early" : "late");
+        return;
+      }
 
       g.state = 1;
       g.q = tier.q;
@@ -2733,10 +2732,11 @@ kbd {
 
       this.popJudge(tier.label, tier.q === 3 ? "perfect" : tier.q === 2 ? "good" : "soft");
       this.sound.hit(this.combo);
+      const ps = this.stage.pearlScreen || { x: this.stage.cx, y: this.stage.cy };
       this.stage.burst(
-        this.stage.cx, this.stage.cy,
+        ps.x, ps.y,
         tier.q === 3 ? "#fff3d6" : tier.q === 2 ? "#bfeee6" : "#c8b6e8",
-        tier.q === 3 ? 22 : 12,
+        tier.q === 3 ? 20 : 11,
         tier.q === 3 ? 210 : 140
       );
       this.setHud();
@@ -2748,20 +2748,22 @@ kbd {
       g.state = 2;
       this.counts.miss += 1;
       this.breakCombo(why === "early" ? "a little early" : why === "late" ? "a little late" : why);
-      this.sound.soft(why);
+      this.sound.soft(why === "early" ? "early" : "late");
       this.setHud();
+    }
+
+    hitTheEnd(dir) {
+      this.shake = 1;
+      this.sound.tangle();
+      if (this.combo > 2) this.popJudge("too far", "bad");
+      this.breakCombo(null);
+      void dir;
     }
 
     breakCombo(word) {
       this.combo = 0;
       if (word) this.popJudge(word, "bad");
       this.setHud();
-    }
-
-    advance() {
-      let i = this.nextGate;
-      while (i < this.gates.length && this.gates[i].state !== 0) i++;
-      this.nextGate = i;
     }
 
     setHud() {
@@ -2788,6 +2790,7 @@ kbd {
       this.sound.stop();
       this.sound.complete();
       this.pointers.clear();
+      this.heldBy = [false, false];
 
       const lv = this.level;
       const total = this.gates.length;
@@ -2837,49 +2840,31 @@ kbd {
 
       this.update(dt);
 
-      const playing = this.state === "playing" || this.state === "countin";
-      const held = [false, false];
-      this.pointers.forEach((p) => { held[p.zone] = true; });
-
-      /* in the menus the sphere keeps dancing quietly to itself */
       const demo = !this.level || this.state === "title" || this.state === "levels" || this.state === "howto";
-      this.demoS = (this.demoS || 0) + dt * (this.state === "title" ? 0.035 : 0.05);
+      this.demoT = (this.demoT || 0) + dt;
+      const demoTilt = Math.sin(this.demoT * 1.6) * 0.85;
       const demoLevel = LEVELS[0];
 
-      const scene = demo
-        ? {
-            level: demoLevel,
-            path: demoLevel.path,
-            ballS: this.demoS,
-            gates: [],
-            nextGate: 0,
-            sway: Math.sin(this.demoS * 6) * 0.18,
-            beatPhase: -1,
-            phase: (this.demoS * 7) % 1,
-            tangle: 0,
-            cum: [this.demoS * 2, this.demoS * 2],
-            held: [false, false],
-            babiMood: 0.7,
-            showDials: false,
-            showHint: false,
-          }
-        : {
-            level: this.level,
-            path: this.level.path,
-            ballS: this.ballS,
-            gates: this.gates,
-            nextGate: this.nextGate,
-            sway: this.sway,
-            beatPhase: this.beatPhase,
-            phase: this.beatPhase >= 0 ? this.beatPhase : 0.5,
-            tangle: this.tangle,
-            cum: this.cum,
-            held: held,
-            babiMood: this.babiMood,
-            showDials: true,
-            showHint: this.state === "countin",
-          };
+      const tilt = demo ? demoTilt : clamp((this.hands[1] - this.hands[0]) * 0.5, -1, 1);
+      const scene = {
+        level: demo ? demoLevel : this.level,
+        tilt: tilt,
+        pearlU: demo ? Math.sin(this.demoT * 1.6) * 0.55 : this.pearlU,
+        pearlV: demo ? 0 : this.pearlV,
+        gates: demo ? [] : this.gates,
+        nextGate: demo ? 0 : this.nextGate,
+        phase: this.beatPhase >= 0 ? this.beatPhase : (this.demoT * 1.6) % 1,
+        hands: demo ? [-demoTilt, demoTilt] : this.hands,
+        babiMood: demo ? 0.7 : this.babiMood,
+        showBars: !demo,
+        showHands: this.state === "countin" || (this.state === "playing" && this.li === 0 && this.el.hudProgress.style.width.replace("%", "") < 25),
+        mode: this.mode,
+        pal0: "#ff9ecb",
+        pal1: "#8ff0e2",
+        shake: this.shake,
+      };
 
+      if (demo) scene.hands = [-demoTilt, demoTilt];
       this.stage.draw(scene, dt);
       requestAnimationFrame(this.frame);
     };

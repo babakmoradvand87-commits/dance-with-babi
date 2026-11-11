@@ -512,3 +512,25 @@ kbd {
 @media (max-width: 420px) {
   .level-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Persian notes ───────────────────────────────────────── */
+.tagline.fa {
+  margin-top: 10px;
+  font-size: 13px;
+  opacity: 0.72;
+  line-height: 1.9;
+}
+.steps.fa {
+  margin: 4px 0 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.steps.fa p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 2;
+  color: rgba(240, 232, 255, 0.82);
+}
+.steps.fa b { color: #ffd28a; }
