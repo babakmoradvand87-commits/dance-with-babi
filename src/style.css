@@ -50,6 +50,10 @@ body { touch-action: none; }
 #backdrop {
   position: fixed;
   inset: 0;
+  /* pin to the LARGE viewport: iOS Safari resizes 100dvh when the URL bar
+     collapses a second after load, which made the poster visibly jump */
+  height: 100vh;
+  height: 100lvh;
   background-size: cover;
   background-position: center 22%;
 }
@@ -795,10 +799,14 @@ kbd {
 
 /* ── the entry screen: the key-art poster itself, ONE button ── */
 #screen-login {
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  /* fixed to the viewport itself (not the padded grid) and pinned to the
+     large viewport height, so the iOS toolbar collapse cannot shake it */
+  position: fixed;
+  inset: 0;
+  width: auto;
   max-width: none;
+  height: 100vh;
+  height: 100lvh;
   max-height: none;
   overflow: hidden;
   background: #08050f;
