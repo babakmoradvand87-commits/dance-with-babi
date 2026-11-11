@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<title>Dance with Babi — a duet for one screen</title>
+<meta name="description" content="Dance with Babi is a two-player dancing game for one screen. Each of you owns a dial: turn together, roll the pearl along the choreography and meet every ring exactly on the beat." />
+<meta name="theme-color" content="#08050f" />
+<meta property="og:title" content="Dance with Babi" />
+<meta property="og:description" content="A two-player dancing game for one screen. Turn together, follow the pearl, meet the rings on the beat." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0714'/%3E%3Ccircle cx='25' cy='32' r='13' fill='none' stroke='%23ff9ecb' stroke-width='3'/%3E%3Ccircle cx='39' cy='32' r='13' fill='none' stroke='%238ff0e2' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23ffd28a'/%3E%3C/svg%3E" />
+<!-- /* INLINE:STYLE */ -->
+</head>
+<body>
+<canvas id="stage" aria-label="Dance with Babi play field"></canvas>
+
+<div id="ui">
+  <!-- ─────────────────────────── HUD ─────────────────────────── -->
+  <header id="topbar" class="hidden">
+    <button class="icon-btn" id="btn-pause" aria-label="Pause">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="5" width="3.4" height="14" rx="1.4"/><rect x="13.6" y="5" width="3.4" height="14" rx="1.4"/></svg>
+    </button>
+    <div class="level-chip">
+      <span id="hud-level">First Bow</span>
+      <div class="progress"><i id="hud-progress"></i></div>
+    </div>
+    <div class="score-wrap">
+      <span id="hud-score">0</span>
+      <small id="hud-combo"></small>
+    </div>
+    <button class="icon-btn" id="btn-sound" aria-label="Toggle sound">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="on"><path d="M4 9.5h3.2L12 6v12L7.2 14.5H4z"/><path d="M15.6 8.6a4.8 4.8 0 0 1 0 6.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18.2 6a8.2 8.2 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="off"><path d="M4 9.5h3.2L12 6v12L7.2 14.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+
+  <div id="countin" class="hidden"><b>3</b></div>
+  <div id="hint" class="hidden">turn both dials together</div>
+  <div id="judge" aria-live="polite"></div>
+
+  <!-- ──────────────────────── SCREENS ──────────────────────── -->
+  <main id="screens">
+
+    <!-- TITLE -->
+    <section class="screen" id="screen-title">
+      <div class="panel title-panel">
+        <div class="emblem">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <defs>
+              <linearGradient id="emb-a" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ffb3d9"/><stop offset="1" stop-color="#ff8ab8"/>
+              </linearGradient>
+              <linearGradient id="emb-b" x1="1" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#8ff0e2"/><stop offset="1" stop-color="#69c7ff"/>
+              </linearGradient>
+              <radialGradient id="emb-p" cx="0.35" cy="0.3" r="0.8">
+                <stop offset="0" stop-color="#fffdf6"/><stop offset="0.55" stop-color="#ffd28a"/><stop offset="1" stop-color="#ffab5e"/>
+              </radialGradient>
+            </defs>
+            <circle cx="45" cy="60" r="28" fill="none" stroke="url(#emb-a)" stroke-width="2.6" opacity=".95"/>
+            <circle cx="75" cy="60" r="28" fill="none" stroke="url(#emb-b)" stroke-width="2.6" opacity=".95"/>
+            <circle cx="60" cy="60" r="9" fill="url(#emb-p)"/>
+          </svg>
+        </div>
+        <h1>Dance<span class="with">with</span>Babi</h1>
+        <p class="tagline">A duet for two players and one screen.<br/>Turn together, and the pearl will dance.</p>
+        <div class="title-actions">
+          <button class="btn primary" data-go="levels">Begin the dance</button>
+          <button class="btn ghost" data-go="howto">How to play</button>
+        </div>
+        <p class="foot-note">inspired by <em>Bounden</em> · built with plain canvas &amp; web audio</p>
+      </div>
+    </section>
+
+    <!-- LEVEL SELECT -->
+    <section class="screen hidden" id="screen-levels">
+      <div class="panel wide">
+        <div class="panel-head">
+          <h2>Choose a dance</h2>
+          <button class="icon-btn small" data-go="title" aria-label="Back">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="mode-switch" role="group" aria-label="Mode">
+          <button class="seg active" data-mode="duet">Duet · 2 players</button>
+          <button class="seg" data-mode="solo">Solo · one pair of hands</button>
+        </div>
+
+        <div id="level-grid" class="level-grid"></div>
+
+        <div class="panel-foot">
+          <div class="hint">
+            <kbd>A</kbd><kbd>D</kbd> player one &nbsp;·&nbsp; <kbd>←</kbd><kbd>→</kbd> player two &nbsp;·&nbsp; on touch: turn your dial
+          </div>
+          <button class="btn tiny ghost" data-go="howto">How to play</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW TO PLAY -->
+    <section class="screen hidden" id="screen-howto">
+      <div class="panel wide">
+        <div class="panel-head">
+          <h2>How to dance</h2>
+          <button class="icon-btn small" data-go="levels" aria-label="Back">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <ol class="steps">
+          <li>
+            <span class="num">1</span>
+            <div>
+              <h3>Take a dial each</h3>
+              <p>Hold one device with both hands: player one owns the left dial, player two the right one. On a keyboard, player one uses <kbd>A</kbd>/<kbd>D</kbd> and player two <kbd>←</kbd>/<kbd>→</kbd>.</p>
+            </div>
+          </li>
+          <li>
+            <span class="num">2</span>
+            <div>
+              <h3>Turn together</h3>
+              <p>The pearl only moves by the <em>average</em> of both dials, so nobody can carry the dance alone. Turn both dials the same way — clockwise rolls forward.</p>
+            </div>
+          </li>
+          <li>
+            <span class="num">3</span>
+            <div>
+              <h3>Meet the rings on the beat</h3>
+              <p>Every golden ring is one beat of the waltz. Pass a ring exactly when it sounds: <em>perfect</em>, <em>good</em>, <em>early</em>, <em>late</em>. Keep a steady, gentle turn and the whole piece lines up.</p>
+            </div>
+          </li>
+          <li>
+            <span class="num">4</span>
+            <div>
+              <h3>Keep the ribbon</h3>
+              <p>If you twist against each other the ribbon between you frays and your combo snaps. Stay together — that is the whole dance.</p>
+            </div>
+          </li>
+        </ol>
+        <div class="panel-foot">
+          <div class="hint">Headphones help. Volume is your friend, the music is your metronome.</div>
+          <button class="btn primary" data-go="levels">I'm ready</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAUSE -->
+    <section class="screen hidden" id="screen-pause">
+      <div class="panel">
+        <h2>Intermission</h2>
+        <p class="tagline">Catch your breath. The music is waiting.</p>
+        <div class="stack">
+          <button class="btn primary" data-pause="resume">Keep dancing</button>
+          <button class="btn ghost" data-pause="restart">Start this dance again</button>
+          <button class="btn ghost" data-pause="quit">Back to the dances</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="screen hidden" id="screen-results">
+      <div class="panel">
+        <p class="kicker" id="res-kicker">Dance complete</p>
+        <h2 id="res-title">First Bow</h2>
+        <div class="stars" id="res-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9z"/></svg>
+        </div>
+        <p class="res-score"><span id="res-score">0</span><small id="res-best"></small></p>
+        <div class="res-breakdown" id="res-breakdown"></div>
+        <div class="stack row">
+          <button class="btn ghost" data-go="levels">Dances</button>
+          <button class="btn primary" id="btn-again">Again</button>
+          <button class="btn ghost hidden" id="btn-next">Next dance</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- /* INLINE:SCRIPT */ -->
+</body>
+</html>
