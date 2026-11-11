@@ -146,7 +146,7 @@
 
     /* ── level list ────────────────────────────────────────── */
     unlocked() {
-      return clamp(Number(store.get("dwb.unlocked", 1)) || 1, 1, LEVELS.length);
+      return LEVELS.length;
     }
 
     best(id) { return store.get("dwb.best." + id, null); }
@@ -173,7 +173,7 @@
         p.textContent = lv.subtitle;
         const meta = document.createElement("div");
         meta.className = "lc-meta";
-        meta.textContent = lv.gates + " rings · " + lv.bpm + " bpm";
+        meta.textContent = (lv.style ? lv.style + " · " : "") + lv.bpm + " bpm · " + lv.gates + " rings";
         body.appendChild(h);
         body.appendChild(p);
         body.appendChild(meta);
@@ -193,7 +193,7 @@
         } else {
           const m2 = document.createElement("div");
           m2.className = "lc-meta";
-          m2.textContent = locked ? "finish the dance before it" : "not danced yet";
+          m2.textContent = "not danced yet";
           body.appendChild(m2);
         }
 
@@ -614,18 +614,19 @@
       this.mx += this.vx * dt;
       this.mz += this.vz * dt;
 
-      const LIM = 0.97;
-      if (this.mx > LIM || this.mx < -LIM) {
-        const hard = Math.abs(this.vx) > RIM_PENALTY;
-        this.mx = this.mx > 0 ? LIM : -LIM;
-        this.vx = -this.vx * RIM_BOUNCE;
-        if (hard) this.hitTheEnd(1);
-      }
-      if (this.mz > LIM || this.mz < -LIM) {
-        const hard = Math.abs(this.vz) > RIM_PENALTY;
-        this.mz = this.mz > 0 ? LIM : -LIM;
-        this.vz = -this.vz * RIM_BOUNCE;
-        if (hard) this.hitTheEnd(1);
+      /* no walls: if you run away from the dance, an invisible leash
+         simply pulls the pearl back towards the ring you owe */
+      const g0 = this.gates[this.nextGate];
+      if (g0) {
+        const dx = g0.x - this.mx, dz = g0.z - this.mz;
+        const far = Math.hypot(dx, dz);
+        if (far > 7.5) {
+          const pull = Math.min(1, (far - 7.5) * 0.9 * dt);
+          this.mx += dx * pull;
+          this.mz += dz * pull;
+          this.vx *= 1 - 0.9 * dt;
+          this.vz *= 1 - 0.9 * dt;
+        }
       }
 
       /* count-in */

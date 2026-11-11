@@ -24,6 +24,16 @@
   const ARP_PATTERN = [1, 0.5, 0.72, 0.44, 0.82, 0.56];
   const PENTA = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22, 24];
 
+  /* one entry per feel: where the kick, the snare, the hats, the bass and
+     the lead land inside a bar of `stepsPerBar` eighth notes */
+  const DRUMS = {
+    waltz: { kick: [0], snare: [], hat: [3], bass: [0, 3], lead: [2, 5] },
+    house: { kick: [0, 4], snare: [2, 6], hat: [1, 3, 5, 7], bass: [0, 4], lead: [2, 6] },
+    pop: { kick: [0], snare: [4], hat: [2, 6], bass: [0, 4], lead: [3, 7] },
+    afro: { kick: [0, 3, 6], snare: [2, 5], hat: [1, 3, 5, 7], bass: [0, 3, 6], lead: [1, 4, 7] },
+    break: { kick: [0, 6], snare: [4], hat: [1, 2, 3, 5, 6, 7], bass: [0, 4], lead: [2, 5] },
+  };
+
   class Sound {
     constructor() {
       this.ctx = null;
@@ -206,30 +216,40 @@
     }
 
     _emit(n, when) {
-      const spb = this.level.spb;
-      n = n + 600000; /* keep the grid positive, it is periodic anyway */
-      const bar = Math.floor(n / 6);
-      const chord = PROG[bar % PROG.length];
-      const beat = (n % 6) / 2; /* 0, 0.5, 1, 1.5, 2, 2.5 */
+      const L = this.level;
+      const spb = L.spb;
+      const per = L.stepsPerBar || 6;
+      n = n + 600000 * per;            /* keep the grid positive: it is periodic */
+      const bar = Math.floor(n / per);
+      const st = n % per;
+      const prog = L.prog || PROG;
+      const chord = prog[bar % prog.length];
+      const mel = L.mel || MELODY;
+      const D = DRUMS[L.drums] || DRUMS.waltz;
+      const e = spb / 2;               /* an eighth */
 
-      if (n % 6 === 0) {
-        this._pad(chord, when, spb * 3.1);
-        this._bass(midi(chord[0] - 12), when, spb * 1.6, 0.16);
-      }
-      if (n % 6 === 3) {
-        this._bass(midi(chord[0] - 5), when, spb * 0.8, 0.08);
+      if (st === 0) this._pad(chord, when, e * per * 1.02);
+
+      for (let i = 0; i < D.bass.length; i++) {
+        if (D.bass[i] === st) {
+          const up = i % 2 === 1;
+          this._bass(midi(chord[0] - 12 + (up ? 7 : 0)), when, e * 1.7, up ? 0.10 : 0.16);
+        }
       }
 
-      const arp = chord[n % 3] + 12 + (n % 12 === 11 ? 12 : 0);
-      this._harp(midi(arp), when, 0.07 * ARP_PATTERN[n % ARP_PATTERN.length]);
+      const arp = chord[st % chord.length] + 12 + (st === per - 1 ? 12 : 0);
+      this._harp(midi(arp), when, 0.055 * ARP_PATTERN[st % ARP_PATTERN.length]);
 
-      if (n % 6 === 2 || n % 6 === 5) {
-        const mel = MELODY[bar % MELODY.length] + (n % 12 > 5 ? 0 : 0);
-        this._bell(midi(mel), when, 0.05);
+      for (let i = 0; i < D.lead.length; i++) {
+        if (D.lead[i] === st) {
+          const lift = st > per / 2 ? 12 : 0;
+          this._bell(midi(mel[bar % mel.length] + lift), when, 0.045);
+        }
       }
-      if (n % 6 === 0) this._tick(when, 0.045);
-      if (n % 6 === 3) this._tick(when, 0.022);
-      void beat;
+
+      if (D.kick.indexOf(st) >= 0) this._kick(when, 0.30);
+      if (D.snare.indexOf(st) >= 0) this._snare(when, L.drums === "break" ? 0.10 : 0.085);
+      if (D.hat.indexOf(st) >= 0) this._hat(when, L.drums === "break" ? 0.030 : 0.038);
     }
 
     /* ── instruments ───────────────────────────────────────── */
@@ -326,6 +346,56 @@
       g2.connect(g);
       o.start(when); o.stop(when + dur + 0.05);
       o2.start(when); o2.stop(when + dur + 0.05);
+    }
+
+    _kick(when, peak) {
+      const ctx = this.ctx;
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.setValueAtTime(136, when);
+      o.frequency.exponentialRampToValueAtTime(44, when + 0.12);
+      const g = ctx.createGain();
+      this._env(g, when, 0.004, 0.26, peak);
+      o.connect(g);
+      g.connect(this.musicGain);
+      o.start(when);
+      o.stop(when + 0.32);
+    }
+
+    _snare(when, peak) {
+      const ctx = this.ctx;
+      const src = ctx.createBufferSource();
+      src.buffer = this.noise;
+      const bp = ctx.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.value = 1900;
+      bp.Q.value = 0.8;
+      const g = ctx.createGain();
+      this._env(g, when, 0.002, 0.15, peak);
+      src.connect(bp); bp.connect(g); g.connect(this.musicGain);
+      src.start(when);
+      src.stop(when + 0.2);
+      const o = ctx.createOscillator();
+      o.type = "triangle";
+      o.frequency.value = 186;
+      const g2 = ctx.createGain();
+      this._env(g2, when, 0.003, 0.09, peak * 0.55);
+      o.connect(g2); g2.connect(this.musicGain);
+      o.start(when); o.stop(when + 0.14);
+    }
+
+    _hat(when, peak) {
+      const ctx = this.ctx;
+      const src = ctx.createBufferSource();
+      src.buffer = this.noise;
+      const bp = ctx.createBiquadFilter();
+      bp.type = "highpass";
+      bp.frequency.value = 6800;
+      const g = ctx.createGain();
+      this._env(g, when, 0.001, 0.045, peak);
+      src.connect(bp); bp.connect(g); g.connect(this.musicGain);
+      src.start(when);
+      src.stop(when + 0.08);
     }
 
     _tick(when, peak) {
