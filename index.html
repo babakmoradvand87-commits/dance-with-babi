@@ -102,6 +102,35 @@ body { touch-action: none; }
 
 .hidden { display: none !important; }
 
+/* ── install banner (menus only) ─────────────────────────── */
+#install-banner {
+  position: fixed;
+  top: calc(10px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(92vw, 520px);
+  padding: 8px 10px 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 210, 138, 0.38);
+  background: linear-gradient(180deg, rgba(30, 19, 44, 0.5), rgba(12, 7, 22, 0.62));
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+  animation: fadeUp 0.4s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+#install-banner span {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ─────────────────────────── HUD ─────────────────────────── */
 #topbar {
   position: absolute;
@@ -1006,6 +1035,15 @@ kbd {
     </section>
 
   </main>
+
+  <!-- install banner — visible on menus only, when the browser offers install -->
+  <div id="install-banner" class="hidden">
+    <span id="install-text">Install Dance with Babi — play offline</span>
+    <button class="btn tiny primary" id="install-btn" type="button">Install</button>
+    <button class="icon-btn small" id="install-x" type="button" aria-label="Dismiss">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
 </div>
 
 <script>
@@ -3672,6 +3710,7 @@ kbd {
         resBest: document.getElementById("res-best"),
         resBreak: document.getElementById("res-breakdown"),
         startBtn: document.getElementById("btn-start"),
+        installBanner: document.getElementById("install-banner"),
         titleNames: document.getElementById("title-names"),
         again: document.getElementById("btn-again"),
         next: document.getElementById("btn-next"),
@@ -3785,6 +3824,9 @@ kbd {
       /* before a dance starts, the poster is the backdrop of every menu */
       const MENU = { login: 1, title: 1, levels: 1, howto: 1 };
       if (this.el.backdrop) this.el.backdrop.classList.toggle("hidden", !MENU[name]);
+      /* the install banner lives on the menus only, and only when the
+         browser actually offers an install (or iOS shows the hint) */
+      if (this.el.installBanner) this.el.installBanner.classList.toggle("hidden", !(MENU[name] && window.__dwbInstallReady));
       /* a service-worker update arrived while a dance was running:
          apply it now that we are back at a menu */
       if (window.__dwbPendingReload && MENU[name]) {
@@ -4566,6 +4608,47 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || location.
     }
   });
 }
+</script>
+<script>
+/* install banner — Android/Chrome fires beforeinstallprompt; iOS needs the Share hint.
+   The banner itself is shown on menu screens only (game.js toggles it in show()). */
+(function () {
+  var banner = document.getElementById("install-banner");
+  if (!banner) return;
+  try { if (localStorage.getItem("dwb.noInstall")) return; } catch (e) { /* noop */ }
+  var standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+  if (standalone) return; /* already installed */
+  var text = document.getElementById("install-text");
+  var btn = document.getElementById("install-btn");
+  var x = document.getElementById("install-x");
+  var deferred = null;
+  window.__dwbInstallReady = false;
+  function ready(msg, showBtn) {
+    text.textContent = msg;
+    btn.classList.toggle("hidden", !showBtn);
+    window.__dwbInstallReady = true;
+  }
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferred = e;
+    ready("Install Dance with Babi — play offline · نصب بازی روی گوشی", true);
+  });
+  btn.addEventListener("click", function () {
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.then(function (c) { if (c.outcome === "accepted") window.__dwbInstallReady = false; });
+    deferred = null;
+  });
+  x.addEventListener("click", function () {
+    window.__dwbInstallReady = false;
+    banner.classList.add("hidden");
+    try { localStorage.setItem("dwb.noInstall", "1"); } catch (e) { /* noop */ }
+  });
+  var ua = navigator.userAgent || "";
+  if (/iPad|iPhone|iPod/.test(ua)) {
+    ready("iOS: Share ⬆︎ → Add to Home Screen · آیفون: Share → Add to Home Screen", false);
+  }
+})();
 </script>
 </body>
 </html>

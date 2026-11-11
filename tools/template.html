@@ -219,6 +219,15 @@
     </section>
 
   </main>
+
+  <!-- install banner — visible on menus only, when the browser offers install -->
+  <div id="install-banner" class="hidden">
+    <span id="install-text">Install Dance with Babi — play offline</span>
+    <button class="btn tiny primary" id="install-btn" type="button">Install</button>
+    <button class="icon-btn small" id="install-x" type="button" aria-label="Dismiss">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
 </div>
 
 <!-- /* INLINE:SCRIPT */ -->
@@ -240,6 +249,47 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || location.
     }
   });
 }
+</script>
+<script>
+/* install banner — Android/Chrome fires beforeinstallprompt; iOS needs the Share hint.
+   The banner itself is shown on menu screens only (game.js toggles it in show()). */
+(function () {
+  var banner = document.getElementById("install-banner");
+  if (!banner) return;
+  try { if (localStorage.getItem("dwb.noInstall")) return; } catch (e) { /* noop */ }
+  var standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+  if (standalone) return; /* already installed */
+  var text = document.getElementById("install-text");
+  var btn = document.getElementById("install-btn");
+  var x = document.getElementById("install-x");
+  var deferred = null;
+  window.__dwbInstallReady = false;
+  function ready(msg, showBtn) {
+    text.textContent = msg;
+    btn.classList.toggle("hidden", !showBtn);
+    window.__dwbInstallReady = true;
+  }
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferred = e;
+    ready("Install Dance with Babi — play offline · نصب بازی روی گوشی", true);
+  });
+  btn.addEventListener("click", function () {
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.then(function (c) { if (c.outcome === "accepted") window.__dwbInstallReady = false; });
+    deferred = null;
+  });
+  x.addEventListener("click", function () {
+    window.__dwbInstallReady = false;
+    banner.classList.add("hidden");
+    try { localStorage.setItem("dwb.noInstall", "1"); } catch (e) { /* noop */ }
+  });
+  var ua = navigator.userAgent || "";
+  if (/iPad|iPhone|iPod/.test(ua)) {
+    ready("iOS: Share ⬆︎ → Add to Home Screen · آیفون: Share → Add to Home Screen", false);
+  }
+})();
 </script>
 </body>
 </html>

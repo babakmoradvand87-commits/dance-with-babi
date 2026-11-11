@@ -71,6 +71,7 @@
         resBest: document.getElementById("res-best"),
         resBreak: document.getElementById("res-breakdown"),
         startBtn: document.getElementById("btn-start"),
+        installBanner: document.getElementById("install-banner"),
         titleNames: document.getElementById("title-names"),
         again: document.getElementById("btn-again"),
         next: document.getElementById("btn-next"),
@@ -184,6 +185,9 @@
       /* before a dance starts, the poster is the backdrop of every menu */
       const MENU = { login: 1, title: 1, levels: 1, howto: 1 };
       if (this.el.backdrop) this.el.backdrop.classList.toggle("hidden", !MENU[name]);
+      /* the install banner lives on the menus only, and only when the
+         browser actually offers an install (or iOS shows the hint) */
+      if (this.el.installBanner) this.el.installBanner.classList.toggle("hidden", !(MENU[name] && window.__dwbInstallReady));
       /* a service-worker update arrived while a dance was running:
          apply it now that we are back at a menu */
       if (window.__dwbPendingReload && MENU[name]) {
