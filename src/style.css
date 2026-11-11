@@ -265,18 +265,27 @@ body { touch-action: none; }
   position: relative;
   border: 1px solid transparent;
   border-radius: 28px;
-  /* a gold hairline drawn as a gradient border */
+  /* frosted glass: the key-art poster behind the menu shows through,
+     blurred — with a gold hairline drawn as a gradient border */
   background:
-    linear-gradient(180deg, rgba(22, 14, 34, 0.88), rgba(11, 7, 20, 0.92)) padding-box,
+    linear-gradient(180deg, rgba(24, 15, 38, 0.38), rgba(10, 6, 19, 0.52)) padding-box,
     linear-gradient(150deg, rgba(255, 210, 138, 0.55), rgba(255, 158, 203, 0.16) 40%, rgba(143, 240, 226, 0.30)) border-box;
-  backdrop-filter: blur(26px) saturate(120%);
-  -webkit-backdrop-filter: blur(26px) saturate(120%);
+  backdrop-filter: blur(26px) saturate(150%) brightness(1.12);
+  -webkit-backdrop-filter: blur(26px) saturate(150%) brightness(1.12);
   box-shadow:
     0 30px 90px rgba(0, 0, 0, 0.62),
     0 2px 0 rgba(255, 255, 255, 0.05) inset,
     0 40px 120px -40px rgba(255, 158, 203, 0.22);
   padding: 32px 26px;
   text-align: center;
+}
+/* browsers without backdrop-filter get a solid dark panel instead of glass */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .panel {
+    background:
+      linear-gradient(180deg, rgba(24, 15, 38, 0.92), rgba(10, 6, 19, 0.95)) padding-box,
+      linear-gradient(150deg, rgba(255, 210, 138, 0.55), rgba(255, 158, 203, 0.16) 40%, rgba(143, 240, 226, 0.30)) border-box;
+  }
 }
 .panel.wide { padding: 22px 24px 18px; text-align: left; }
 
@@ -460,8 +469,10 @@ kbd {
   text-align: left;
   padding: 12px;
   border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  background: linear-gradient(150deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   color: inherit;
   cursor: pointer;
   overflow: hidden;
