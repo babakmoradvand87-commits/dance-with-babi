@@ -440,6 +440,13 @@
       cv.addEventListener("pointercancel", release);
       cv.addEventListener("pointerleave", release);
 
+      /* two thumbs held down must never select the page or raise the
+         iOS callout — kill the native touch gestures on the play field */
+      ["touchstart", "touchmove"].forEach((t) =>
+        cv.addEventListener(t, (e) => e.preventDefault(), { passive: false })
+      );
+      cv.addEventListener("contextmenu", (e) => e.preventDefault());
+
       window.addEventListener("touchstart", () => this.askGyro(), { passive: true });
       window.addEventListener("pointerdown", () => {
         if (!this.gyroLive()) this.askGyro();
