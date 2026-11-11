@@ -1,8 +1,8 @@
 /* ──────────────────────────────────────────────────────────────
    Dance with Babi — game.js
-   Two players hold one plank. Raise your end and the pearl rolls
-   toward your partner; lower it and it comes back. The whole dance
-   is one long swing you have to keep in time.
+   The phone is a tray, and a marble rolls on it. Tip the phone any
+   way at all and the marble runs downhill; your job is to land it
+   in the next ring exactly when the waltz beats.
    ────────────────────────────────────────────────────────────── */
 (function () {
   const DWB = window.DWB;
@@ -11,18 +11,18 @@
   const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
 
-  const KEY_RATE = 2.6;      /* how fast a key raises your end */
-  const GRAB_RANGE = 0.30;   /* fraction of the screen height for a full raise */
-  const SPRING = 5.5;        /* how quickly an end falls back when let go */
+  const GRAB_RANGE = 0.24;   /* fraction of the screen for a full tilt */
   const GRIP_GRACE = 0.45;   /* you may lose your grip for this long */
-  const END_BOUNCE = 0.34;
-  const END_PENALTY = 0.55;  /* how hard the pearl must hit the end to count */
+  const PAD_RATE = 3.2;      /* how fast a key tips the tray */
+  const RIM_BOUNCE = 0.42;
+  const RIM_PENALTY = 0.9;   /* how hard the marble must hit the rim to count */
+  const FOLLOW = 22;         /* how quickly the tray answers your hands */
 
-  /* judged on the beat: how close is the pearl to the ring when the music lands */
+  /* judged on the beat: how close is the marble to the ring centre */
   const JUDGE = [
-    { d: 0.15, q: 3, points: 100, label: "perfect" },
-    { d: 0.30, q: 2, points: 60, label: "good" },
-    { d: 0.46, q: 1, points: 30, label: "on the edge" },
+    { d: "perfect", q: 3, points: 100, label: "perfect" },
+    { d: "good", q: 2, points: 60, label: "good" },
+    { d: "edge", q: 1, points: 30, label: "on the edge" },
   ];
 
   const store = {
@@ -75,14 +75,13 @@
       this.level = null;
       this.gates = [];
       this.nextGate = 0;
-      this.hands = [0, 0];
       this.heldBy = [false, false];
       this.lostGrip = 0;
       this.gripped = false;
-      this.pearlU = 0;
-      this.pearlV = 0;
-      this.prevU = 0;
-      this.prevT = -0.001;
+      this.mx = 0; this.mz = 0;          /* the marble, in tray units */
+      this.vx = 0; this.vz = 0;
+      this.tiltX = 0; this.tiltY = 0;    /* where the tray is tipped right now */
+      this.pads = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
       this.score = 0;
       this.combo = 0;
       this.maxCombo = 0;
@@ -90,7 +89,7 @@
       this.babiMood = 0;
       this.beatPhase = -1;
       this.pointers = new Map();
-      this.keys = { w: 0, s: 0, up: 0, down: 0 };
+      this.keys = { w: 0, s: 0, a: 0, d: 0, up: 0, down: 0, left: 0, right: 0 };
       this.lastT = 0;
       this.resumeState = "playing";
       this.shake = 0;
@@ -285,10 +284,11 @@
       el.classList.toggle("live", gyro);
     }
 
-    /* ── input: raise and lower your end of the plank ──────── */
-    zoneFor(x) {
+    /* ── input: two thumbs, one at each end of the phone ───── */
+    zoneFor(y) {
       if (this.mode === "solo") return 0;
-      return x < this.stage.w / 2 ? 0 : 1;
+      /* player one holds the near end (bottom), player two the far end */
+      return y < this.stage.h * 0.5 ? 1 : 0;
     }
 
     bindInput() {
@@ -303,8 +303,8 @@
         this.askGyro();
         if (this.state !== "playing" && this.state !== "countin") return;
         const p = pos(e);
-        const zone = this.zoneFor(p.x);
-        this.pointers.set(e.pointerId, { zone: zone, anchorY: p.y, value: 0 });
+        const zone = this.zoneFor(p.y);
+        this.pointers.set(e.pointerId, { zone: zone, ax: p.x, ay: p.y, x: 0, y: 0 });
         this.heldBy[zone] = true;
         if (this.mode === "solo") this.heldBy = [true, true];
         try { cv.setPointerCapture(e.pointerId); } catch (err) { /* noop */ }
@@ -314,24 +314,23 @@
       cv.addEventListener("pointermove", (e) => {
         const d = this.pointers.get(e.pointerId);
         if (!d) return;
-        if (this.gyroLive()) { e.preventDefault(); return; }
-        const p = pos(e);
-        const v = clamp((d.anchorY - p.y) / (this.stage.h * GRAB_RANGE), -1, 1);
-        d.value = v;
-        if (this.state !== "playing" && this.state !== "countin") return;
-        if (this.mode === "solo") {
-          this.hands[0] = -v;
-          this.hands[1] = v;
-        } else {
-          this.hands[d.zone] = v;
-        }
         e.preventDefault();
+        if (this.gyroLive()) return;         /* the gyroscope is steering */
+        /* with no gyroscope, a drag becomes a little joystick */
+        const p = pos(e);
+        const sc = this.stage.h * GRAB_RANGE;
+        d.x = clamp((p.x - d.ax) / sc, -1, 1);
+        d.y = clamp((d.ay - p.y) / sc, -1, 1);
+        this.pads[d.zone].x = d.x;
+        this.pads[d.zone].y = d.y;
       });
 
       const release = (e) => {
         const d = this.pointers.get(e.pointerId);
         if (d) {
           this.heldBy[d.zone] = false;
+          this.pads[d.zone].x = 0;
+          this.pads[d.zone].y = 0;
           if (this.mode === "solo") this.heldBy = [false, false];
         }
         this.pointers.delete(e.pointerId);
@@ -358,10 +357,14 @@
           return;
         }
         switch (e.code) {
-          case "KeyW": case "KeyA": this.keys.w = 1; break;
-          case "KeyS": case "KeyD": this.keys.s = 1; break;
+          case "KeyW": this.keys.w = 1; break;
+          case "KeyS": this.keys.s = 1; break;
+          case "KeyA": this.keys.a = 1; break;
+          case "KeyD": this.keys.d = 1; break;
           case "ArrowUp": this.keys.up = 1; e.preventDefault(); break;
           case "ArrowDown": this.keys.down = 1; e.preventDefault(); break;
+          case "ArrowLeft": this.keys.left = 1; e.preventDefault(); break;
+          case "ArrowRight": this.keys.right = 1; e.preventDefault(); break;
           case "Escape": case "KeyP":
             if (this.state === "playing" || this.state === "countin" || this.state === "paused") {
               this.togglePause();
@@ -375,16 +378,20 @@
 
       window.addEventListener("keyup", (e) => {
         switch (e.code) {
-          case "KeyW": case "KeyA": this.keys.w = 0; break;
-          case "KeyS": case "KeyD": this.keys.s = 0; break;
+          case "KeyW": this.keys.w = 0; break;
+          case "KeyS": this.keys.s = 0; break;
+          case "KeyA": this.keys.a = 0; break;
+          case "KeyD": this.keys.d = 0; break;
           case "ArrowUp": this.keys.up = 0; break;
           case "ArrowDown": this.keys.down = 0; break;
+          case "ArrowLeft": this.keys.left = 0; break;
+          case "ArrowRight": this.keys.right = 0; break;
           default: break;
         }
       });
 
       window.addEventListener("blur", () => {
-        this.keys.w = this.keys.s = this.keys.up = this.keys.down = 0;
+        this.keys = { w: 0, s: 0, a: 0, d: 0, up: 0, down: 0, left: 0, right: 0 };
         this.pointers.clear();
         this.heldBy = [false, false];
       });
@@ -402,18 +409,19 @@
       this.gates = [];
       for (let k = 0; k < lv.gates; k++) {
         this.gates.push({
-          u: lv.gateU(k),
+          x: lv.gateX(k),
+          z: lv.gateZ(k),
           expected: lv.gateAt(k),
           state: 0, q: 0, flash: 0,
         });
       }
       this.nextGate = 0;
-      this.hands = [0, 0];
       this.heldBy = [false, false];
-      this.pearlU = 0;
-      this.pearlV = 0;
-      this.prevU = 0;
-      this.prevT = -0.001;
+      this.pads = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
+      this.mx = 0; this.mz = 0;
+      this.vx = 0; this.vz = 0;
+      this.tiltX = 0; this.tiltY = 0;
+      if (MOTION) MOTION.setRange(lv.tiltRange);
       this.score = 0;
       this.combo = 0;
       this.maxCombo = 0;
@@ -421,7 +429,7 @@
       this.babiMood = 0;
       this.beatPhase = -1;
       this.pointers.clear();
-      this.keys = { w: 0, s: 0, up: 0, down: 0 };
+      this.keys = { w: 0, s: 0, a: 0, d: 0, up: 0, down: 0, left: 0, right: 0 };
       this.lastCount = null;
       this.shake = 0;
 
@@ -432,10 +440,10 @@
       this.el.topbar.classList.remove("hidden");
       this.el.countin.classList.remove("hidden");
       this.el.hint.textContent = this.gyroLive()
-        ? "hold the phone together — one thumb each — and lean it"
+        ? "one thumb at each end of the phone — then tip it"
         : this.mode === "solo"
-          ? "lift and lower — one long swing"
-          : "lift your own end, then let go";
+          ? "drag anywhere (or WASD) to tip the tray"
+          : "a thumb each: WASD and the arrows — tip it together";
       this.el.hint.classList.remove("hidden");
       this.el.hudLevel.textContent = lv.name;
       this.setControlChip();
@@ -486,63 +494,82 @@
       const live = this.state === "playing" || this.state === "countin";
       if (!live) return;
 
-      /* ── hands ── */
+      /* ── where is the tray tipped right now? ── */
+      const lv = this.level;
       const gyro = this.gyroLive();
+      let tx = 0, ty = 0;
+
       if (gyro) {
-        /* both of you hold the phone: lean it and the plank follows.
-           the thumbs on the glass are the grip — let go and it levels. */
         MOTION.update(dt);
         const grip = this.heldBy[0] && (this.mode === "solo" || this.heldBy[1]);
-        const lean = grip ? MOTION.value : 0;
-        this.hands[0] += (lean - this.hands[0]) * Math.min(1, dt * (grip ? 26 : 8));
-        this.hands[1] = -this.hands[0];
+        if (grip) { tx = MOTION.tx; ty = MOTION.ty; }
         if (!grip && this.gripped) this.lostGrip += dt;
         else this.lostGrip = 0;
         this.gripped = grip;
         if (this.lostGrip > GRIP_GRACE && this.state === "playing") {
           this.lostGrip = 0;
-          this.breakCombo("hold the phone with both hands");
+          this.breakCombo("keep a thumb at each end");
           this.sound.soft("late");
         }
-      }
-
-      const k1 = (this.keys.w ? 1 : 0) - (this.keys.s ? 1 : 0);
-      const k2 = (this.keys.up ? 1 : 0) - (this.keys.down ? 1 : 0);
-      const spring = Math.min(1, dt * SPRING);
-      for (let i = 0; i < 2 && !gyro; i++) {
-        if (this.heldBy[i]) continue;
-        const kd = this.mode === "solo" ? (k1 || k2) : i === 0 ? k1 : k2;
-        if (kd) {
-          this.hands[i] = clamp(this.hands[i] + kd * KEY_RATE * dt, -1, 1);
-          if (this.mode === "solo") {
-            this.hands[0] = -this.hands[1];
+      } else {
+        /* no gyroscope: the two of you push with keys or a drag */
+        const keys = this.keys;
+        const raw = [
+          { x: (keys.d ? 1 : 0) - (keys.a ? 1 : 0), y: (keys.w ? 1 : 0) - (keys.s ? 1 : 0) },
+          { x: (keys.right ? 1 : 0) - (keys.left ? 1 : 0), y: (keys.up ? 1 : 0) - (keys.down ? 1 : 0) },
+        ];
+        for (let i = 0; i < 2; i++) {
+          let d = null;
+          this.pointers.forEach((p) => { if (p.zone === i) d = p; });
+          let wx = 0, wy = 0, stick = false;
+          const canPush = this.heldBy[i] || (!this.gyroLive() && !DWB.isTouch());
+          if (canPush) {
+            wx = raw[i].x; wy = raw[i].y;
+            if (d) { wx = d.x; wy = d.y; stick = true; }
           }
+          /* a thumb is already smooth; a key press needs easing */
+          const f = stick ? 1 : Math.min(1, dt * PAD_RATE * 2);
+          this.pads[i].x += (wx - this.pads[i].x) * f;
+          this.pads[i].y += (wy - this.pads[i].y) * f;
+        }
+        const p0 = this.pads[0], p1 = this.pads[1];
+        if (this.mode === "solo") {
+          tx = p0.x; ty = p0.y;
         } else {
-          this.hands[i] += (0 - this.hands[i]) * spring;
+          /* the tray only tips while the two of you push the same way */
+          const agree = Math.abs(p0.x - p1.x) < 0.5 && Math.abs(p0.y - p1.y) < 0.5;
+          if (agree) { tx = (p0.x + p1.x) * 0.5; ty = (p0.y + p1.y) * 0.5; }
         }
       }
 
-      const lv = this.level;
-      /* the plank only tilts when the two of you disagree: half the
-         difference, so one player alone can never tilt it far enough */
-      const tilt = clamp((this.hands[1] - this.hands[0]) * 0.5, -1, 1);
+      const f2 = Math.min(1, dt * FOLLOW);
+      this.tiltX += (clamp(tx, -1, 1) - this.tiltX) * f2;
+      this.tiltY += (clamp(ty, -1, 1) - this.tiltY) * f2;
+
       const t = this.sound.songTime();
       this.beatPhase = t < 0 ? -1 : (t / lv.spb) % 1;
 
-      /* ── the pearl: the plank's slope sets its speed, and it
-         answers your hands with a short lag, so you must lead ── */
-      const wanted = -lv.speed * tilt;
-      this.pearlV += (wanted - this.pearlV) * Math.min(1, dt / lv.lag);
-      this.pearlU += this.pearlV * dt;
+      /* ── the marble: gravity down the tilted tray, with a little lag ── */
+      const wx = lv.speed * this.tiltX;
+      const wz = -lv.speed * this.tiltY;
+      const kk = Math.min(1, dt / lv.lag);
+      this.vx += (wx - this.vx) * kk;
+      this.vz += (wz - this.vz) * kk;
+      this.mx += this.vx * dt;
+      this.mz += this.vz * dt;
 
-      if (this.pearlU > 1) {
-        this.pearlU = 1;
-        if (this.pearlV > END_PENALTY) this.hitTheEnd(1);
-        this.pearlV = -this.pearlV * END_BOUNCE;
-      } else if (this.pearlU < -1) {
-        this.pearlU = -1;
-        if (this.pearlV < -END_PENALTY) this.hitTheEnd(-1);
-        this.pearlV = -this.pearlV * END_BOUNCE;
+      const LIM = 0.97;
+      if (this.mx > LIM || this.mx < -LIM) {
+        const hard = Math.abs(this.vx) > RIM_PENALTY;
+        this.mx = this.mx > 0 ? LIM : -LIM;
+        this.vx = -this.vx * RIM_BOUNCE;
+        if (hard) this.hitTheEnd(1);
+      }
+      if (this.mz > LIM || this.mz < -LIM) {
+        const hard = Math.abs(this.vz) > RIM_PENALTY;
+        this.mz = this.mz > 0 ? LIM : -LIM;
+        this.vz = -this.vz * RIM_BOUNCE;
+        if (hard) this.hitTheEnd(1);
       }
 
       /* count-in */
@@ -571,10 +598,18 @@
     }
 
     /** every ring is a snapshot: is the pearl inside it when the beat lands? */
+    gripOK() {
+      /* on a phone both thumbs must be on the glass; on a laptop there is
+         nothing to hold, so the keyboard or a drag counts on its own */
+      if (!this.gyroLive() && !DWB.isTouch()) return true;
+      return this.heldBy[0] && (this.mode === "solo" || this.heldBy[1]);
+    }
+
     judgeBeats(t) {
       let guard = 0;
       while (this.nextGate < this.gates.length && t >= this.gates[this.nextGate].expected && guard++ < 8) {
-        this.scoreGate(this.nextGate);
+        if (this.gripOK()) this.scoreGate(this.nextGate);
+        else this.missGate(this.nextGate, "let go");
         this.nextGate++;
       }
     }
@@ -582,14 +617,17 @@
     scoreGate(i) {
       const g = this.gates[i];
       const lv = this.level;
-      const d = Math.abs(this.pearlU - g.u) / Math.max(0.35, lv.amp);
+      const d = Math.hypot(this.mx - g.x, this.mz - g.z);
       let tier = null;
       for (let j = 0; j < JUDGE.length; j++) {
-        if (d <= JUDGE[j].d) { tier = JUDGE[j]; break; }
+        if (d <= lv[JUDGE[j].d]) { tier = JUDGE[j]; break; }
       }
       if (!tier) {
-        const past = (this.pearlV > 0 && this.pearlU > g.u) || (this.pearlV < 0 && this.pearlU < g.u);
-        this.missGate(i, past ? "early" : "late");
+        /* ahead of the ring along the dance, or still behind it? */
+        const nx = lv.gateX(i + 1) - g.x;
+        const nz = lv.gateZ(i + 1) - g.z;
+        const along = (this.mx - g.x) * nx + (this.mz - g.z) * nz;
+        this.missGate(i, along > 0 ? "early" : "late");
         return;
       }
 
@@ -620,17 +658,21 @@
       if (g.state !== 0) return;
       g.state = 2;
       this.counts.miss += 1;
-      this.breakCombo(why === "early" ? "a little early" : why === "late" ? "a little late" : why);
+      this.breakCombo(
+        why === "early" ? "a little early"
+          : why === "late" ? "a little late"
+            : why === "let go" ? "keep a thumb at each end"
+              : why
+      );
       this.sound.soft(why === "early" ? "early" : "late");
       this.setHud();
     }
 
-    hitTheEnd(dir) {
+    hitTheEnd() {
       this.shake = 1;
       this.sound.tangle();
-      if (this.combo > 2) this.popJudge("too far", "bad");
+      if (this.combo > 2) this.popJudge("off the tray", "bad");
       this.breakCombo(null);
-      void dir;
     }
 
     breakCombo(word) {
@@ -718,26 +760,26 @@
       const demoTilt = Math.sin(this.demoT * 1.6) * 0.85;
       const demoLevel = LEVELS[0];
 
-      const tilt = demo ? demoTilt : clamp((this.hands[1] - this.hands[0]) * 0.5, -1, 1);
       const scene = {
         level: demo ? demoLevel : this.level,
-        tilt: tilt,
-        pearlU: demo ? Math.sin(this.demoT * 1.6) * 0.55 : this.pearlU,
-        pearlV: demo ? 0 : this.pearlV,
+        demo: demo,
+        tx: demo ? demoTilt : this.tiltX,
+        ty: demo ? Math.cos(this.demoT * 1.1) * 0.55 : this.tiltY,
+        mx: demo ? Math.sin(this.demoT * 1.6) * 0.45 : this.mx,
+        mz: demo ? Math.cos(this.demoT * 1.1) * 0.28 : this.mz,
+        vx: demo ? 0 : this.vx,
+        vz: demo ? 0 : this.vz,
         gates: demo ? [] : this.gates,
         nextGate: demo ? 0 : this.nextGate,
         phase: this.beatPhase >= 0 ? this.beatPhase : (this.demoT * 1.6) % 1,
-        hands: demo ? [-demoTilt, demoTilt] : this.hands,
+        heldBy: demo ? [true, true] : this.heldBy,
         babiMood: demo ? 0.7 : this.babiMood,
         showBars: !demo,
-        showHands: this.state === "countin" || (this.state === "playing" && this.li === 0 && this.el.hudProgress.style.width.replace("%", "") < 25),
+        showHands: !demo && (this.state === "countin" || (this.state === "playing" && this.li === 0 && this.nextGate < 6)),
         mode: this.mode,
-        pal0: "#ff9ecb",
-        pal1: "#8ff0e2",
         shake: this.shake,
       };
 
-      if (demo) scene.hands = [-demoTilt, demoTilt];
       this.stage.draw(scene, dt);
       requestAnimationFrame(this.frame);
     };

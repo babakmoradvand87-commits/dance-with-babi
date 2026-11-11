@@ -21,18 +21,20 @@
 
 ## فارسی
 
-**Dance with Babi** یک بازی رقص دونفره است با الهام از بازی *Bounden*: **گوشی همان تخته است**. دو نفر گوشی را
-با هم می‌گیرند (هر کدام یک شست روی صفحه) و آن را مثل سینی کج می‌کنند؛ تختهٔ سه‌بعدی روی صفحه کج می‌شود و مروارید
-روی آن می‌غلتد. حلقه‌ها یکی‌یکی روی ضربِ والس می‌آیند و باید مروارید دقیقاً همان لحظه داخل حلقه باشد.
+**Dance with Babi** یک بازی رقص دونفره است با الهام از بازی *Bounden*: **گوشی همان سینی است**. دو نفر گوشی را
+با هم می‌گیرند — یکی از پایین، یکی از بالا — و هر کدام یک شست روی صفحه می‌گذارند. سینی سه‌بعدی روی صفحه دقیقاً
+مثل گوشی کج می‌شود و مروارید به هر طرف که سرازیری باشد می‌غلتد. حلقه‌ها یکی‌یکی روی ضربِ والس می‌آیند و باید
+مروارید دقیقاً همان لحظه داخل حلقه باشد.
 
 **سه قانون، همین:**
 
-1. **گوشی را با هم بگیرید.** ژیروسکوپ گوشی خوانده می‌شود، نه حرکت انگشت. شست‌های شما روی صفحه «گرفتن» تخته‌اند:
-   اگر یکی شستش را بردارد تخته شل می‌شود و مروارید می‌ایستد — پس هیچ‌کس نمی‌تواند تنهایی برقصد.
-2. **شیب = سرعت.** گوشی را کج کنید: سمت پایین‌تر، سرازیری تخته است و مروارید به همان سمت می‌غلتد. گوشی را صاف
-   بگیرید تا مروارید بایستد. هر позی که در آن شروع کنید «صاف» حساب می‌شود؛ برای تنظیم مجدد، بازی را pause و
-   دوباره resume کنید. اگر جهت کج‌شدن برعکس بود، روی برچسب **gyroscope** در نوار بالا بزنید تا برعکس شود.
-   مروارید با یک تأخیر کوتاه (~۱۵۰ میلی‌ثانیه) جواب می‌دهد، پس باید یک ضرب زودتر شروع کنید.
+1. **دو شست، دو سر گوشی.** یکی گوشی را از پایین و دیگری از بالا می‌گیرد و هر کدام یک شست در نیمهٔ خودش روی
+   صفحه می‌گذارد. این دو شست «گرفتن» سینی هستند: اگر یکی برداشته شود سینی صاف می‌شود و دیگر امتیازی نمی‌گیرید.
+2. **به هر طرف که کج کنید.** ژیروسکوپ هر دو محور را می‌خواند، نه فقط چپ/راست: لبهٔ بالا را پایین بگیرید →
+   مروارید دور می‌شود؛ سمت راست را پایین بگیرید → به راست می‌رود؛ مورب → مورب. گوشی را صاف بگیرید تا بایستد.
+   هر позی که هنگام شروع داشته باشید «صاف» حساب می‌شود (برای تنظیم مجدد: pause و دوباره resume)، و اگر جهت
+   برعکس بود روی برچسب **gyroscope** در نوار بالا بزنید. مروارید با ~۱۵۰ میلی‌ثانیه تأخیر جواب می‌دهد،
+   پس یک ضرب زودتر شروع کنید.
 3. **روی ضرب داخل حلقه.** قضاوت لحظه‌ای است: همان‌جا که ضرب می‌خورد، فاصلهٔ مروارید تا حلقه اندازه گرفته
    می‌شود — *perfect* / *good* / *on the edge*. اگر از سر تخته رد شوید، مروارید به دیواره می‌خورد و کمبو می‌شکند.
 
@@ -41,9 +43,10 @@
 
 | | |
 |---|---|
-| 📱 **ژیروسکوپ** | موبایل/تبلت: گوشی را با هم بگیرید و کج کنید (HTTPS لازم است؛ iOS اجازه می‌پرسد) |
-| ⌨️ **جایگزین رومیزی** | لپ‌تاپ بدون ژیروسکوپ: نفر اول `W`/`S`، نفر دوم `↑`/`↓` — یک سر تخته برای هر نفر |
-| 🕺 **حالت تک‌نفره** | یک شست، هر دو سر تخته با هم — برای تمرین |
+| 📱 **ژیروسکوپ دو محوره** | کج کردن گوشی به هر سمت → مروارید همان طرف می‌غلتد (HTTPS لازم است؛ iOS اجازه می‌پرسد) |
+| 👍 **دو شست** | یکی بالا، یکی پایین؛ اگر یکی برداشته شود سینی صاف می‌شود |
+| ⌨️ **جایگزین رومیزی** | `WASD` برای نفر اول، کلیدهای جهت‌دار برای نفر دوم؛ سینی فقط با فشارِ هم‌جهتِ هر دو کج می‌شود |
+| 🕺 **حالت تک‌نفره** | یک نفر، هر دو شست — برای تمرین |
 | 🎵 **موسیقی زنده** | والس در لا مینور که همان لحظه با Web Audio ساخته می‌شود؛ هیچ فایل صوتی در ریپو نیست |
 | 💃 **سه رقص** | First Bow (۸۴ bpm) · Moonlit Spin (۹۶ bpm) · Babi's Finale (۱۰۸ bpm) |
 | 🏅 **امتیاز و ستاره** | دقت، کمبو، بهترین رکورد و باز شدن رقص بعدی (در `localStorage`) |
@@ -54,14 +57,16 @@
 
 ## How to play
 
-1. **Hold the phone together.** The phone *is* the plank. Both of you hold it, one thumb on the glass each —
-   one thumb in each half of the screen. Those thumbs are the grip: let go with one hand and the plank goes
-   slack, so nobody can carry this dance alone.
-2. **Lean it like a tray (gyroscope).** The game reads `DeviceOrientationEvent` — how you physically lean the
-   device — not finger dragging. Right side down, plank tips right, pearl rolls downhill. Hold it level and
-   the pearl coasts. Whatever pose you hold when the dance starts becomes "level"; pause and resume to
-   re-centre. If your phone leans the other way round, tap the **gyroscope** chip in the top bar to invert it.
-   On a laptop with no gyroscope, one end each: <kbd>W</kbd>/<kbd>S</kbd> and <kbd>↑</kbd>/<kbd>↓</kbd>.
+1. **Two thumbs, two ends.** One of you holds the phone at the bottom, the other at the top, and each keeps
+   one thumb on the glass — one in the lower half of the screen, one in the upper half. Those thumbs are the
+   grip: if either lifts, the tray goes flat and the rings stop counting.
+2. **Tip it any way at all (gyroscope).** The game reads `DeviceOrientationEvent` — the gravity vector, both
+   axes — not finger dragging. Tip the top edge down and the marble runs away from you; tip the right edge
+   down and it runs right; tip it diagonally and it goes diagonally. Hold the phone flat and the marble
+   coasts to a stop. Whatever pose you hold when the dance starts counts as flat (pause and resume to
+   re-centre), and if the lean ever feels upside down, tap the **gyroscope** chip in the top bar to invert it.
+   On a laptop: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> for one of you and the arrow keys for the other —
+   and the tray only tips while you both push the same way.
 3. **The slope is the speed.** Steeper means faster, and the pearl answers your hands about 150 ms late. You
    are steering a pendulum, so *lead* the beat and level the plank to stop it.
 4. **Be in the ring on the beat.** Each ring is snapshotted the instant the beat lands: the closer the pearl
@@ -77,11 +82,11 @@
 
 ## The three dances
 
-| dance | tempo | rings | swing | what happens |
+| dance | tempo | rings | loop | what happens |
 |---|---|---|---|---|
-| **First Bow** | 84 bpm | 24 | ±0.62 | a gentle bow: one ring per beat, alternating ends, plenty of room to breathe |
-| **Moonlit Spin** | 96 bpm | 30 | ±0.72 | faster music, wider swing — the plank has to be levelled on the off-beat |
-| **Babi's Finale** | 108 bpm | 36 | ±0.82 | the fastest waltz of the evening; the pearl needs 5.6 units a second |
+| **First Bow** | 84 bpm | 24 | 5 loops | a slow waltz, one ring a beat, a wide loop around the tray |
+| **Moonlit Spin** | 96 bpm | 30 | 7 loops | faster music, tighter loop — the tray has to be flattened on the off-beat |
+| **Babi's Finale** | 108 bpm | 36 | 9 loops | the fastest waltz of the evening |
 
 Finishing a dance with at least one star unlocks the next one.
 
@@ -92,20 +97,22 @@ Five small scripts, one stylesheet, zero dependencies:
 | file | what's inside |
 |---|---|
 | `src/math3d.js` | the maths: vectors, a look-at camera with roll, perspective projection, and box/beam/sphere meshes. |
-| `src/motion.js` | the gyroscope. Reads `beta`/`gamma`, rebuilds the gravity vector in the device frame, projects it onto the screen's own axes (so landscape and upside-down work), calibrates "level" and smooths it. |
-| `src/paths.js` | the choreography and the physics of each dance: tempo, ring count, swing (`amp`), how fast the pearl rolls at full tilt (`speed`), how late it answers (`lag`), the glide curve of the plank, the palette. |
-| `src/render.js` | the look. A **software 3D rasterizer on Canvas 2D**: the plank is re-built every frame as a sheared beam whose two ends sit under each player's hand, faces are painter-sorted, lit by the face normal and faded into fog, and the rings are 3D hoops drawn in projected space. Camera follows the pearl and rocks with the tilt. |
+| `src/motion.js` | the gyroscope. Reads `beta`/`gamma`/`alpha`, rebuilds the gravity vector in the device frame, projects it onto the screen's own axes (so portrait, landscape and upside-down all agree), calibrates the pose you are holding as "flat", and smooths both axes. |
+| `src/paths.js` | the choreography: each dance is a closed loop on the tray sampled at equal distances, one ring per beat, so the marble always has the same distance to travel. Also tempo, required pace, tolerances, palette. |
+| `src/render.js` | the look. A **software 3D rasterizer on Canvas 2D**: a tray of painter-sorted, normal-lit quads that tilts exactly with the phone (rotation applied to every point it draws — the grid, the rings, the marble, the rim), 3D rings drawn in projected space, a marble with a shadow, Babi, and a spirit level at the bottom. |
 | `src/audio.js` | the music. A generative waltz in A minor: pad, bass, harp arpeggio and a celesta melody, scheduled ahead of the audio clock, plus a generated hall reverb. All synthesised, no samples. |
 | `src/game.js` | the rules. Gyroscope grip, hand smoothing, the pearl's integration, beat-snapshot judging, combo, screens and persistence. |
 
 A few notes on the design:
 
-* **The plank is honest.** The pearl's speed is the plank's slope (with a little inertia), the two ends of the
-  drawn plank sit exactly where the gyroscope says your two hands are, and the camera rolls with the tilt —
-  every degree you lean the phone changes the picture *and* the physics in the same frame.
-* **Two thumbs, or nothing.** In duet mode the plank only answers you while both halves of the screen are
-  held, so if one player lets go the pearl stops dead. The gyroscope itself cannot see *who* leaned, but the
-  grip can see that both of you are still there.
+* **The tray is honest.** The marble's speed is the tray's slope (with a little inertia), the drawn tray is
+  rotated by exactly the vector the gyroscope reports, and the marble is drawn on the tilted plane — every
+  degree you tip the phone changes the picture *and* the physics in the same frame.
+* **Two thumbs, or nothing.** In duet mode the tray only answers while both halves of the screen are held,
+  and the ring is only judged then. The gyroscope cannot see *who* tipped the phone, but the grip can see
+  that both of you are still there.
+* **No resting place.** The choreography is a loop around the tray that never passes through the middle, so
+  a marble left alone in the centre collects nothing.
 * **Timing** is measured against the audio clock (`AudioContext.currentTime`), not `requestAnimationFrame`,
   so the rings stay true to the music even if the frame rate dips. With no audio it falls back to
   `performance.now()`.
@@ -145,7 +152,7 @@ No bundler, no npm, no dependencies. Published with GitHub Pages straight from t
 
 ```bash
 node ../tests/smoke.js    # headless playtest: balance, inputs, screens (jsdom)
-node ../tests/gyro.js     # the gyroscope: lean maths, the grip, the permission fallback
+node ../tests/gyro.js     # the gyroscope: every tilt direction, the grip, a dance played by leaning
 node ../tests/audio.js    # the synthesised waltz, with a mock AudioContext
 node ../tests/render.js   # renders stills of the 3D scene to ../tests/shots/ (@napi-rs/canvas)
 ```

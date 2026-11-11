@@ -4,10 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
 <title>Dance with Babi — a duet for one screen</title>
-<meta name="description" content="Dance with Babi is a two-player dancing game for one screen. Each of you holds one end of a plank: one end up, one end down, and the pearl rolls along the choreography. Meet every ring exactly on the beat." />
+<meta name="description" content="Dance with Babi is a two-player dancing game for one phone. Hold it together, a thumb at each end, and tip it: the marble on screen rolls exactly the way your phone leans. Land it in every ring on the beat." />
 <meta name="theme-color" content="#08050f" />
 <meta property="og:title" content="Dance with Babi" />
-<meta property="og:description" content="A two-player dancing game for one screen. Two hands on one plank, a 3D hall, and a pearl that rolls to the waltz." />
+<meta property="og:description" content="A two-player dancing game for one phone. Tip the phone any way you like and the marble rolls; land it in the ring on the beat." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0714'/%3E%3Ccircle cx='25' cy='32' r='13' fill='none' stroke='%23ff9ecb' stroke-width='3'/%3E%3Ccircle cx='39' cy='32' r='13' fill='none' stroke='%238ff0e2' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23ffd28a'/%3E%3C/svg%3E" />
 <!-- /* INLINE:STYLE */ -->
@@ -37,7 +37,7 @@
   </header>
 
   <div id="countin" class="hidden"><b>3</b></div>
-  <div id="hint" class="hidden">one end up, the other down</div>
+  <div id="hint" class="hidden">one thumb at each end — then tip the phone</div>
   <div id="judge" aria-live="polite"></div>
 
   <!-- ──────────────────────── SCREENS ──────────────────────── -->
@@ -65,8 +65,8 @@
           </svg>
         </div>
         <h1>Dance<span class="with">with</span>Babi</h1>
-        <p class="tagline">A duet for two players and one phone.<br/>Hold it together, lean it like a tray, and the pearl rolls.</p>
-        <p class="tagline fa" dir="rtl" lang="fa">یک گوشی، دو نفر. گوشی را با هم بگیرید و مثل سینی کج کنید؛ مروارید روی تخته می‌غلتد.</p>
+        <p class="tagline">A duet for two players and one phone.<br/>Hold it like a tray — tip it any way at all — and the marble rolls.</p>
+        <p class="tagline fa" dir="rtl" lang="fa">گوشی همان سینی است: با هم بگیریدش، هر طرف که کج کنید مروارید همان طرف می‌غلتد.</p>
         <div class="title-actions">
           <button class="btn primary" data-go="levels">Begin the dance</button>
           <button class="btn ghost" data-go="howto">How to play</button>
@@ -94,7 +94,7 @@
 
         <div class="panel-foot">
           <div class="hint">
-            on a phone: hold it together with one thumb each, then lean it &nbsp;·&nbsp; on a keyboard: <kbd>W</kbd><kbd>S</kbd> player one, <kbd>↑</kbd><kbd>↓</kbd> player two
+            on a phone: a thumb at each end, then tip it &nbsp;·&nbsp; on a keyboard: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> and <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd>
           </div>
           <button class="btn tiny ghost" data-go="howto">How to play</button>
         </div>
@@ -114,34 +114,34 @@
           <li>
             <span class="num">1</span>
             <div>
-              <h3>Hold the phone together</h3>
-              <p>The phone <em>is</em> the plank. Both of you hold it, one thumb on the glass each — one thumb in each half of the screen. Your thumbs are the grip: let go with one hand and the plank goes slack.</p>
+              <h3>Two thumbs, two ends</h3>
+              <p>One of you holds the phone at the bottom, the other at the top, and <em>each keeps a thumb on the glass</em> — one thumb in the lower half of the screen, one in the upper half. Those thumbs are the grip: if either one lifts, the tray goes flat and the rings stop counting.</p>
             </div>
           </li>
           <li>
             <span class="num">2</span>
             <div>
-              <h3>Lean it like a tray</h3>
-              <p>The gyroscope reads how you lean the phone: right side down and the plank tips right, the pearl rolls downhill. Hold it level and the pearl coasts — that is how you stop it. Whatever pose you start in becomes "level", so get comfortable first. On a laptop there is no gyroscope: use <kbd>W</kbd><kbd>S</kbd> and <kbd>↑</kbd><kbd>↓</kbd>, one end each.</p>
+              <h3>Tip it any way at all</h3>
+              <p>The gyroscope reads which way the phone is leaning — <em>both</em> directions, not just left and right. Tip the top edge down and the marble runs away from you; tip the right edge down and it runs right; tip it diagonally and it goes diagonally. Hold the phone flat and the marble coasts to a stop. Whatever pose you hold when the dance starts counts as flat, so get comfortable first — and tap the <b>gyroscope</b> chip in the top bar if the lean ever feels upside down. On a laptop: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> for one of you, the arrow keys for the other, and the tray only tips when you both push the same way.</p>
             </div>
           </li>
           <li>
             <span class="num">3</span>
             <div>
               <h3>The slope is the speed</h3>
-              <p>Lean harder, roll faster — and the pearl answers a heartbeat late, so you have to <em>lead</em>. Start the lean before you need it and level the phone to stop the pearl dead.</p>
+              <p>Tip harder, roll faster — and the marble answers a heartbeat late, so you have to <em>lead</em> it. Start the tip before you need it, and flatten the phone to stop the marble dead.</p>
             </div>
           </li>
           <li>
             <span class="num">4</span>
             <div>
               <h3>Be in the ring on the beat</h3>
-              <p>Every ring is one beat of the waltz and they alternate between the two ends: one for you, one for your partner. It is judged the moment the drum lands — <em>perfect</em>, <em>good</em>, <em>on the edge</em>. Overshoot and the pearl slams into the end of the plank, and your streak snaps.</p>
+              <p>Every ring is one beat of the waltz, and they walk around the tray. It is judged the moment the drum lands — <em>perfect</em>, <em>good</em>, <em>on the edge</em>. Tip too far and the marble hits the rim of the tray and your streak snaps.</p>
             </div>
           </li>
         </ol>
         <div class="steps fa" dir="rtl" lang="fa">
-          <p><b>خلاصه به فارسی:</b> گوشی همان تخته است. هر دو نفر گوشی را با هم می‌گیرید و هر کدام یک شست روی صفحه می‌گذارید؛ انگشت‌ها «گرفتن» تخته‌اند و اگر یکی رها کند تخته شل می‌شود. با کج کردن گوشی (ژیروسکوپ) تخته کج می‌شود و مروارید به سمت پایین‌تر می‌غلتد؛ گوشی را صاف بگیرید تا مروارید بایستد. هرچه شیب بیشتر، سرعت بیشتر، و مروارید با کمی تأخیر جواب می‌دهد، پس یک ضرب زودتر شروع کنید. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد. روی لپ‌تاپ که ژیروسکوپ نیست، با کلیدهای <kbd>W</kbd>/<kbd>S</kbd> و <kbd>↑</kbd>/<kbd>↓</kbd> بازی کنید.</p>
+          <p><b>خلاصه به فارسی:</b> گوشی همان سینی است. یکی گوشی را از پایین و دیگری از بالا می‌گیرد و <b>هر کدام یک شست روی صفحه</b> می‌گذارد (یکی در نیمهٔ پایین، یکی در نیمهٔ بالا). اگر یکی شستش را بردارد سینی صاف می‌شود و امتیاز نمی‌گیرید. با ژیروسکوپ، کج کردن گوشی به <b>هر طرف</b> مروارید را همان طرف می‌غلتد: لبهٔ بالا را پایین بگیرید، مروارید دور می‌شود؛ سمت راست را پایین بگیرید، به راست می‌رود؛ کجِ مورب، مورب می‌رود. گوشی را صاف بگیرید تا مروارید بایستد. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد. اگر جهت برعکس بود، روی برچسب «gyroscope» در نوار بالا بزنید. روی لپ‌تاپ: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> و کلیدهای جهت‌دار، و سینی فقط وقتی کج می‌شود که هر دو یک طرف را فشار دهید.</p>
         </div>
         <div class="panel-foot">
           <div class="hint">Headphones help. Volume is your friend, the music is your metronome.</div>

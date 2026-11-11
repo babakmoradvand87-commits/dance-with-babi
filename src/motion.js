@@ -20,10 +20,11 @@
     enabled: false,
     has: false,
     reason: "",
-    lean: 0,   /* radians, + = the screen's right side is down */
-    value: 0,  /* -1..1 after calibration */
-    zero: 0,
-    flip: 1,   /* tap the HUD chip to invert the lean direction */
+    sx: 0, sy: 0, sz: 0,  /* gravity in the screen's own frame, unit length */
+    zx: 0, zy: 0,         /* the pose that counts as flat */
+    tx: 0, ty: 0,         /* calibrated tilt, -1..1, +x = right side down, +y = top side down */
+    flip: 1,              /* tap the HUD chip to invert */
+    gain: 1,
     _bound: null,
 
     supported() {
@@ -63,40 +64,56 @@
          W3C rotation matrix Rz(alpha)·Rx(beta)·Ry(gamma) */
       const gx = Math.cos(be) * Math.sin(ga);
       const gy = -Math.sin(be);
+      const gz = -Math.cos(be) * Math.cos(ga);
 
       /* express it in the screen's own frame (landscape, upside down…) */
       const ang =
         ((window.screen && window.screen.orientation && window.screen.orientation.angle) ||
           window.orientation || 0) * D2R;
-      const sx = gx * Math.cos(ang) - gy * Math.sin(ang);
-
-      this.lean = Math.asin(clamp(sx, -1, 1));
+      this.sx = gx * Math.cos(ang) - gy * Math.sin(ang);
+      this.sy = gx * Math.sin(ang) + gy * Math.cos(ang);
+      this.sz = gz;
       this.has = true;
     },
 
     update(dt) {
       if (!this.enabled || !this.has) return;
-      const want = clamp((this.lean - this.zero) / MAX_LEAN, -1, 1) * this.flip;
-      this.value += (want - this.value) * Math.min(1, dt * SMOOTH);
-      if (Math.abs(this.value) < 0.004) this.value = 0;
+      /* how far the tray has been tipped away from the pose you started in —
+         both axes, so *any* way you tilt the phone moves the marble */
+      const dx = (this.sx - this.zx) * this.gain * this.flip;
+      const dy = (this.sy - this.zy) * this.gain * this.flip;
+      const k = 1 / Math.sin(this.range || MAX_LEAN);
+      const wx = clamp(dx * k, -1, 1);
+      const wy = clamp(dy * k, -1, 1);
+      const f = Math.min(1, dt * SMOOTH);
+      this.tx += (wx - this.tx) * f;
+      this.ty += (wy - this.ty) * f;
+      if (Math.abs(this.tx) < 0.004) this.tx = 0;
+      if (Math.abs(this.ty) < 0.004) this.ty = 0;
     },
 
-    /* whatever pose you are holding it in right now becomes "level" */
+    /* whatever pose you are holding it in right now becomes "flat" */
     calibrate() {
-      if (this.has) this.zero = this.lean;
-      this.value = 0;
+      if (!this.has) return;
+      this.zx = this.sx;
+      this.zy = this.sy;
+      /* a phone held upright moves the gravity vector less per degree:
+         give those players a little more gain so it feels the same */
+      this.gain = 1 / clamp(Math.abs(this.sz), 0.45, 1);
+      this.tx = 0;
+      this.ty = 0;
+    },
+
+    setRange(degrees) {
+      this.range = (degrees || 26) * D2R;
     },
 
     reset() {
       this.has = false;
-      this.lean = 0;
-      this.value = 0;
-      this.zero = 0;
-    },
-
-    /* how far past "level" you are right now, for the HUD */
-    leanDegrees() {
-      return ((this.lean - this.zero) / D2R) | 0;
+      this.sx = this.sy = this.sz = 0;
+      this.zx = this.zy = 0;
+      this.tx = this.ty = 0;
+      this.gain = 1;
     },
   };
 

@@ -1,18 +1,23 @@
 /* ──────────────────────────────────────────────────────────────
    Dance with Babi — render.js
-   A hand-rolled 3D scene on a 2D canvas: a plank floating in a
-   hall, a pearl that rolls on it, rings to pass through, and the
-   camera that swings with both of you.
+   A hand-rolled 3D scene on a 2D canvas: a tray floating in a hall,
+   tipped exactly the way the phone in your hands is tipped, a marble
+   that runs downhill on it, and rings to be standing in on the beat.
    ────────────────────────────────────────────────────────────── */
 (function () {
   const DWB = window.DWB;
   const V = DWB.V;
   const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
-  const RAIL_HALF = DWB.RAIL_HALF;
-  const FOV = (52 * Math.PI) / 180;
-  const LIGHT = V.norm([0.42, 0.82, 0.44]);
-  const LIFT = 0.30;   /* how high a full lift raises one end */
+  const TRAY_HALF = DWB.TRAY_HALF || 1.02;
+  const FOV = (50 * Math.PI) / 180;
+  const LIGHT = (function () {
+    const v = V.norm([0.35, 0.88, 0.32]);
+    return v;
+  })();
+  const VIS = 0.52;      /* how many radians the tray leans per unit of tilt */
+  const MARBLE_R = 0.062;
+  const RING_R = 0.155;
 
   const isTouch = () =>
     typeof window !== "undefined" &&
@@ -47,7 +52,9 @@
       this.motes = [];
       this.time = 0;
       this.babi = { x: 0, y: 0, vx: 0, vy: 0, ready: false };
-      this.meshes = {};
+      this.tiltX = 0;
+      this.tiltY = 0;
+      this.pearlScreen = { x: 0, y: 0 };
       this.resize();
     }
 
@@ -62,16 +69,12 @@
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       this.cx = w / 2;
-      this.cy = h * 0.53;
+      this.cy = h * 0.50;
       this.focal = (h / 2) / Math.tan(FOV / 2);
-      /* frame the plank so it fills most of the width, phone or desktop */
-      const need = (2 * RAIL_HALF * this.focal) / (0.62 * w);
-      this.dist = Math.max(1.62, need);
+      /* pull back until the whole tray sits comfortably on the screen */
+      const need = (2 * TRAY_HALF * 1.18 * this.focal) / (0.84 * w);
+      this.dist = Math.max(2.15, need * 0.62);
 
-      this.bars = [
-        { x: Math.max(46, w * 0.13), y: h - Math.max(96, h * 0.13), len: Math.min(150, h * 0.26) },
-        { x: Math.min(w - 46, w * 0.87), y: h - Math.max(96, h * 0.13), len: Math.min(150, h * 0.26) },
-      ];
       this.motes = [];
       const n = Math.round(clamp((w * h) / 26000, 26, 90));
       for (let i = 0; i < n; i++) {
@@ -114,10 +117,26 @@
       }
     }
 
+    /* ── the tray's own little coordinate system ───────────── */
+    plane(x, z, y) {
+      const ax = -this.tiltY * VIS;
+      const az = -this.tiltX * VIS;
+      const cx = Math.cos(ax), sx = Math.sin(ax);
+      const cz = Math.cos(az), sz = Math.sin(az);
+      const py = y || 0;
+      const y1 = py * cx - z * sx;
+      const z1 = py * sx + z * cx;
+      const x2 = x * cz - y1 * sz;
+      const y2 = x * sz + y1 * cz;
+      return [x2, y2, z1];
+    }
+
     /* ── the frame ─────────────────────────────────────────── */
     draw(scene, dt) {
       const ctx = this.ctx;
       this.time += dt;
+      this.tiltX = clamp(scene.tx || 0, -1, 1);
+      this.tiltY = clamp(scene.ty || 0, -1, 1);
       this.updateParticles(dt);
       ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
       ctx.clearRect(0, 0, this.w, this.h);
@@ -127,37 +146,31 @@
       }
 
       const pal = scene.level ? scene.level.pal : MENU_PAL;
-      const tilt = clamp(scene.tilt || 0, -1, 1);
-
-      /* camera: slides along the plank and rocks with it */
-      const px = clamp(scene.pearlU || 0, -1.2, 1.2);
-      const orbit = Math.sin(this.time * 0.22) * 0.22;
-      const eye = [
-        px * 0.34 + orbit * 0.6,
-        0.52 + tilt * 0.04,
-        this.dist + Math.abs(px) * 0.18,
-      ];
-      const target = [px * 0.26, 0.03 + tilt * 0.05, 0];
-      const cam = DWB.camera(eye, target, [0, 1, 0], -tilt * 0.045);
+      const orbit = Math.sin(this.time * 0.22) * 0.10;
+      const eye = [orbit * 0.7, 2.30, 1.92 - Math.abs(orbit) * 0.2];
+      const target = [0, 0.03, -0.10];
+      const cam = DWB.camera(eye, target, [0, 1, 0], this.tiltX * 0.035);
       this.cam = cam;
 
       this.drawBackdrop(scene, pal);
       this.drawFloor(pal);
-      this.drawFloorGlow(pal, scene);
       this.drawColumns(pal);
-      this.drawPlank(scene, pal);
-      this.drawGates(scene, pal);
-      this.drawPearl(scene, pal);
+      this.drawTray(scene, pal);
+      this.drawRings(scene, pal);
+      this.drawMarble(scene, pal);
       this.drawParticles();
-      if (scene.showBars) this.drawBars(scene, pal);
+      if (scene.showBars) this.drawGrips(scene, pal);
       this.drawVignette();
     }
 
+    /* project a world point, or null if it is behind the camera */
     P(p) {
-      return DWB.project(this.cam, this.focal, this.cx, this.cy, p);
+      const pr = DWB.project(this.cam, this.focal, this.cx, this.cy, p);
+      if (!pr || pr.z < 0.2) return null;
+      return pr;
     }
 
-    /* ── environment ───────────────────────────────────────── */
+    /* ── background ────────────────────────────────────────── */
     drawBackdrop(scene, pal) {
       const ctx = this.ctx, w = this.w, h = this.h;
       const g = ctx.createLinearGradient(0, 0, 0, h);
@@ -167,8 +180,7 @@
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, w, h);
 
-      /* the glow of the hall behind the plank */
-      const hy = this.cy - h * 0.04;
+      const hy = this.cy - h * 0.06;
       const rg = ctx.createRadialGradient(this.cx, hy, 0, this.cx, hy, Math.max(w, h) * 0.55);
       rg.addColorStop(0, C.rgba(pal.halo, 0.20));
       rg.addColorStop(0.4, C.rgba(pal.halo, 0.06));
@@ -176,7 +188,6 @@
       ctx.fillStyle = rg;
       ctx.fillRect(0, 0, w, h);
 
-      /* slow motes drifting in the light */
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
       const t = this.time;
@@ -194,64 +205,6 @@
       }
       ctx.restore();
       void scene;
-    }
-
-    /* the plank's height at u ∈ [-1, 1]: each end follows its own hand */
-    plankY(u, hands) {
-      const hA = clamp(hands ? hands[0] || 0 : 0, -1, 1);
-      const hB = clamp(hands ? hands[1] || 0 : 0, -1, 1);
-      const mean = (hA + hB) * 0.5;
-      const tilt = (hB - hA) * 0.5;
-      const bend = this.bendAt(u);
-      return LIFT * (mean + tilt * u) + bend;
-    }
-
-    bendAt(u) {
-      const lv = this.curLevel;
-      return lv && lv.bend ? lv.bend(u * RAIL_HALF) : 0;
-    }
-
-    /** project + light + painter-sort a bag of quads */
-    quads(verts, faces, base, fog, pal, rim) {
-      const ctx = this.ctx;
-      const list = [];
-      for (let i = 0; i < faces.length; i++) {
-        const f = faces[i];
-        const q = [];
-        let zsum = 0, ok = true;
-        for (let k = 0; k < f.length; k++) {
-          const pr = this.P(verts[f[k]]);
-          if (!pr) { ok = false; break; }
-          q.push(pr);
-          zsum += pr.z;
-        }
-        if (!ok) continue;
-        const a = verts[f[0]], b = verts[f[1]], c = verts[f[2]];
-        const n = V.norm(V.cross(V.sub(b, a), V.sub(c, a)));
-        const diff = Math.abs(n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
-        const k2 = 0.30 + 0.72 * diff;
-        const z = zsum / f.length;
-        const fz = clamp((z - this.dist) / 6.5, 0, 1) * fog;
-        const col = C.mix(C.mix(base, C.parse(pal.fog), fz), [255, 255, 255], rim * 0.10);
-        list.push({
-          z: z,
-          c: "rgb(" + Math.round(col[0] * k2) + "," + Math.round(col[1] * k2) + "," + Math.round(col[2] * k2) + ")",
-          p: q,
-        });
-      }
-      list.sort((x, y) => y.z - x.z);
-      for (let i = 0; i < list.length; i++) {
-        const it = list[i];
-        ctx.beginPath();
-        ctx.moveTo(it.p[0].x, it.p[0].y);
-        for (let k = 1; k < it.p.length; k++) ctx.lineTo(it.p[k].x, it.p[k].y);
-        ctx.closePath();
-        ctx.fillStyle = it.c;
-        ctx.strokeStyle = it.c;
-        ctx.lineWidth = 0.8;
-        ctx.fill();
-        ctx.stroke();
-      }
     }
 
     drawFloor(pal) {
@@ -283,40 +236,34 @@
         ctx.lineTo(b.x, b.y);
         ctx.stroke();
       }
+      /* a pool of light under the tray */
+      const c = this.P([0, y, -0.1]);
+      const e = this.P([TRAY_HALF * 1.5, y, -0.1]);
+      if (c && e) {
+        const rx = Math.max(40, Math.abs(e.x - c.x));
+        ctx.globalCompositeOperation = "lighter";
+        const gg = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, rx);
+        gg.addColorStop(0, C.rgba(pal.halo, 0.09));
+        gg.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = gg;
+        ctx.beginPath();
+        ctx.ellipse(c.x, c.y, rx, rx * 0.16, 0, 0, TAU);
+        ctx.fill();
+      }
       ctx.restore();
-    }
-
-    drawFloorGlow(pal, scene) {
-      const ctx = this.ctx;
-      const hands = scene.hands || [0, 0];
-      const c = this.P([0, -1.04, 0]);
-      const e = this.P([RAIL_HALF * 1.5, -1.04, 0]);
-      if (!c || !e) return;
-      const rx = Math.max(40, Math.abs(e.x - c.x));
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, rx);
-      g.addColorStop(0, C.rgba(pal.halo, 0.10));
-      g.addColorStop(0.5, C.rgba(pal.halo, 0.03));
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.ellipse(c.x, c.y, rx, rx * 0.14, 0, 0, TAU);
-      ctx.fill();
-      ctx.restore();
-      void hands;
     }
 
     drawColumns(pal) {
+      if (!this.meshes) this.meshes = {};
       if (!this.meshes.column) this.meshes.column = DWB.mesh.box(0.13, 1, 0.13);
       const mesh = this.meshes.column;
-      const base = C.mix(C.parse(pal.column), C.parse(pal.rail), 0.42);
+      const base = C.mix(C.parse(pal.column), C.parse(pal.tray), 0.38);
       for (let i = 0; i < 10; i++) {
         const side = i % 2 === 0 ? -1 : 1;
         const row = Math.floor(i / 2);
         if (row > 4) continue;
-        const x = side * (2.10 + row * 0.70);
-        const z = -1.9 - row * 2.3;
+        const x = side * (2.15 + row * 0.72);
+        const z = -1.75 - row * 2.3;
         const hgt = 3.2 - row * 0.22;
         const verts = mesh.verts.map((v) => [
           v[0] * hgt + x,
@@ -327,113 +274,152 @@
       }
     }
 
-    /* ── the plank, and the two hands that hold it ─────────── */
-    drawPlank(scene, pal) {
+    /** project + light + painter-sort a bag of quads */
+    quads(verts, faces, base, fog, pal, rim) {
       const ctx = this.ctx;
-      const hands = scene.hands || [0, 0];
-      this.curLevel = scene.level;
-
-      const SEG = 18, W = 0.22, H = 0.07;
-      const verts = [];
-      const quads = [];
-      for (let i = 0; i <= SEG; i++) {
-        const u = -1 + (2 * i) / SEG;
-        const x = u * RAIL_HALF;
-        const y = this.plankY(u, hands);
-        verts.push([x, y - H / 2, -W / 2], [x, y + H / 2, -W / 2], [x, y + H / 2, W / 2], [x, y - H / 2, W / 2]);
-      }
-      for (let i = 0; i < SEG; i++) {
-        const a = i * 4, b = (i + 1) * 4;
-        quads.push([a + 2, a + 3, b + 3, b + 2]);
-        quads.push([a + 0, a + 1, b + 1, b + 0]);
-        quads.push([a + 1, a + 2, b + 2, b + 1]);
-        quads.push([a + 3, a + 0, b + 0, b + 3]);
-      }
-      quads.push([0, 1, 2, 3]);
-      quads.push([SEG * 4 + 3, SEG * 4 + 2, SEG * 4 + 1, SEG * 4 + 0]);
-      this.quads(verts, quads, C.parse(pal.rail), 0.5, pal, 0.5);
-
-      /* a thread of light along the top edge */
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      let started = false;
-      for (let i = 0; i <= 26; i++) {
-        const u = -1 + (2 * i) / 26;
-        const pr = this.P([u * RAIL_HALF, this.plankY(u, hands) + H / 2 + 0.004, 0]);
-        if (!pr) { started = false; continue; }
-        if (!started) { ctx.moveTo(pr.x, pr.y); started = true; }
-        else ctx.lineTo(pr.x, pr.y);
-      }
-      ctx.strokeStyle = C.rgba(pal.railGlow, 0.34);
-      ctx.lineWidth = 1.6;
-      ctx.stroke();
-      ctx.restore();
-
-      /* the two grips */
-      for (let i = 0; i < 2; i++) {
-        const u = i === 0 ? -1 : 1;
-        const pr = this.P([u * RAIL_HALF, this.plankY(u, hands) + 0.02, 0]);
-        if (!pr) continue;
-        const tint = i === 0 ? "#ff9ecb" : "#8ff0e2";
-        const hand = clamp(hands[i] || 0, -1, 1);
-        const r = clamp((this.focal * 0.03) / pr.z, 3.5, 15);
-
-        ctx.save();
-        ctx.globalCompositeOperation = "lighter";
-        const glow = ctx.createRadialGradient(pr.x, pr.y, 0, pr.x, pr.y, r * 4.4);
-        glow.addColorStop(0, C.rgba(tint, 0.36 + Math.abs(hand) * 0.34));
-        glow.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(pr.x, pr.y, r * 4.4, 0, TAU);
-        ctx.fill();
-        ctx.restore();
-
-        ctx.beginPath();
-        ctx.arc(pr.x, pr.y, r, 0, TAU);
-        ctx.fillStyle = C.rgba(tint, 0.92);
-        ctx.fill();
-
-        if (scene.showHands) {
-          const dir = hand > 0.06 ? -1 : hand < -0.06 ? 1 : 0;
-          ctx.save();
-          ctx.globalAlpha = 0.45 + Math.abs(hand) * 0.55;
-          ctx.fillStyle = C.rgba(tint, 0.9);
-          if (dir !== 0) {
-            const y0 = pr.y + dir * (r + 6), y1 = pr.y + dir * (r + 21);
-            ctx.beginPath();
-            ctx.moveTo(pr.x, y1);
-            ctx.lineTo(pr.x - 6, y1 - dir * 7);
-            ctx.lineTo(pr.x + 6, y1 - dir * 7);
-            ctx.closePath();
-            ctx.fill();
-            ctx.strokeStyle = C.rgba(tint, 0.5);
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(pr.x, y0);
-            ctx.lineTo(pr.x, y1 - dir * 4);
-            ctx.stroke();
-          }
-          ctx.restore();
+      const list = [];
+      for (let i = 0; i < faces.length; i++) {
+        const f = faces[i];
+        const q = [];
+        let zsum = 0, ok = true;
+        for (let k = 0; k < f.length; k++) {
+          const pr = this.P(verts[f[k]]);
+          if (!pr) { ok = false; break; }
+          q.push(pr);
+          zsum += pr.z;
         }
+        if (!ok) continue;
+        const a = verts[f[0]], b = verts[f[1]], c = verts[f[2]];
+        const n = V.norm(V.cross(V.sub(b, a), V.sub(c, a)));
+        const diff = Math.abs(n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
+        const k2 = 0.28 + 0.74 * diff;
+        const z = zsum / f.length;
+        const fz = clamp((z - this.dist) / 7, 0, 1) * fog;
+        const col = C.mix(C.mix(base, C.parse(pal.fog), fz), [255, 255, 255], rim * 0.10);
+        list.push({
+          z: z,
+          c: "rgb(" + Math.round(col[0] * k2) + "," + Math.round(col[1] * k2) + "," + Math.round(col[2] * k2) + ")",
+          p: q,
+        });
+      }
+      list.sort((x, y) => y.z - x.z);
+      for (let i = 0; i < list.length; i++) {
+        const it = list[i];
+        ctx.beginPath();
+        ctx.moveTo(it.p[0].x, it.p[0].y);
+        for (let k = 1; k < it.p.length; k++) ctx.lineTo(it.p[k].x, it.p[k].y);
+        ctx.closePath();
+        ctx.fillStyle = it.c;
+        ctx.strokeStyle = it.c;
+        ctx.lineWidth = 0.8;
+        ctx.fill();
+        ctx.stroke();
       }
     }
 
-    /* ── rings ─────────────────────────────────────────────── */
-    drawGates(scene, pal) {
-      if (!scene.gates || !scene.gates.length) return;
+    /* ── the tray: a slab that tips exactly like the phone ──── */
+    drawTray(scene, pal) {
       const ctx = this.ctx;
-      const SEG = 26;
-      const hands = scene.hands || [0, 0];
+      const H = -0.055;
+      const S = TRAY_HALF;
+      const base = C.parse(pal.tray);
+
+      /* the body */
+      const verts = [
+        this.plane(-S, -S, H), this.plane(-S, S, H), this.plane(S, S, H), this.plane(S, -S, H),
+        this.plane(-S, -S, 0), this.plane(-S, S, 0), this.plane(S, S, 0), this.plane(S, -S, 0),
+      ];
+      const faces = [
+        [4, 5, 6, 7],
+        [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7],
+        [3, 2, 1, 0],
+      ];
+      this.quads(verts, faces, base, 0.42, pal, 0.35);
+
+      /* the surface: a soft sheen and a grid, so the tip is readable */
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      for (let i = -2; i <= 2; i++) {
+        const u = (i / 2) * S * 0.82;
+        const a1 = this.P(this.plane(u, -S * 0.94, 0.004));
+        const b1 = this.P(this.plane(u, S * 0.94, 0.004));
+        const a2 = this.P(this.plane(-S * 0.94, u, 0.004));
+        const b2 = this.P(this.plane(S * 0.94, u, 0.004));
+        ctx.strokeStyle = C.rgba(pal.trayTop, i === 0 ? 0.16 : 0.07);
+        ctx.lineWidth = 1;
+        if (a1 && b1) { ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(b1.x, b1.y); ctx.stroke(); }
+        if (a2 && b2) { ctx.beginPath(); ctx.moveTo(a2.x, a2.y); ctx.lineTo(b2.x, b2.y); ctx.stroke(); }
+      }
+      ctx.restore();
+
+      /* the two ends: player one at the near edge, player two at the far one */
+      const ends = [
+        { i: 0, color: pal.rimA, z: S, label: "1" },
+        { i: 1, color: pal.rimB, z: -S, label: "2" },
+      ];
+      for (let k = 0; k < ends.length; k++) {
+        const e = ends[k];
+        const a = this.P(this.plane(-S, e.z, 0.01));
+        const b = this.P(this.plane(S, e.z, 0.01));
+        if (!a || !b) continue;
+        const held = scene.heldBy ? scene.heldBy[e.i] : true;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = C.rgba(e.color, held ? 1 : 0.25);
+        ctx.lineWidth = held ? 4.5 : 1.8;
+        ctx.lineCap = "round";
+        if (held) { ctx.shadowColor = e.color; ctx.shadowBlur = 22; }
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      /* the rim, as a thin wall all the way round */
+      const rimTop = 0.085;
+      for (let s2 = -1; s2 <= 1; s2 += 2) {
+        const rv = [
+          this.plane(-S, s2 * S, 0), this.plane(S, s2 * S, 0),
+          this.plane(S, s2 * S, rimTop), this.plane(-S, s2 * S, rimTop),
+        ];
+        const color = s2 > 0 ? pal.rimA : pal.rimB;
+        this.quads(rv, [[0, 1, 2, 3]], C.mix(C.parse(color), base, 0.18), 0.4, pal, 0.8);
+      }
+      for (let s2 = -1; s2 <= 1; s2 += 2) {
+        const rv = [
+          this.plane(s2 * S, -S, 0), this.plane(s2 * S, S, 0),
+          this.plane(s2 * S, S, rimTop), this.plane(s2 * S, -S, rimTop),
+        ];
+        this.quads(rv, [[0, 1, 2, 3]], C.mix(base, [255, 255, 255], 0.10), 0.4, pal, 0.4);
+      }
+    }
+
+    /* ── the rings the marble must be standing in ──────────── */
+    drawRings(scene, pal) {
+      let gates = scene.gates;
+      let nextGate = scene.nextGate || 0;
+      if ((!gates || !gates.length) && scene.demo && scene.level) {
+        /* a little choreography showing off on the title screen */
+        const lv = scene.level;
+        gates = [];
+        for (let k = 0; k < lv.gates; k++) {
+          gates.push({ x: lv.gateX(k), z: lv.gateZ(k), state: 0, q: 0, flash: 0 });
+        }
+        nextGate = Math.floor(this.time * 1.4) % lv.gates;
+        for (let k = 0; k < gates.length; k++) if (k < nextGate) gates[k].state = 2;
+      }
+      if (!gates || !gates.length) return;
+
+      const ctx = this.ctx;
+      const SEG = 30;
       const list = [];
-      for (let i = 0; i < scene.gates.length; i++) {
-        const g = scene.gates[i];
-        const rel = i - scene.nextGate;
+      for (let i = 0; i < gates.length; i++) {
+        const g = gates[i];
+        const rel = i - nextGate;
         if (rel < -1 || rel > 4) continue;
-        let rad = 0.16;
-        let alpha = 0.32 * clamp(1 - Math.max(0, rel) / 4.5, 0, 1);
+        let rad = RING_R;
+        let alpha = 0.30 * clamp(1 - Math.max(0, rel) / 4.5, 0, 1);
         let color = pal.ring;
         let width = 2;
         let glow = 0;
@@ -441,36 +427,35 @@
         if (g.state === 1) {
           const fl = g.flash == null ? 0 : g.flash;
           if (fl <= 0) continue;
-          rad = 0.16 + (1 - fl) * 0.20;
+          rad = RING_R * (1 + (1 - fl) * 0.9);
           color = g.q === 3 ? "#fffaf0" : pal.ringNext;
-          alpha = fl * 0.9;
-          width = 2.4 * fl + 0.8;
-          glow = 16;
+          alpha = fl * 0.95;
+          width = 2.6 * fl + 0.8;
+          glow = 18;
         } else if (g.state === 2) {
           color = "#7d7288";
-          alpha = 0.09;
+          alpha = 0.10;
           width = 1.3;
-        } else if (i === scene.nextGate) {
+        } else if (i === nextGate) {
           const pulse = 0.5 + 0.5 * Math.sin((scene.phase || 0) * TAU);
-          rad = 0.163 + 0.013 * pulse;
+          rad = RING_R * (1 + 0.06 * pulse);
           color = pal.ringNext;
-          alpha = 0.92;
-          width = 2.6 + pulse * 1.2;
-          glow = 15 + pulse * 9;
+          alpha = 0.95;
+          width = 2.8 + pulse * 1.4;
+          glow = 16 + pulse * 10;
         }
 
-        const cy = this.plankY(g.u, hands) + 0.10;
         const pts = [];
         let zsum = 0, ok = true;
         for (let k = 0; k <= SEG; k++) {
           const th = (k / SEG) * TAU;
-          const pr = this.P([g.u * RAIL_HALF, cy + Math.cos(th) * rad, Math.sin(th) * rad]);
+          const pr = this.P(this.plane(g.x + Math.cos(th) * rad, g.z + Math.sin(th) * rad, 0.012));
           if (!pr) { ok = false; break; }
           pts.push(pr);
           zsum += pr.z;
         }
         if (!ok) continue;
-        list.push({ z: zsum / pts.length, pts: pts, alpha: alpha, color: color, width: width, glow: glow });
+        list.push({ z: zsum / pts.length, pts, alpha, color, width, glow, g });
       }
       list.sort((a, b) => b.z - a.z);
       for (let i = 0; i < list.length; i++) {
@@ -479,41 +464,42 @@
         ctx.globalCompositeOperation = "lighter";
         if (it.glow) { ctx.shadowColor = it.color; ctx.shadowBlur = it.glow; }
         ctx.strokeStyle = C.rgba(it.color, it.alpha);
-        ctx.lineWidth = clamp((it.width * this.focal) / (it.z * 300), 1, 7);
+        ctx.lineWidth = clamp((it.width * this.focal) / (it.z * 320), 1, 7);
         ctx.lineCap = "round";
         ctx.beginPath();
         for (let k = 0; k < it.pts.length; k++) {
           if (k === 0) ctx.moveTo(it.pts[k].x, it.pts[k].y);
           else ctx.lineTo(it.pts[k].x, it.pts[k].y);
         }
+        ctx.closePath();
         ctx.stroke();
         ctx.restore();
       }
     }
 
-    /* ── the pearl, and Babi beside it ─────────────────────── */
-    drawPearl(scene, pal, ca, sa) {
+    /* ── the marble, and Babi who floats above it ──────────── */
+    drawMarble(scene, pal) {
       const ctx = this.ctx;
-      const u = clamp(scene.pearlU || 0, -1.15, 1.15);
-      this.curLevel = scene.level;
-      const p = [u * RAIL_HALF, this.plankY(u, scene.hands || [0, 0]) + 0.10, 0];
+      const mx = clamp(scene.mx || 0, -1.05, 1.05);
+      const mz = clamp(scene.mz || 0, -1.05, 1.05);
+      const p = this.plane(mx, mz, MARBLE_R);
       const pr = this.P(p);
       if (!pr) return;
       this.pearlScreen = { x: pr.x, y: pr.y };
 
-      const rs = clamp((this.focal * 0.052) / pr.z, 5, 22);
+      const rs = clamp((this.focal * MARBLE_R * 1.25) / pr.z, 5, 26);
 
-      /* shadow on the plank */
-      const shadowP = this.P([p[0], p[1] - 0.10, p[2]]);
-      if (shadowP) {
+      /* shadow on the tray */
+      const sh = this.P(this.plane(mx + 0.03, mz + 0.03, 0.008));
+      if (sh) {
         ctx.save();
-        ctx.globalAlpha = 0.35;
-        const sg = ctx.createRadialGradient(shadowP.x, shadowP.y, 0, shadowP.x, shadowP.y, rs * 1.5);
-        sg.addColorStop(0, "rgba(0,0,0,0.85)");
+        ctx.globalAlpha = 0.4;
+        const sg = ctx.createRadialGradient(sh.x, sh.y, 0, sh.x, sh.y, rs * 1.7);
+        sg.addColorStop(0, "rgba(0,0,0,0.8)");
         sg.addColorStop(1, "rgba(0,0,0,0)");
         ctx.fillStyle = sg;
         ctx.beginPath();
-        ctx.ellipse(shadowP.x, shadowP.y, rs * 1.35, rs * 0.5, 0, 0, TAU);
+        ctx.ellipse(sh.x, sh.y, rs * 1.5, rs * 0.62, 0, 0, TAU);
         ctx.fill();
         ctx.restore();
       }
@@ -521,13 +507,12 @@
       /* glow */
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
-      const gl = ctx.createRadialGradient(pr.x, pr.y, 0, pr.x, pr.y, rs * 3.6);
-      gl.addColorStop(0, C.rgba(pal.pearl, 0.26));
-      gl.addColorStop(0.3, C.rgba(pal.pearl2, 0.20));
+      const gl = ctx.createRadialGradient(pr.x, pr.y, 0, pr.x, pr.y, rs * 3.2);
+      gl.addColorStop(0, C.rgba(pal.pearl, 0.30));
       gl.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = gl;
       ctx.beginPath();
-      ctx.arc(pr.x, pr.y, rs * 3.6, 0, TAU);
+      ctx.arc(pr.x, pr.y, rs * 3.2, 0, TAU);
       ctx.fill();
       ctx.restore();
 
@@ -542,19 +527,18 @@
       ctx.fill();
       ctx.beginPath();
       ctx.arc(pr.x, pr.y, rs, 0, TAU);
-      ctx.strokeStyle = C.rgba(pal.pearl2, 0.55);
-      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = C.rgba(pal.pearl2, 0.5);
+      ctx.lineWidth = 1.1;
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(pr.x - rs * 0.34, pr.y - rs * 0.4, rs * 0.20, 0, TAU);
+      ctx.arc(pr.x - rs * 0.32, pr.y - rs * 0.38, rs * 0.19, 0, TAU);
       ctx.fillStyle = "rgba(255,255,255,0.95)";
       ctx.fill();
 
-      /* Babi trails along behind the pearl, in the air */
+      /* Babi trails along above the marble */
       const b = this.babi;
       const t = this.time;
-      const side = Math.sin(t * 0.7) > 0 ? 1 : -1;
-      const tp = this.P([p[0] + side * 0.17, p[1] + 0.09 + Math.sin(t * 2.2) * 0.02, p[2] + 0.04]);
+      const tp = this.P([p[0] + 0.30, p[1] + 0.20 + Math.sin(t * 2.2) * 0.02, p[2] - 0.06]);
       if (tp) {
         if (!b.ready) { b.x = tp.x; b.y = tp.y; b.ready = true; }
         b.vx += (tp.x - b.x) * 0.30;
@@ -562,10 +546,9 @@
         b.vx *= 0.86; b.vy *= 0.86;
         b.x += b.vx; b.y += b.vy;
 
-        const rb = clamp(rs * 0.60, 6, 16);
+        const rb = clamp(rs * 0.85, 6, 17);
         const mood = scene.babiMood || 0;
 
-        /* little arms that wave with the music */
         ctx.save();
         ctx.strokeStyle = "rgba(255,190,220,0.85)";
         ctx.lineWidth = Math.max(1.2, rb * 0.22);
@@ -592,7 +575,6 @@
         ctx.fill();
         ctx.restore();
 
-        /* face */
         const happy = mood > 0.3;
         ctx.strokeStyle = "rgba(72,32,64,0.85)";
         ctx.lineWidth = Math.max(1.1, rb * 0.15);
@@ -633,71 +615,56 @@
       ctx.restore();
     }
 
-    /* ── each player's hand, as a vertical bar ─────────────── */
-    drawBars(scene, pal) {
+    /* ── the two thumbs, one at each end of the screen ─────── */
+    drawGrips(scene, pal) {
       const ctx = this.ctx;
-      const hands = scene.hands || [0, 0];
-      const duet = scene.mode !== "solo";
-      for (let i = 0; i < (duet ? 2 : 1); i++) {
-        const b = this.bars[duet ? i : 0];
-        const tint = i === 0 ? "#ff9ecb" : "#8ff0e2";
-        const raised = clamp(hands[i] || 0, -1, 1);
-        const top = b.y - b.len;
-        const midY = b.y - b.len / 2;
-        const thY = midY - raised * (b.len / 2);
-
+      const held = scene.heldBy || [false, false];
+      const pads = [
+        { x: this.w / 2, y: this.h - 34, color: pal.rimA, label: isTouch() ? "PLAYER ONE · BOTTOM" : "PLAYER ONE · WASD", on: held[0] },
+        { x: this.w / 2, y: 74, color: pal.rimB, label: isTouch() ? "PLAYER TWO · TOP" : "PLAYER TWO · ARROWS", on: held[1] },
+      ];
+      for (let i = 0; i < pads.length; i++) {
+        const p = pads[i];
+        const w = 132, h = 26;
         ctx.save();
-        /* track */
-        ctx.strokeStyle = "rgba(255,255,255,0.10)";
-        ctx.lineWidth = 2;
-        ctx.lineCap = "round";
         ctx.beginPath();
-        ctx.moveTo(b.x, b.y);
-        ctx.lineTo(b.x, top);
-        ctx.stroke();
-
-        /* centre tick */
-        ctx.strokeStyle = "rgba(255,255,255,0.16)";
-        ctx.beginPath();
-        ctx.moveTo(b.x - 8, midY);
-        ctx.lineTo(b.x + 8, midY);
-        ctx.stroke();
-
-        /* filled part */
-        ctx.globalCompositeOperation = "lighter";
-        ctx.strokeStyle = C.rgba(tint, 0.75);
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(b.x, midY);
-        ctx.lineTo(b.x, thY);
-        ctx.stroke();
-
-        /* thumb */
-        const gr = ctx.createRadialGradient(b.x, thY, 0, b.x, thY, 22);
-        gr.addColorStop(0, C.rgba(tint, 0.55));
-        gr.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = gr;
-        ctx.beginPath();
-        ctx.arc(b.x, thY, 22, 0, TAU);
-        ctx.fill();
-        ctx.restore();
-
-        ctx.beginPath();
-        ctx.arc(b.x, thY, 5, 0, TAU);
-        ctx.fillStyle = "#fffdf7";
-        ctx.fill();
-
-        ctx.save();
-        ctx.textAlign = "center";
-        ctx.fillStyle = "rgba(255,255,255,0.45)";
-        ctx.font = "600 9px ui-sans-serif, system-ui, sans-serif";
-        ctx.fillText(duet ? (i === 0 ? "PLAYER ONE" : "PLAYER TWO") : "YOUR HANDS", b.x, b.y + 18);
-        if (!isTouch()) {
-          ctx.fillStyle = "rgba(255,255,255,0.3)";
-          ctx.fillText(i === 0 ? "W  ·  S" : "↑  ·  ↓", b.x, b.y + 31);
+        if (ctx.roundRect) {
+          ctx.roundRect(p.x - w / 2, p.y - h / 2, w, h, 13);
+        } else {
+          ctx.rect(p.x - w / 2, p.y - h / 2, w, h);
         }
+        ctx.fillStyle = p.on ? C.rgba(p.color, 0.20) : "rgba(255,255,255,0.04)";
+        ctx.fill();
+        ctx.strokeStyle = p.on ? C.rgba(p.color, 0.9) : "rgba(255,255,255,0.12)";
+        ctx.lineWidth = p.on ? 1.6 : 1;
+        ctx.stroke();
+
+        ctx.fillStyle = p.on ? C.rgba(p.color, 0.95) : "rgba(255,255,255,0.35)";
+        ctx.font = "600 9px ui-sans-serif, system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(p.on ? p.label + " ✓" : p.label, p.x, p.y);
         ctx.restore();
       }
+
+      /* a spirit level, so you can see the tray is flat */
+      const lv = { x: this.w / 2, y: this.h - 76, w: 132, h: 18 };
+      ctx.save();
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(lv.x - lv.w / 2, lv.y - lv.h / 2, lv.w, lv.h, 9);
+      else ctx.rect(lv.x - lv.w / 2, lv.y - lv.h / 2, lv.w, lv.h);
+      ctx.fillStyle = "rgba(255,255,255,0.05)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.10)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      const bx = lv.x + clamp(this.tiltX, -1, 1) * (lv.w / 2 - 10);
+      const by = lv.y - clamp(this.tiltY, -1, 1) * 3;
+      ctx.beginPath();
+      ctx.arc(bx, by, 4.5, 0, TAU);
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      ctx.fill();
+      ctx.restore();
     }
 
     drawVignette() {
@@ -715,13 +682,14 @@
 
   const MENU_PAL = {
     bg0: "#080611", bg1: "#150c22", fog: "#140c20",
-    rail: "#7b6a95", railTop: "#ffe3c0", railGlow: "#ffb877",
+    tray: "#6f6288", trayTop: "#fff0d8", trayGlow: "#ffb877",
+    rimA: "#ff9ecb", rimB: "#8ff0e2",
     ring: "#ff9ecb", ringNext: "#ffd28a",
     pearl: "#fff4dc", pearl2: "#ffb877",
     floor: "#2a1f3d", column: "#241a35", halo: "#ff9ecb",
   };
 
-  /* ── little side-view previews for the level cards ───────── */
+  /* ── little top-down previews for the level cards ───────── */
   function drawLevelPreview(canvas, level) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const size = 58;
@@ -731,39 +699,47 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, size, size);
 
-    const cx = size / 2, cy = size * 0.62;
-    const half = size * 0.40;
-    const ang = 0.16;
-    const ca = Math.cos(ang), sa = Math.sin(ang);
+    const cx = size / 2, cy = size / 2;
+    const r = size * 0.40;
 
-    /* the plank */
+    /* the tray */
     ctx.beginPath();
-    ctx.moveTo(cx - half * ca, cy - half * sa);
-    ctx.lineTo(cx + half * ca, cy + half * sa);
-    ctx.strokeStyle = "rgba(255,255,255,0.45)";
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
+    if (ctx.roundRect) ctx.roundRect(cx - r, cy - r, r * 2, r * 2, size * 0.09);
+    else ctx.rect(cx - r, cy - r, r * 2, r * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.30)";
+    ctx.lineWidth = 1.2;
     ctx.stroke();
 
-    /* rings at both ends */
-    const amp = level.amp;
-    [-amp, amp].forEach((u, i) => {
-      const x = u * half;
-      const y = u * half * (sa / ca);
-      ctx.beginPath();
-      ctx.arc(cx + x, cy + y, size * 0.13, 0, TAU);
-      ctx.strokeStyle = i === 0 ? C.rgba(level.pal.ring, 0.85) : C.rgba(level.pal.ringNext, 0.85);
-      ctx.lineWidth = 1.6;
-      ctx.stroke();
-    });
+    /* the path the marble takes */
+    ctx.beginPath();
+    for (let k = 0; k <= level.gates; k++) {
+      const x = cx + level.gateX(k) * r * 0.92;
+      const y = cy + level.gateZ(k) * r * 0.92;
+      if (k === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = C.rgba(level.pal.ring, 0.35);
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
-    /* the pearl */
+    /* a few rings */
+    for (let k = 0; k < level.gates; k += Math.max(1, Math.round(level.gates / 7))) {
+      const x = cx + level.gateX(k) * r * 0.92;
+      const y = cy + level.gateZ(k) * r * 0.92;
+      ctx.beginPath();
+      ctx.arc(x, y, size * 0.055, 0, TAU);
+      ctx.strokeStyle = C.rgba(k === 0 ? level.pal.ringNext : level.pal.ring, 0.75);
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+
+    /* the marble */
     const gr = ctx.createRadialGradient(cx - 1, cy - 2, 0, cx, cy, size * 0.09);
     gr.addColorStop(0, "#fffdf6");
     gr.addColorStop(1, level.pal.pearl2);
     ctx.fillStyle = gr;
     ctx.beginPath();
-    ctx.arc(cx, cy, size * 0.085, 0, TAU);
+    ctx.arc(cx, cy, size * 0.075, 0, TAU);
     ctx.fill();
   }
 

@@ -4,10 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
 <title>Dance with Babi — a duet for one screen</title>
-<meta name="description" content="Dance with Babi is a two-player dancing game for one screen. Each of you holds one end of a plank: one end up, one end down, and the pearl rolls along the choreography. Meet every ring exactly on the beat." />
+<meta name="description" content="Dance with Babi is a two-player dancing game for one phone. Hold it together, a thumb at each end, and tip it: the marble on screen rolls exactly the way your phone leans. Land it in every ring on the beat." />
 <meta name="theme-color" content="#08050f" />
 <meta property="og:title" content="Dance with Babi" />
-<meta property="og:description" content="A two-player dancing game for one screen. Two hands on one plank, a 3D hall, and a pearl that rolls to the waltz." />
+<meta property="og:description" content="A two-player dancing game for one phone. Tip the phone any way you like and the marble rolls; land it in the ring on the beat." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0714'/%3E%3Ccircle cx='25' cy='32' r='13' fill='none' stroke='%23ff9ecb' stroke-width='3'/%3E%3Ccircle cx='39' cy='32' r='13' fill='none' stroke='%238ff0e2' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23ffd28a'/%3E%3C/svg%3E" />
 <style>
@@ -593,7 +593,7 @@ kbd {
   </header>
 
   <div id="countin" class="hidden"><b>3</b></div>
-  <div id="hint" class="hidden">one end up, the other down</div>
+  <div id="hint" class="hidden">one thumb at each end — then tip the phone</div>
   <div id="judge" aria-live="polite"></div>
 
   <!-- ──────────────────────── SCREENS ──────────────────────── -->
@@ -621,8 +621,8 @@ kbd {
           </svg>
         </div>
         <h1>Dance<span class="with">with</span>Babi</h1>
-        <p class="tagline">A duet for two players and one phone.<br/>Hold it together, lean it like a tray, and the pearl rolls.</p>
-        <p class="tagline fa" dir="rtl" lang="fa">یک گوشی، دو نفر. گوشی را با هم بگیرید و مثل سینی کج کنید؛ مروارید روی تخته می‌غلتد.</p>
+        <p class="tagline">A duet for two players and one phone.<br/>Hold it like a tray — tip it any way at all — and the marble rolls.</p>
+        <p class="tagline fa" dir="rtl" lang="fa">گوشی همان سینی است: با هم بگیریدش، هر طرف که کج کنید مروارید همان طرف می‌غلتد.</p>
         <div class="title-actions">
           <button class="btn primary" data-go="levels">Begin the dance</button>
           <button class="btn ghost" data-go="howto">How to play</button>
@@ -650,7 +650,7 @@ kbd {
 
         <div class="panel-foot">
           <div class="hint">
-            on a phone: hold it together with one thumb each, then lean it &nbsp;·&nbsp; on a keyboard: <kbd>W</kbd><kbd>S</kbd> player one, <kbd>↑</kbd><kbd>↓</kbd> player two
+            on a phone: a thumb at each end, then tip it &nbsp;·&nbsp; on a keyboard: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> and <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd>
           </div>
           <button class="btn tiny ghost" data-go="howto">How to play</button>
         </div>
@@ -670,34 +670,34 @@ kbd {
           <li>
             <span class="num">1</span>
             <div>
-              <h3>Hold the phone together</h3>
-              <p>The phone <em>is</em> the plank. Both of you hold it, one thumb on the glass each — one thumb in each half of the screen. Your thumbs are the grip: let go with one hand and the plank goes slack.</p>
+              <h3>Two thumbs, two ends</h3>
+              <p>One of you holds the phone at the bottom, the other at the top, and <em>each keeps a thumb on the glass</em> — one thumb in the lower half of the screen, one in the upper half. Those thumbs are the grip: if either one lifts, the tray goes flat and the rings stop counting.</p>
             </div>
           </li>
           <li>
             <span class="num">2</span>
             <div>
-              <h3>Lean it like a tray</h3>
-              <p>The gyroscope reads how you lean the phone: right side down and the plank tips right, the pearl rolls downhill. Hold it level and the pearl coasts — that is how you stop it. Whatever pose you start in becomes "level", so get comfortable first. On a laptop there is no gyroscope: use <kbd>W</kbd><kbd>S</kbd> and <kbd>↑</kbd><kbd>↓</kbd>, one end each.</p>
+              <h3>Tip it any way at all</h3>
+              <p>The gyroscope reads which way the phone is leaning — <em>both</em> directions, not just left and right. Tip the top edge down and the marble runs away from you; tip the right edge down and it runs right; tip it diagonally and it goes diagonally. Hold the phone flat and the marble coasts to a stop. Whatever pose you hold when the dance starts counts as flat, so get comfortable first — and tap the <b>gyroscope</b> chip in the top bar if the lean ever feels upside down. On a laptop: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> for one of you, the arrow keys for the other, and the tray only tips when you both push the same way.</p>
             </div>
           </li>
           <li>
             <span class="num">3</span>
             <div>
               <h3>The slope is the speed</h3>
-              <p>Lean harder, roll faster — and the pearl answers a heartbeat late, so you have to <em>lead</em>. Start the lean before you need it and level the phone to stop the pearl dead.</p>
+              <p>Tip harder, roll faster — and the marble answers a heartbeat late, so you have to <em>lead</em> it. Start the tip before you need it, and flatten the phone to stop the marble dead.</p>
             </div>
           </li>
           <li>
             <span class="num">4</span>
             <div>
               <h3>Be in the ring on the beat</h3>
-              <p>Every ring is one beat of the waltz and they alternate between the two ends: one for you, one for your partner. It is judged the moment the drum lands — <em>perfect</em>, <em>good</em>, <em>on the edge</em>. Overshoot and the pearl slams into the end of the plank, and your streak snaps.</p>
+              <p>Every ring is one beat of the waltz, and they walk around the tray. It is judged the moment the drum lands — <em>perfect</em>, <em>good</em>, <em>on the edge</em>. Tip too far and the marble hits the rim of the tray and your streak snaps.</p>
             </div>
           </li>
         </ol>
         <div class="steps fa" dir="rtl" lang="fa">
-          <p><b>خلاصه به فارسی:</b> گوشی همان تخته است. هر دو نفر گوشی را با هم می‌گیرید و هر کدام یک شست روی صفحه می‌گذارید؛ انگشت‌ها «گرفتن» تخته‌اند و اگر یکی رها کند تخته شل می‌شود. با کج کردن گوشی (ژیروسکوپ) تخته کج می‌شود و مروارید به سمت پایین‌تر می‌غلتد؛ گوشی را صاف بگیرید تا مروارید بایستد. هرچه شیب بیشتر، سرعت بیشتر، و مروارید با کمی تأخیر جواب می‌دهد، پس یک ضرب زودتر شروع کنید. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد. روی لپ‌تاپ که ژیروسکوپ نیست، با کلیدهای <kbd>W</kbd>/<kbd>S</kbd> و <kbd>↑</kbd>/<kbd>↓</kbd> بازی کنید.</p>
+          <p><b>خلاصه به فارسی:</b> گوشی همان سینی است. یکی گوشی را از پایین و دیگری از بالا می‌گیرد و <b>هر کدام یک شست روی صفحه</b> می‌گذارد (یکی در نیمهٔ پایین، یکی در نیمهٔ بالا). اگر یکی شستش را بردارد سینی صاف می‌شود و امتیاز نمی‌گیرید. با ژیروسکوپ، کج کردن گوشی به <b>هر طرف</b> مروارید را همان طرف می‌غلتد: لبهٔ بالا را پایین بگیرید، مروارید دور می‌شود؛ سمت راست را پایین بگیرید، به راست می‌رود؛ کجِ مورب، مورب می‌رود. گوشی را صاف بگیرید تا مروارید بایستد. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد. اگر جهت برعکس بود، روی برچسب «gyroscope» در نوار بالا بزنید. روی لپ‌تاپ: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> و کلیدهای جهت‌دار، و سینی فقط وقتی کج می‌شود که هر دو یک طرف را فشار دهید.</p>
         </div>
         <div class="panel-foot">
           <div class="hint">Headphones help. Volume is your friend, the music is your metronome.</div>
@@ -894,34 +894,62 @@ kbd {
 /* ==== src/paths.js ==== */
 /* ──────────────────────────────────────────────────────────────
    Dance with Babi — paths.js
-   The three dances: tempo, swinging distance, light, and the
-   shape of the plank. Everything else is computed from these.
+   The phone is a tray. Inside the tray a marble rolls, and three
+   dances tell it where to go: each one is a closed curve sampled
+   at equal distances, one ring per beat, so the marble always
+   has the same distance to travel between two rings.
    ────────────────────────────────────────────────────────────── */
 (function () {
   const DWB = (window.DWB = window.DWB || {});
   const TAU = Math.PI * 2;
 
-  /* the rail is a function u ∈ [-1, 1] → world position */
-  const RAIL_HALF = 0.86;
+  const TRAY_HALF = 1.02;   /* world half-size of the tray surface */
+
+  /* walk a closed curve and drop N points on it at equal distance */
+  function sampleCurve(pt, turns, n) {
+    const M = 3000;
+    const xs = new Float64Array(M + 1);
+    const zs = new Float64Array(M + 1);
+    const cum = new Float64Array(M + 1);
+    for (let i = 0; i <= M; i++) {
+      const p = pt((i / M) * TAU * turns);
+      xs[i] = p[0];
+      zs[i] = p[1];
+      if (i) cum[i] = cum[i - 1] + Math.hypot(xs[i] - xs[i - 1], zs[i] - zs[i - 1]);
+    }
+    const length = cum[M];
+    const points = [];
+    let j = 0;
+    for (let k = 0; k < n; k++) {
+      const target = (k / n) * length;
+      while (j < M - 1 && cum[j + 1] < target) j++;
+      const seg = cum[j + 1] - cum[j] || 1;
+      const f = (target - cum[j]) / seg;
+      points.push([xs[j] + (xs[j + 1] - xs[j]) * f, zs[j] + (zs[j + 1] - zs[j]) * f]);
+    }
+    return { points: points, length: length, step: length / n };
+  }
 
   const LEVELS = [
     {
       id: "first-bow",
       name: "First Bow",
-      subtitle: "Raise, lower, find the sway",
-      blurb: "A slow waltz. One ring at each end, one beat apart.",
+      subtitle: "Up, down, find the sway",
+      blurb: "A slow waltz. The marble swings away from you and back.",
       bpm: 84,
       gates: 24,
       intro: 6,
-      amp: 0.62,       /* how far along the plank each ring sits */
-      speed: 3.3,      /* units/s the pearl rolls at a full tilt */
-      lag: 0.16,       /* how long the pearl takes to answer your hands */
-      maxTilt: 0.26,   /* how far the plank visually rotates (rad) */
+      turns: 5,      /* how many up-and-down passes the tune makes */
+      ampV: 0.62,    /* how far away and back it travels */
+      ampU: 0.38,    /* how far it sways sideways */
+      lag: 0.16,
+      phase: 0.6,
+      tiltRange: 26, /* degrees of phone lean that count as full tilt */
       difficulty: 1,
-      curve: 0.16,
       pal: {
         bg0: "#080611", bg1: "#150c22", fog: "#140c20",
-        rail: "#7b6a95", railTop: "#ffe3c0", railGlow: "#ffb877",
+        tray: "#6f6288", trayTop: "#fff0d8", trayGlow: "#ffb877",
+        rimA: "#ff9ecb", rimB: "#8ff0e2",
         ring: "#ff9ecb", ringNext: "#ffd28a",
         pearl: "#fff4dc", pearl2: "#ffb877",
         floor: "#2a1f3d", column: "#241a35", halo: "#ff9ecb",
@@ -930,20 +958,22 @@ kbd {
     {
       id: "moonlit-spin",
       name: "Moonlit Spin",
-      subtitle: "Wider, slower, watch the far end",
-      blurb: "The plank is longer now. Lead the swing a beat early.",
+      subtitle: "Further, faster, hold the line",
+      blurb: "The curve widens at the corners. Lead the marble a beat early.",
       bpm: 96,
       gates: 30,
       intro: 6,
-      amp: 0.72,
-      speed: 4.4,
+      turns: 7,
+      ampV: 0.66,
+      ampU: 0.42,
       lag: 0.15,
-      maxTilt: 0.30,
+      phase: 0.9,
+      tiltRange: 26,
       difficulty: 2,
-      curve: 0.26,
       pal: {
         bg0: "#05070f", bg1: "#0b1226", fog: "#0a1120",
-        rail: "#5f7595", railTop: "#d9f0ff", railGlow: "#8fd0ff",
+        tray: "#54688a", trayTop: "#d9f0ff", trayGlow: "#8fd0ff",
+        rimA: "#9fd0ff", rimB: "#c9b6ff",
         ring: "#9fd0ff", ringNext: "#c9b6ff",
         pearl: "#f4fbff", pearl2: "#8fd0ff",
         floor: "#16233a", column: "#132033", halo: "#6fa8ff",
@@ -952,20 +982,22 @@ kbd {
     {
       id: "babis-finale",
       name: "Babi's Finale",
-      subtitle: "Both arms, all the way",
-      blurb: "Fastest waltz of the evening. Full swings, no hesitation.",
+      subtitle: "All the way, every beat",
+      blurb: "Fastest waltz of the evening. The tray has no time to settle.",
       bpm: 108,
       gates: 36,
       intro: 6,
-      amp: 0.82,
-      speed: 5.6,
+      turns: 9,
+      ampV: 0.70,
+      ampU: 0.45,
       lag: 0.14,
-      maxTilt: 0.34,
+      phase: 1.2,
+      tiltRange: 25,
       difficulty: 3,
-      curve: 0.34,
       pal: {
         bg0: "#0a0612", bg1: "#1a0d24", fog: "#170b20",
-        rail: "#8a6d9c", railTop: "#fff0d0", railGlow: "#ffd28a",
+        tray: "#7f6490", trayTop: "#fff0d0", trayGlow: "#ffd28a",
+        rimA: "#e0bdff", rimB: "#ffd28a",
         ring: "#e0bdff", ringNext: "#ffd28a",
         pearl: "#fffaef", pearl2: "#ffc48a",
         floor: "#2a1a33", column: "#241530", halo: "#c9a0ff",
@@ -974,18 +1006,34 @@ kbd {
   ];
 
   LEVELS.forEach(function (lv) {
-    lv.spb = 60 / lv.bpm;                 /* seconds per beat */
-    /* the plank bows gently towards the camera, so it reads as 3D */
-    lv.rail = function (u) {
-      return [u * RAIL_HALF, 0, lv.curve * Math.cos(u * Math.PI * 0.75)];
+    lv.spb = 60 / lv.bpm;
+    /* a tall, slightly wobbly loop: the marble never crosses the middle,
+       so it cannot sit there and collect rings by doing nothing */
+    const curve = function (th) {
+      return [
+        lv.ampU * Math.cos(th) + 0.05 * Math.sin(3 * th + lv.phase),
+        -lv.ampV * Math.sin(th),
+      ];
     };
-    lv.bend = function (x) {
-      const u = x / RAIL_HALF;
-      return lv.curve * 0.14 * Math.cos(u * Math.PI * 0.75);
+    const path = sampleCurve(curve, lv.turns, lv.gates);
+    lv.points = path.points;
+    lv.length = path.length;
+    lv.step = path.step;
+
+    /* a steady pair needs most of the tilt to keep up — which is why one
+       pair of hands alone can never carry the dance */
+    lv.speed = Math.max(1.2, path.step / lv.spb / 0.74);
+
+    /* how close to the ring centre counts as a hit, in tray units */
+    lv.perfect = path.step * 0.20;
+    lv.good = path.step * 0.42;
+    lv.edge = path.step * 0.66;
+
+    lv.gateX = function (i) {
+      return lv.points[((i % lv.gates) + lv.gates) % lv.gates][0];
     };
-    /* rings sit alternately at either end of the swing */
-    lv.gateU = function (i) {
-      return i % 2 === 0 ? lv.amp : -lv.amp;
+    lv.gateZ = function (i) {
+      return lv.points[((i % lv.gates) + lv.gates) % lv.gates][1];
     };
     lv.gateAt = function (i) {
       return (i + 1) * lv.spb;
@@ -993,7 +1041,7 @@ kbd {
   });
 
   DWB.LEVELS = LEVELS;
-  DWB.RAIL_HALF = RAIL_HALF;
+  DWB.TRAY_HALF = TRAY_HALF;
   DWB.TAU = TAU;
 })();
 
@@ -1020,10 +1068,11 @@ kbd {
     enabled: false,
     has: false,
     reason: "",
-    lean: 0,   /* radians, + = the screen's right side is down */
-    value: 0,  /* -1..1 after calibration */
-    zero: 0,
-    flip: 1,   /* tap the HUD chip to invert the lean direction */
+    sx: 0, sy: 0, sz: 0,  /* gravity in the screen's own frame, unit length */
+    zx: 0, zy: 0,         /* the pose that counts as flat */
+    tx: 0, ty: 0,         /* calibrated tilt, -1..1, +x = right side down, +y = top side down */
+    flip: 1,              /* tap the HUD chip to invert */
+    gain: 1,
     _bound: null,
 
     supported() {
@@ -1063,40 +1112,56 @@ kbd {
          W3C rotation matrix Rz(alpha)·Rx(beta)·Ry(gamma) */
       const gx = Math.cos(be) * Math.sin(ga);
       const gy = -Math.sin(be);
+      const gz = -Math.cos(be) * Math.cos(ga);
 
       /* express it in the screen's own frame (landscape, upside down…) */
       const ang =
         ((window.screen && window.screen.orientation && window.screen.orientation.angle) ||
           window.orientation || 0) * D2R;
-      const sx = gx * Math.cos(ang) - gy * Math.sin(ang);
-
-      this.lean = Math.asin(clamp(sx, -1, 1));
+      this.sx = gx * Math.cos(ang) - gy * Math.sin(ang);
+      this.sy = gx * Math.sin(ang) + gy * Math.cos(ang);
+      this.sz = gz;
       this.has = true;
     },
 
     update(dt) {
       if (!this.enabled || !this.has) return;
-      const want = clamp((this.lean - this.zero) / MAX_LEAN, -1, 1) * this.flip;
-      this.value += (want - this.value) * Math.min(1, dt * SMOOTH);
-      if (Math.abs(this.value) < 0.004) this.value = 0;
+      /* how far the tray has been tipped away from the pose you started in —
+         both axes, so *any* way you tilt the phone moves the marble */
+      const dx = (this.sx - this.zx) * this.gain * this.flip;
+      const dy = (this.sy - this.zy) * this.gain * this.flip;
+      const k = 1 / Math.sin(this.range || MAX_LEAN);
+      const wx = clamp(dx * k, -1, 1);
+      const wy = clamp(dy * k, -1, 1);
+      const f = Math.min(1, dt * SMOOTH);
+      this.tx += (wx - this.tx) * f;
+      this.ty += (wy - this.ty) * f;
+      if (Math.abs(this.tx) < 0.004) this.tx = 0;
+      if (Math.abs(this.ty) < 0.004) this.ty = 0;
     },
 
-    /* whatever pose you are holding it in right now becomes "level" */
+    /* whatever pose you are holding it in right now becomes "flat" */
     calibrate() {
-      if (this.has) this.zero = this.lean;
-      this.value = 0;
+      if (!this.has) return;
+      this.zx = this.sx;
+      this.zy = this.sy;
+      /* a phone held upright moves the gravity vector less per degree:
+         give those players a little more gain so it feels the same */
+      this.gain = 1 / clamp(Math.abs(this.sz), 0.45, 1);
+      this.tx = 0;
+      this.ty = 0;
+    },
+
+    setRange(degrees) {
+      this.range = (degrees || 26) * D2R;
     },
 
     reset() {
       this.has = false;
-      this.lean = 0;
-      this.value = 0;
-      this.zero = 0;
-    },
-
-    /* how far past "level" you are right now, for the HUD */
-    leanDegrees() {
-      return ((this.lean - this.zero) / D2R) | 0;
+      this.sx = this.sy = this.sz = 0;
+      this.zx = this.zy = 0;
+      this.tx = this.ty = 0;
+      this.gain = 1;
     },
   };
 
@@ -1548,19 +1613,24 @@ kbd {
 /* ==== src/render.js ==== */
 /* ──────────────────────────────────────────────────────────────
    Dance with Babi — render.js
-   A hand-rolled 3D scene on a 2D canvas: a plank floating in a
-   hall, a pearl that rolls on it, rings to pass through, and the
-   camera that swings with both of you.
+   A hand-rolled 3D scene on a 2D canvas: a tray floating in a hall,
+   tipped exactly the way the phone in your hands is tipped, a marble
+   that runs downhill on it, and rings to be standing in on the beat.
    ────────────────────────────────────────────────────────────── */
 (function () {
   const DWB = window.DWB;
   const V = DWB.V;
   const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
-  const RAIL_HALF = DWB.RAIL_HALF;
-  const FOV = (52 * Math.PI) / 180;
-  const LIGHT = V.norm([0.42, 0.82, 0.44]);
-  const LIFT = 0.30;   /* how high a full lift raises one end */
+  const TRAY_HALF = DWB.TRAY_HALF || 1.02;
+  const FOV = (50 * Math.PI) / 180;
+  const LIGHT = (function () {
+    const v = V.norm([0.35, 0.88, 0.32]);
+    return v;
+  })();
+  const VIS = 0.52;      /* how many radians the tray leans per unit of tilt */
+  const MARBLE_R = 0.062;
+  const RING_R = 0.155;
 
   const isTouch = () =>
     typeof window !== "undefined" &&
@@ -1595,7 +1665,9 @@ kbd {
       this.motes = [];
       this.time = 0;
       this.babi = { x: 0, y: 0, vx: 0, vy: 0, ready: false };
-      this.meshes = {};
+      this.tiltX = 0;
+      this.tiltY = 0;
+      this.pearlScreen = { x: 0, y: 0 };
       this.resize();
     }
 
@@ -1610,16 +1682,12 @@ kbd {
       this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       this.cx = w / 2;
-      this.cy = h * 0.53;
+      this.cy = h * 0.50;
       this.focal = (h / 2) / Math.tan(FOV / 2);
-      /* frame the plank so it fills most of the width, phone or desktop */
-      const need = (2 * RAIL_HALF * this.focal) / (0.62 * w);
-      this.dist = Math.max(1.62, need);
+      /* pull back until the whole tray sits comfortably on the screen */
+      const need = (2 * TRAY_HALF * 1.18 * this.focal) / (0.84 * w);
+      this.dist = Math.max(2.15, need * 0.62);
 
-      this.bars = [
-        { x: Math.max(46, w * 0.13), y: h - Math.max(96, h * 0.13), len: Math.min(150, h * 0.26) },
-        { x: Math.min(w - 46, w * 0.87), y: h - Math.max(96, h * 0.13), len: Math.min(150, h * 0.26) },
-      ];
       this.motes = [];
       const n = Math.round(clamp((w * h) / 26000, 26, 90));
       for (let i = 0; i < n; i++) {
@@ -1662,10 +1730,26 @@ kbd {
       }
     }
 
+    /* ── the tray's own little coordinate system ───────────── */
+    plane(x, z, y) {
+      const ax = -this.tiltY * VIS;
+      const az = -this.tiltX * VIS;
+      const cx = Math.cos(ax), sx = Math.sin(ax);
+      const cz = Math.cos(az), sz = Math.sin(az);
+      const py = y || 0;
+      const y1 = py * cx - z * sx;
+      const z1 = py * sx + z * cx;
+      const x2 = x * cz - y1 * sz;
+      const y2 = x * sz + y1 * cz;
+      return [x2, y2, z1];
+    }
+
     /* ── the frame ─────────────────────────────────────────── */
     draw(scene, dt) {
       const ctx = this.ctx;
       this.time += dt;
+      this.tiltX = clamp(scene.tx || 0, -1, 1);
+      this.tiltY = clamp(scene.ty || 0, -1, 1);
       this.updateParticles(dt);
       ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
       ctx.clearRect(0, 0, this.w, this.h);
@@ -1675,37 +1759,31 @@ kbd {
       }
 
       const pal = scene.level ? scene.level.pal : MENU_PAL;
-      const tilt = clamp(scene.tilt || 0, -1, 1);
-
-      /* camera: slides along the plank and rocks with it */
-      const px = clamp(scene.pearlU || 0, -1.2, 1.2);
-      const orbit = Math.sin(this.time * 0.22) * 0.22;
-      const eye = [
-        px * 0.34 + orbit * 0.6,
-        0.52 + tilt * 0.04,
-        this.dist + Math.abs(px) * 0.18,
-      ];
-      const target = [px * 0.26, 0.03 + tilt * 0.05, 0];
-      const cam = DWB.camera(eye, target, [0, 1, 0], -tilt * 0.045);
+      const orbit = Math.sin(this.time * 0.22) * 0.10;
+      const eye = [orbit * 0.7, 2.30, 1.92 - Math.abs(orbit) * 0.2];
+      const target = [0, 0.03, -0.10];
+      const cam = DWB.camera(eye, target, [0, 1, 0], this.tiltX * 0.035);
       this.cam = cam;
 
       this.drawBackdrop(scene, pal);
       this.drawFloor(pal);
-      this.drawFloorGlow(pal, scene);
       this.drawColumns(pal);
-      this.drawPlank(scene, pal);
-      this.drawGates(scene, pal);
-      this.drawPearl(scene, pal);
+      this.drawTray(scene, pal);
+      this.drawRings(scene, pal);
+      this.drawMarble(scene, pal);
       this.drawParticles();
-      if (scene.showBars) this.drawBars(scene, pal);
+      if (scene.showBars) this.drawGrips(scene, pal);
       this.drawVignette();
     }
 
+    /* project a world point, or null if it is behind the camera */
     P(p) {
-      return DWB.project(this.cam, this.focal, this.cx, this.cy, p);
+      const pr = DWB.project(this.cam, this.focal, this.cx, this.cy, p);
+      if (!pr || pr.z < 0.2) return null;
+      return pr;
     }
 
-    /* ── environment ───────────────────────────────────────── */
+    /* ── background ────────────────────────────────────────── */
     drawBackdrop(scene, pal) {
       const ctx = this.ctx, w = this.w, h = this.h;
       const g = ctx.createLinearGradient(0, 0, 0, h);
@@ -1715,8 +1793,7 @@ kbd {
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, w, h);
 
-      /* the glow of the hall behind the plank */
-      const hy = this.cy - h * 0.04;
+      const hy = this.cy - h * 0.06;
       const rg = ctx.createRadialGradient(this.cx, hy, 0, this.cx, hy, Math.max(w, h) * 0.55);
       rg.addColorStop(0, C.rgba(pal.halo, 0.20));
       rg.addColorStop(0.4, C.rgba(pal.halo, 0.06));
@@ -1724,7 +1801,6 @@ kbd {
       ctx.fillStyle = rg;
       ctx.fillRect(0, 0, w, h);
 
-      /* slow motes drifting in the light */
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
       const t = this.time;
@@ -1742,64 +1818,6 @@ kbd {
       }
       ctx.restore();
       void scene;
-    }
-
-    /* the plank's height at u ∈ [-1, 1]: each end follows its own hand */
-    plankY(u, hands) {
-      const hA = clamp(hands ? hands[0] || 0 : 0, -1, 1);
-      const hB = clamp(hands ? hands[1] || 0 : 0, -1, 1);
-      const mean = (hA + hB) * 0.5;
-      const tilt = (hB - hA) * 0.5;
-      const bend = this.bendAt(u);
-      return LIFT * (mean + tilt * u) + bend;
-    }
-
-    bendAt(u) {
-      const lv = this.curLevel;
-      return lv && lv.bend ? lv.bend(u * RAIL_HALF) : 0;
-    }
-
-    /** project + light + painter-sort a bag of quads */
-    quads(verts, faces, base, fog, pal, rim) {
-      const ctx = this.ctx;
-      const list = [];
-      for (let i = 0; i < faces.length; i++) {
-        const f = faces[i];
-        const q = [];
-        let zsum = 0, ok = true;
-        for (let k = 0; k < f.length; k++) {
-          const pr = this.P(verts[f[k]]);
-          if (!pr) { ok = false; break; }
-          q.push(pr);
-          zsum += pr.z;
-        }
-        if (!ok) continue;
-        const a = verts[f[0]], b = verts[f[1]], c = verts[f[2]];
-        const n = V.norm(V.cross(V.sub(b, a), V.sub(c, a)));
-        const diff = Math.abs(n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
-        const k2 = 0.30 + 0.72 * diff;
-        const z = zsum / f.length;
-        const fz = clamp((z - this.dist) / 6.5, 0, 1) * fog;
-        const col = C.mix(C.mix(base, C.parse(pal.fog), fz), [255, 255, 255], rim * 0.10);
-        list.push({
-          z: z,
-          c: "rgb(" + Math.round(col[0] * k2) + "," + Math.round(col[1] * k2) + "," + Math.round(col[2] * k2) + ")",
-          p: q,
-        });
-      }
-      list.sort((x, y) => y.z - x.z);
-      for (let i = 0; i < list.length; i++) {
-        const it = list[i];
-        ctx.beginPath();
-        ctx.moveTo(it.p[0].x, it.p[0].y);
-        for (let k = 1; k < it.p.length; k++) ctx.lineTo(it.p[k].x, it.p[k].y);
-        ctx.closePath();
-        ctx.fillStyle = it.c;
-        ctx.strokeStyle = it.c;
-        ctx.lineWidth = 0.8;
-        ctx.fill();
-        ctx.stroke();
-      }
     }
 
     drawFloor(pal) {
@@ -1831,40 +1849,34 @@ kbd {
         ctx.lineTo(b.x, b.y);
         ctx.stroke();
       }
+      /* a pool of light under the tray */
+      const c = this.P([0, y, -0.1]);
+      const e = this.P([TRAY_HALF * 1.5, y, -0.1]);
+      if (c && e) {
+        const rx = Math.max(40, Math.abs(e.x - c.x));
+        ctx.globalCompositeOperation = "lighter";
+        const gg = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, rx);
+        gg.addColorStop(0, C.rgba(pal.halo, 0.09));
+        gg.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = gg;
+        ctx.beginPath();
+        ctx.ellipse(c.x, c.y, rx, rx * 0.16, 0, 0, TAU);
+        ctx.fill();
+      }
       ctx.restore();
-    }
-
-    drawFloorGlow(pal, scene) {
-      const ctx = this.ctx;
-      const hands = scene.hands || [0, 0];
-      const c = this.P([0, -1.04, 0]);
-      const e = this.P([RAIL_HALF * 1.5, -1.04, 0]);
-      if (!c || !e) return;
-      const rx = Math.max(40, Math.abs(e.x - c.x));
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, rx);
-      g.addColorStop(0, C.rgba(pal.halo, 0.10));
-      g.addColorStop(0.5, C.rgba(pal.halo, 0.03));
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.ellipse(c.x, c.y, rx, rx * 0.14, 0, 0, TAU);
-      ctx.fill();
-      ctx.restore();
-      void hands;
     }
 
     drawColumns(pal) {
+      if (!this.meshes) this.meshes = {};
       if (!this.meshes.column) this.meshes.column = DWB.mesh.box(0.13, 1, 0.13);
       const mesh = this.meshes.column;
-      const base = C.mix(C.parse(pal.column), C.parse(pal.rail), 0.42);
+      const base = C.mix(C.parse(pal.column), C.parse(pal.tray), 0.38);
       for (let i = 0; i < 10; i++) {
         const side = i % 2 === 0 ? -1 : 1;
         const row = Math.floor(i / 2);
         if (row > 4) continue;
-        const x = side * (2.10 + row * 0.70);
-        const z = -1.9 - row * 2.3;
+        const x = side * (2.15 + row * 0.72);
+        const z = -1.75 - row * 2.3;
         const hgt = 3.2 - row * 0.22;
         const verts = mesh.verts.map((v) => [
           v[0] * hgt + x,
@@ -1875,113 +1887,152 @@ kbd {
       }
     }
 
-    /* ── the plank, and the two hands that hold it ─────────── */
-    drawPlank(scene, pal) {
+    /** project + light + painter-sort a bag of quads */
+    quads(verts, faces, base, fog, pal, rim) {
       const ctx = this.ctx;
-      const hands = scene.hands || [0, 0];
-      this.curLevel = scene.level;
-
-      const SEG = 18, W = 0.22, H = 0.07;
-      const verts = [];
-      const quads = [];
-      for (let i = 0; i <= SEG; i++) {
-        const u = -1 + (2 * i) / SEG;
-        const x = u * RAIL_HALF;
-        const y = this.plankY(u, hands);
-        verts.push([x, y - H / 2, -W / 2], [x, y + H / 2, -W / 2], [x, y + H / 2, W / 2], [x, y - H / 2, W / 2]);
-      }
-      for (let i = 0; i < SEG; i++) {
-        const a = i * 4, b = (i + 1) * 4;
-        quads.push([a + 2, a + 3, b + 3, b + 2]);
-        quads.push([a + 0, a + 1, b + 1, b + 0]);
-        quads.push([a + 1, a + 2, b + 2, b + 1]);
-        quads.push([a + 3, a + 0, b + 0, b + 3]);
-      }
-      quads.push([0, 1, 2, 3]);
-      quads.push([SEG * 4 + 3, SEG * 4 + 2, SEG * 4 + 1, SEG * 4 + 0]);
-      this.quads(verts, quads, C.parse(pal.rail), 0.5, pal, 0.5);
-
-      /* a thread of light along the top edge */
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      let started = false;
-      for (let i = 0; i <= 26; i++) {
-        const u = -1 + (2 * i) / 26;
-        const pr = this.P([u * RAIL_HALF, this.plankY(u, hands) + H / 2 + 0.004, 0]);
-        if (!pr) { started = false; continue; }
-        if (!started) { ctx.moveTo(pr.x, pr.y); started = true; }
-        else ctx.lineTo(pr.x, pr.y);
-      }
-      ctx.strokeStyle = C.rgba(pal.railGlow, 0.34);
-      ctx.lineWidth = 1.6;
-      ctx.stroke();
-      ctx.restore();
-
-      /* the two grips */
-      for (let i = 0; i < 2; i++) {
-        const u = i === 0 ? -1 : 1;
-        const pr = this.P([u * RAIL_HALF, this.plankY(u, hands) + 0.02, 0]);
-        if (!pr) continue;
-        const tint = i === 0 ? "#ff9ecb" : "#8ff0e2";
-        const hand = clamp(hands[i] || 0, -1, 1);
-        const r = clamp((this.focal * 0.03) / pr.z, 3.5, 15);
-
-        ctx.save();
-        ctx.globalCompositeOperation = "lighter";
-        const glow = ctx.createRadialGradient(pr.x, pr.y, 0, pr.x, pr.y, r * 4.4);
-        glow.addColorStop(0, C.rgba(tint, 0.36 + Math.abs(hand) * 0.34));
-        glow.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(pr.x, pr.y, r * 4.4, 0, TAU);
-        ctx.fill();
-        ctx.restore();
-
-        ctx.beginPath();
-        ctx.arc(pr.x, pr.y, r, 0, TAU);
-        ctx.fillStyle = C.rgba(tint, 0.92);
-        ctx.fill();
-
-        if (scene.showHands) {
-          const dir = hand > 0.06 ? -1 : hand < -0.06 ? 1 : 0;
-          ctx.save();
-          ctx.globalAlpha = 0.45 + Math.abs(hand) * 0.55;
-          ctx.fillStyle = C.rgba(tint, 0.9);
-          if (dir !== 0) {
-            const y0 = pr.y + dir * (r + 6), y1 = pr.y + dir * (r + 21);
-            ctx.beginPath();
-            ctx.moveTo(pr.x, y1);
-            ctx.lineTo(pr.x - 6, y1 - dir * 7);
-            ctx.lineTo(pr.x + 6, y1 - dir * 7);
-            ctx.closePath();
-            ctx.fill();
-            ctx.strokeStyle = C.rgba(tint, 0.5);
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(pr.x, y0);
-            ctx.lineTo(pr.x, y1 - dir * 4);
-            ctx.stroke();
-          }
-          ctx.restore();
+      const list = [];
+      for (let i = 0; i < faces.length; i++) {
+        const f = faces[i];
+        const q = [];
+        let zsum = 0, ok = true;
+        for (let k = 0; k < f.length; k++) {
+          const pr = this.P(verts[f[k]]);
+          if (!pr) { ok = false; break; }
+          q.push(pr);
+          zsum += pr.z;
         }
+        if (!ok) continue;
+        const a = verts[f[0]], b = verts[f[1]], c = verts[f[2]];
+        const n = V.norm(V.cross(V.sub(b, a), V.sub(c, a)));
+        const diff = Math.abs(n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
+        const k2 = 0.28 + 0.74 * diff;
+        const z = zsum / f.length;
+        const fz = clamp((z - this.dist) / 7, 0, 1) * fog;
+        const col = C.mix(C.mix(base, C.parse(pal.fog), fz), [255, 255, 255], rim * 0.10);
+        list.push({
+          z: z,
+          c: "rgb(" + Math.round(col[0] * k2) + "," + Math.round(col[1] * k2) + "," + Math.round(col[2] * k2) + ")",
+          p: q,
+        });
+      }
+      list.sort((x, y) => y.z - x.z);
+      for (let i = 0; i < list.length; i++) {
+        const it = list[i];
+        ctx.beginPath();
+        ctx.moveTo(it.p[0].x, it.p[0].y);
+        for (let k = 1; k < it.p.length; k++) ctx.lineTo(it.p[k].x, it.p[k].y);
+        ctx.closePath();
+        ctx.fillStyle = it.c;
+        ctx.strokeStyle = it.c;
+        ctx.lineWidth = 0.8;
+        ctx.fill();
+        ctx.stroke();
       }
     }
 
-    /* ── rings ─────────────────────────────────────────────── */
-    drawGates(scene, pal) {
-      if (!scene.gates || !scene.gates.length) return;
+    /* ── the tray: a slab that tips exactly like the phone ──── */
+    drawTray(scene, pal) {
       const ctx = this.ctx;
-      const SEG = 26;
-      const hands = scene.hands || [0, 0];
+      const H = -0.055;
+      const S = TRAY_HALF;
+      const base = C.parse(pal.tray);
+
+      /* the body */
+      const verts = [
+        this.plane(-S, -S, H), this.plane(-S, S, H), this.plane(S, S, H), this.plane(S, -S, H),
+        this.plane(-S, -S, 0), this.plane(-S, S, 0), this.plane(S, S, 0), this.plane(S, -S, 0),
+      ];
+      const faces = [
+        [4, 5, 6, 7],
+        [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7],
+        [3, 2, 1, 0],
+      ];
+      this.quads(verts, faces, base, 0.42, pal, 0.35);
+
+      /* the surface: a soft sheen and a grid, so the tip is readable */
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      for (let i = -2; i <= 2; i++) {
+        const u = (i / 2) * S * 0.82;
+        const a1 = this.P(this.plane(u, -S * 0.94, 0.004));
+        const b1 = this.P(this.plane(u, S * 0.94, 0.004));
+        const a2 = this.P(this.plane(-S * 0.94, u, 0.004));
+        const b2 = this.P(this.plane(S * 0.94, u, 0.004));
+        ctx.strokeStyle = C.rgba(pal.trayTop, i === 0 ? 0.16 : 0.07);
+        ctx.lineWidth = 1;
+        if (a1 && b1) { ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(b1.x, b1.y); ctx.stroke(); }
+        if (a2 && b2) { ctx.beginPath(); ctx.moveTo(a2.x, a2.y); ctx.lineTo(b2.x, b2.y); ctx.stroke(); }
+      }
+      ctx.restore();
+
+      /* the two ends: player one at the near edge, player two at the far one */
+      const ends = [
+        { i: 0, color: pal.rimA, z: S, label: "1" },
+        { i: 1, color: pal.rimB, z: -S, label: "2" },
+      ];
+      for (let k = 0; k < ends.length; k++) {
+        const e = ends[k];
+        const a = this.P(this.plane(-S, e.z, 0.01));
+        const b = this.P(this.plane(S, e.z, 0.01));
+        if (!a || !b) continue;
+        const held = scene.heldBy ? scene.heldBy[e.i] : true;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = C.rgba(e.color, held ? 1 : 0.25);
+        ctx.lineWidth = held ? 4.5 : 1.8;
+        ctx.lineCap = "round";
+        if (held) { ctx.shadowColor = e.color; ctx.shadowBlur = 22; }
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      /* the rim, as a thin wall all the way round */
+      const rimTop = 0.085;
+      for (let s2 = -1; s2 <= 1; s2 += 2) {
+        const rv = [
+          this.plane(-S, s2 * S, 0), this.plane(S, s2 * S, 0),
+          this.plane(S, s2 * S, rimTop), this.plane(-S, s2 * S, rimTop),
+        ];
+        const color = s2 > 0 ? pal.rimA : pal.rimB;
+        this.quads(rv, [[0, 1, 2, 3]], C.mix(C.parse(color), base, 0.18), 0.4, pal, 0.8);
+      }
+      for (let s2 = -1; s2 <= 1; s2 += 2) {
+        const rv = [
+          this.plane(s2 * S, -S, 0), this.plane(s2 * S, S, 0),
+          this.plane(s2 * S, S, rimTop), this.plane(s2 * S, -S, rimTop),
+        ];
+        this.quads(rv, [[0, 1, 2, 3]], C.mix(base, [255, 255, 255], 0.10), 0.4, pal, 0.4);
+      }
+    }
+
+    /* ── the rings the marble must be standing in ──────────── */
+    drawRings(scene, pal) {
+      let gates = scene.gates;
+      let nextGate = scene.nextGate || 0;
+      if ((!gates || !gates.length) && scene.demo && scene.level) {
+        /* a little choreography showing off on the title screen */
+        const lv = scene.level;
+        gates = [];
+        for (let k = 0; k < lv.gates; k++) {
+          gates.push({ x: lv.gateX(k), z: lv.gateZ(k), state: 0, q: 0, flash: 0 });
+        }
+        nextGate = Math.floor(this.time * 1.4) % lv.gates;
+        for (let k = 0; k < gates.length; k++) if (k < nextGate) gates[k].state = 2;
+      }
+      if (!gates || !gates.length) return;
+
+      const ctx = this.ctx;
+      const SEG = 30;
       const list = [];
-      for (let i = 0; i < scene.gates.length; i++) {
-        const g = scene.gates[i];
-        const rel = i - scene.nextGate;
+      for (let i = 0; i < gates.length; i++) {
+        const g = gates[i];
+        const rel = i - nextGate;
         if (rel < -1 || rel > 4) continue;
-        let rad = 0.16;
-        let alpha = 0.32 * clamp(1 - Math.max(0, rel) / 4.5, 0, 1);
+        let rad = RING_R;
+        let alpha = 0.30 * clamp(1 - Math.max(0, rel) / 4.5, 0, 1);
         let color = pal.ring;
         let width = 2;
         let glow = 0;
@@ -1989,36 +2040,35 @@ kbd {
         if (g.state === 1) {
           const fl = g.flash == null ? 0 : g.flash;
           if (fl <= 0) continue;
-          rad = 0.16 + (1 - fl) * 0.20;
+          rad = RING_R * (1 + (1 - fl) * 0.9);
           color = g.q === 3 ? "#fffaf0" : pal.ringNext;
-          alpha = fl * 0.9;
-          width = 2.4 * fl + 0.8;
-          glow = 16;
+          alpha = fl * 0.95;
+          width = 2.6 * fl + 0.8;
+          glow = 18;
         } else if (g.state === 2) {
           color = "#7d7288";
-          alpha = 0.09;
+          alpha = 0.10;
           width = 1.3;
-        } else if (i === scene.nextGate) {
+        } else if (i === nextGate) {
           const pulse = 0.5 + 0.5 * Math.sin((scene.phase || 0) * TAU);
-          rad = 0.163 + 0.013 * pulse;
+          rad = RING_R * (1 + 0.06 * pulse);
           color = pal.ringNext;
-          alpha = 0.92;
-          width = 2.6 + pulse * 1.2;
-          glow = 15 + pulse * 9;
+          alpha = 0.95;
+          width = 2.8 + pulse * 1.4;
+          glow = 16 + pulse * 10;
         }
 
-        const cy = this.plankY(g.u, hands) + 0.10;
         const pts = [];
         let zsum = 0, ok = true;
         for (let k = 0; k <= SEG; k++) {
           const th = (k / SEG) * TAU;
-          const pr = this.P([g.u * RAIL_HALF, cy + Math.cos(th) * rad, Math.sin(th) * rad]);
+          const pr = this.P(this.plane(g.x + Math.cos(th) * rad, g.z + Math.sin(th) * rad, 0.012));
           if (!pr) { ok = false; break; }
           pts.push(pr);
           zsum += pr.z;
         }
         if (!ok) continue;
-        list.push({ z: zsum / pts.length, pts: pts, alpha: alpha, color: color, width: width, glow: glow });
+        list.push({ z: zsum / pts.length, pts, alpha, color, width, glow, g });
       }
       list.sort((a, b) => b.z - a.z);
       for (let i = 0; i < list.length; i++) {
@@ -2027,41 +2077,42 @@ kbd {
         ctx.globalCompositeOperation = "lighter";
         if (it.glow) { ctx.shadowColor = it.color; ctx.shadowBlur = it.glow; }
         ctx.strokeStyle = C.rgba(it.color, it.alpha);
-        ctx.lineWidth = clamp((it.width * this.focal) / (it.z * 300), 1, 7);
+        ctx.lineWidth = clamp((it.width * this.focal) / (it.z * 320), 1, 7);
         ctx.lineCap = "round";
         ctx.beginPath();
         for (let k = 0; k < it.pts.length; k++) {
           if (k === 0) ctx.moveTo(it.pts[k].x, it.pts[k].y);
           else ctx.lineTo(it.pts[k].x, it.pts[k].y);
         }
+        ctx.closePath();
         ctx.stroke();
         ctx.restore();
       }
     }
 
-    /* ── the pearl, and Babi beside it ─────────────────────── */
-    drawPearl(scene, pal, ca, sa) {
+    /* ── the marble, and Babi who floats above it ──────────── */
+    drawMarble(scene, pal) {
       const ctx = this.ctx;
-      const u = clamp(scene.pearlU || 0, -1.15, 1.15);
-      this.curLevel = scene.level;
-      const p = [u * RAIL_HALF, this.plankY(u, scene.hands || [0, 0]) + 0.10, 0];
+      const mx = clamp(scene.mx || 0, -1.05, 1.05);
+      const mz = clamp(scene.mz || 0, -1.05, 1.05);
+      const p = this.plane(mx, mz, MARBLE_R);
       const pr = this.P(p);
       if (!pr) return;
       this.pearlScreen = { x: pr.x, y: pr.y };
 
-      const rs = clamp((this.focal * 0.052) / pr.z, 5, 22);
+      const rs = clamp((this.focal * MARBLE_R * 1.25) / pr.z, 5, 26);
 
-      /* shadow on the plank */
-      const shadowP = this.P([p[0], p[1] - 0.10, p[2]]);
-      if (shadowP) {
+      /* shadow on the tray */
+      const sh = this.P(this.plane(mx + 0.03, mz + 0.03, 0.008));
+      if (sh) {
         ctx.save();
-        ctx.globalAlpha = 0.35;
-        const sg = ctx.createRadialGradient(shadowP.x, shadowP.y, 0, shadowP.x, shadowP.y, rs * 1.5);
-        sg.addColorStop(0, "rgba(0,0,0,0.85)");
+        ctx.globalAlpha = 0.4;
+        const sg = ctx.createRadialGradient(sh.x, sh.y, 0, sh.x, sh.y, rs * 1.7);
+        sg.addColorStop(0, "rgba(0,0,0,0.8)");
         sg.addColorStop(1, "rgba(0,0,0,0)");
         ctx.fillStyle = sg;
         ctx.beginPath();
-        ctx.ellipse(shadowP.x, shadowP.y, rs * 1.35, rs * 0.5, 0, 0, TAU);
+        ctx.ellipse(sh.x, sh.y, rs * 1.5, rs * 0.62, 0, 0, TAU);
         ctx.fill();
         ctx.restore();
       }
@@ -2069,13 +2120,12 @@ kbd {
       /* glow */
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
-      const gl = ctx.createRadialGradient(pr.x, pr.y, 0, pr.x, pr.y, rs * 3.6);
-      gl.addColorStop(0, C.rgba(pal.pearl, 0.26));
-      gl.addColorStop(0.3, C.rgba(pal.pearl2, 0.20));
+      const gl = ctx.createRadialGradient(pr.x, pr.y, 0, pr.x, pr.y, rs * 3.2);
+      gl.addColorStop(0, C.rgba(pal.pearl, 0.30));
       gl.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = gl;
       ctx.beginPath();
-      ctx.arc(pr.x, pr.y, rs * 3.6, 0, TAU);
+      ctx.arc(pr.x, pr.y, rs * 3.2, 0, TAU);
       ctx.fill();
       ctx.restore();
 
@@ -2090,19 +2140,18 @@ kbd {
       ctx.fill();
       ctx.beginPath();
       ctx.arc(pr.x, pr.y, rs, 0, TAU);
-      ctx.strokeStyle = C.rgba(pal.pearl2, 0.55);
-      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = C.rgba(pal.pearl2, 0.5);
+      ctx.lineWidth = 1.1;
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(pr.x - rs * 0.34, pr.y - rs * 0.4, rs * 0.20, 0, TAU);
+      ctx.arc(pr.x - rs * 0.32, pr.y - rs * 0.38, rs * 0.19, 0, TAU);
       ctx.fillStyle = "rgba(255,255,255,0.95)";
       ctx.fill();
 
-      /* Babi trails along behind the pearl, in the air */
+      /* Babi trails along above the marble */
       const b = this.babi;
       const t = this.time;
-      const side = Math.sin(t * 0.7) > 0 ? 1 : -1;
-      const tp = this.P([p[0] + side * 0.17, p[1] + 0.09 + Math.sin(t * 2.2) * 0.02, p[2] + 0.04]);
+      const tp = this.P([p[0] + 0.30, p[1] + 0.20 + Math.sin(t * 2.2) * 0.02, p[2] - 0.06]);
       if (tp) {
         if (!b.ready) { b.x = tp.x; b.y = tp.y; b.ready = true; }
         b.vx += (tp.x - b.x) * 0.30;
@@ -2110,10 +2159,9 @@ kbd {
         b.vx *= 0.86; b.vy *= 0.86;
         b.x += b.vx; b.y += b.vy;
 
-        const rb = clamp(rs * 0.60, 6, 16);
+        const rb = clamp(rs * 0.85, 6, 17);
         const mood = scene.babiMood || 0;
 
-        /* little arms that wave with the music */
         ctx.save();
         ctx.strokeStyle = "rgba(255,190,220,0.85)";
         ctx.lineWidth = Math.max(1.2, rb * 0.22);
@@ -2140,7 +2188,6 @@ kbd {
         ctx.fill();
         ctx.restore();
 
-        /* face */
         const happy = mood > 0.3;
         ctx.strokeStyle = "rgba(72,32,64,0.85)";
         ctx.lineWidth = Math.max(1.1, rb * 0.15);
@@ -2181,71 +2228,56 @@ kbd {
       ctx.restore();
     }
 
-    /* ── each player's hand, as a vertical bar ─────────────── */
-    drawBars(scene, pal) {
+    /* ── the two thumbs, one at each end of the screen ─────── */
+    drawGrips(scene, pal) {
       const ctx = this.ctx;
-      const hands = scene.hands || [0, 0];
-      const duet = scene.mode !== "solo";
-      for (let i = 0; i < (duet ? 2 : 1); i++) {
-        const b = this.bars[duet ? i : 0];
-        const tint = i === 0 ? "#ff9ecb" : "#8ff0e2";
-        const raised = clamp(hands[i] || 0, -1, 1);
-        const top = b.y - b.len;
-        const midY = b.y - b.len / 2;
-        const thY = midY - raised * (b.len / 2);
-
+      const held = scene.heldBy || [false, false];
+      const pads = [
+        { x: this.w / 2, y: this.h - 34, color: pal.rimA, label: isTouch() ? "PLAYER ONE · BOTTOM" : "PLAYER ONE · WASD", on: held[0] },
+        { x: this.w / 2, y: 74, color: pal.rimB, label: isTouch() ? "PLAYER TWO · TOP" : "PLAYER TWO · ARROWS", on: held[1] },
+      ];
+      for (let i = 0; i < pads.length; i++) {
+        const p = pads[i];
+        const w = 132, h = 26;
         ctx.save();
-        /* track */
-        ctx.strokeStyle = "rgba(255,255,255,0.10)";
-        ctx.lineWidth = 2;
-        ctx.lineCap = "round";
         ctx.beginPath();
-        ctx.moveTo(b.x, b.y);
-        ctx.lineTo(b.x, top);
-        ctx.stroke();
-
-        /* centre tick */
-        ctx.strokeStyle = "rgba(255,255,255,0.16)";
-        ctx.beginPath();
-        ctx.moveTo(b.x - 8, midY);
-        ctx.lineTo(b.x + 8, midY);
-        ctx.stroke();
-
-        /* filled part */
-        ctx.globalCompositeOperation = "lighter";
-        ctx.strokeStyle = C.rgba(tint, 0.75);
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(b.x, midY);
-        ctx.lineTo(b.x, thY);
-        ctx.stroke();
-
-        /* thumb */
-        const gr = ctx.createRadialGradient(b.x, thY, 0, b.x, thY, 22);
-        gr.addColorStop(0, C.rgba(tint, 0.55));
-        gr.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = gr;
-        ctx.beginPath();
-        ctx.arc(b.x, thY, 22, 0, TAU);
-        ctx.fill();
-        ctx.restore();
-
-        ctx.beginPath();
-        ctx.arc(b.x, thY, 5, 0, TAU);
-        ctx.fillStyle = "#fffdf7";
-        ctx.fill();
-
-        ctx.save();
-        ctx.textAlign = "center";
-        ctx.fillStyle = "rgba(255,255,255,0.45)";
-        ctx.font = "600 9px ui-sans-serif, system-ui, sans-serif";
-        ctx.fillText(duet ? (i === 0 ? "PLAYER ONE" : "PLAYER TWO") : "YOUR HANDS", b.x, b.y + 18);
-        if (!isTouch()) {
-          ctx.fillStyle = "rgba(255,255,255,0.3)";
-          ctx.fillText(i === 0 ? "W  ·  S" : "↑  ·  ↓", b.x, b.y + 31);
+        if (ctx.roundRect) {
+          ctx.roundRect(p.x - w / 2, p.y - h / 2, w, h, 13);
+        } else {
+          ctx.rect(p.x - w / 2, p.y - h / 2, w, h);
         }
+        ctx.fillStyle = p.on ? C.rgba(p.color, 0.20) : "rgba(255,255,255,0.04)";
+        ctx.fill();
+        ctx.strokeStyle = p.on ? C.rgba(p.color, 0.9) : "rgba(255,255,255,0.12)";
+        ctx.lineWidth = p.on ? 1.6 : 1;
+        ctx.stroke();
+
+        ctx.fillStyle = p.on ? C.rgba(p.color, 0.95) : "rgba(255,255,255,0.35)";
+        ctx.font = "600 9px ui-sans-serif, system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(p.on ? p.label + " ✓" : p.label, p.x, p.y);
         ctx.restore();
       }
+
+      /* a spirit level, so you can see the tray is flat */
+      const lv = { x: this.w / 2, y: this.h - 76, w: 132, h: 18 };
+      ctx.save();
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(lv.x - lv.w / 2, lv.y - lv.h / 2, lv.w, lv.h, 9);
+      else ctx.rect(lv.x - lv.w / 2, lv.y - lv.h / 2, lv.w, lv.h);
+      ctx.fillStyle = "rgba(255,255,255,0.05)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.10)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      const bx = lv.x + clamp(this.tiltX, -1, 1) * (lv.w / 2 - 10);
+      const by = lv.y - clamp(this.tiltY, -1, 1) * 3;
+      ctx.beginPath();
+      ctx.arc(bx, by, 4.5, 0, TAU);
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      ctx.fill();
+      ctx.restore();
     }
 
     drawVignette() {
@@ -2263,13 +2295,14 @@ kbd {
 
   const MENU_PAL = {
     bg0: "#080611", bg1: "#150c22", fog: "#140c20",
-    rail: "#7b6a95", railTop: "#ffe3c0", railGlow: "#ffb877",
+    tray: "#6f6288", trayTop: "#fff0d8", trayGlow: "#ffb877",
+    rimA: "#ff9ecb", rimB: "#8ff0e2",
     ring: "#ff9ecb", ringNext: "#ffd28a",
     pearl: "#fff4dc", pearl2: "#ffb877",
     floor: "#2a1f3d", column: "#241a35", halo: "#ff9ecb",
   };
 
-  /* ── little side-view previews for the level cards ───────── */
+  /* ── little top-down previews for the level cards ───────── */
   function drawLevelPreview(canvas, level) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const size = 58;
@@ -2279,39 +2312,47 @@ kbd {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, size, size);
 
-    const cx = size / 2, cy = size * 0.62;
-    const half = size * 0.40;
-    const ang = 0.16;
-    const ca = Math.cos(ang), sa = Math.sin(ang);
+    const cx = size / 2, cy = size / 2;
+    const r = size * 0.40;
 
-    /* the plank */
+    /* the tray */
     ctx.beginPath();
-    ctx.moveTo(cx - half * ca, cy - half * sa);
-    ctx.lineTo(cx + half * ca, cy + half * sa);
-    ctx.strokeStyle = "rgba(255,255,255,0.45)";
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
+    if (ctx.roundRect) ctx.roundRect(cx - r, cy - r, r * 2, r * 2, size * 0.09);
+    else ctx.rect(cx - r, cy - r, r * 2, r * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.30)";
+    ctx.lineWidth = 1.2;
     ctx.stroke();
 
-    /* rings at both ends */
-    const amp = level.amp;
-    [-amp, amp].forEach((u, i) => {
-      const x = u * half;
-      const y = u * half * (sa / ca);
-      ctx.beginPath();
-      ctx.arc(cx + x, cy + y, size * 0.13, 0, TAU);
-      ctx.strokeStyle = i === 0 ? C.rgba(level.pal.ring, 0.85) : C.rgba(level.pal.ringNext, 0.85);
-      ctx.lineWidth = 1.6;
-      ctx.stroke();
-    });
+    /* the path the marble takes */
+    ctx.beginPath();
+    for (let k = 0; k <= level.gates; k++) {
+      const x = cx + level.gateX(k) * r * 0.92;
+      const y = cy + level.gateZ(k) * r * 0.92;
+      if (k === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = C.rgba(level.pal.ring, 0.35);
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
-    /* the pearl */
+    /* a few rings */
+    for (let k = 0; k < level.gates; k += Math.max(1, Math.round(level.gates / 7))) {
+      const x = cx + level.gateX(k) * r * 0.92;
+      const y = cy + level.gateZ(k) * r * 0.92;
+      ctx.beginPath();
+      ctx.arc(x, y, size * 0.055, 0, TAU);
+      ctx.strokeStyle = C.rgba(k === 0 ? level.pal.ringNext : level.pal.ring, 0.75);
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+
+    /* the marble */
     const gr = ctx.createRadialGradient(cx - 1, cy - 2, 0, cx, cy, size * 0.09);
     gr.addColorStop(0, "#fffdf6");
     gr.addColorStop(1, level.pal.pearl2);
     ctx.fillStyle = gr;
     ctx.beginPath();
-    ctx.arc(cx, cy, size * 0.085, 0, TAU);
+    ctx.arc(cx, cy, size * 0.075, 0, TAU);
     ctx.fill();
   }
 
@@ -2323,9 +2364,9 @@ kbd {
 /* ==== src/game.js ==== */
 /* ──────────────────────────────────────────────────────────────
    Dance with Babi — game.js
-   Two players hold one plank. Raise your end and the pearl rolls
-   toward your partner; lower it and it comes back. The whole dance
-   is one long swing you have to keep in time.
+   The phone is a tray, and a marble rolls on it. Tip the phone any
+   way at all and the marble runs downhill; your job is to land it
+   in the next ring exactly when the waltz beats.
    ────────────────────────────────────────────────────────────── */
 (function () {
   const DWB = window.DWB;
@@ -2334,18 +2375,18 @@ kbd {
   const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
 
-  const KEY_RATE = 2.6;      /* how fast a key raises your end */
-  const GRAB_RANGE = 0.30;   /* fraction of the screen height for a full raise */
-  const SPRING = 5.5;        /* how quickly an end falls back when let go */
+  const GRAB_RANGE = 0.24;   /* fraction of the screen for a full tilt */
   const GRIP_GRACE = 0.45;   /* you may lose your grip for this long */
-  const END_BOUNCE = 0.34;
-  const END_PENALTY = 0.55;  /* how hard the pearl must hit the end to count */
+  const PAD_RATE = 3.2;      /* how fast a key tips the tray */
+  const RIM_BOUNCE = 0.42;
+  const RIM_PENALTY = 0.9;   /* how hard the marble must hit the rim to count */
+  const FOLLOW = 22;         /* how quickly the tray answers your hands */
 
-  /* judged on the beat: how close is the pearl to the ring when the music lands */
+  /* judged on the beat: how close is the marble to the ring centre */
   const JUDGE = [
-    { d: 0.15, q: 3, points: 100, label: "perfect" },
-    { d: 0.30, q: 2, points: 60, label: "good" },
-    { d: 0.46, q: 1, points: 30, label: "on the edge" },
+    { d: "perfect", q: 3, points: 100, label: "perfect" },
+    { d: "good", q: 2, points: 60, label: "good" },
+    { d: "edge", q: 1, points: 30, label: "on the edge" },
   ];
 
   const store = {
@@ -2398,14 +2439,13 @@ kbd {
       this.level = null;
       this.gates = [];
       this.nextGate = 0;
-      this.hands = [0, 0];
       this.heldBy = [false, false];
       this.lostGrip = 0;
       this.gripped = false;
-      this.pearlU = 0;
-      this.pearlV = 0;
-      this.prevU = 0;
-      this.prevT = -0.001;
+      this.mx = 0; this.mz = 0;          /* the marble, in tray units */
+      this.vx = 0; this.vz = 0;
+      this.tiltX = 0; this.tiltY = 0;    /* where the tray is tipped right now */
+      this.pads = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
       this.score = 0;
       this.combo = 0;
       this.maxCombo = 0;
@@ -2413,7 +2453,7 @@ kbd {
       this.babiMood = 0;
       this.beatPhase = -1;
       this.pointers = new Map();
-      this.keys = { w: 0, s: 0, up: 0, down: 0 };
+      this.keys = { w: 0, s: 0, a: 0, d: 0, up: 0, down: 0, left: 0, right: 0 };
       this.lastT = 0;
       this.resumeState = "playing";
       this.shake = 0;
@@ -2608,10 +2648,11 @@ kbd {
       el.classList.toggle("live", gyro);
     }
 
-    /* ── input: raise and lower your end of the plank ──────── */
-    zoneFor(x) {
+    /* ── input: two thumbs, one at each end of the phone ───── */
+    zoneFor(y) {
       if (this.mode === "solo") return 0;
-      return x < this.stage.w / 2 ? 0 : 1;
+      /* player one holds the near end (bottom), player two the far end */
+      return y < this.stage.h * 0.5 ? 1 : 0;
     }
 
     bindInput() {
@@ -2626,8 +2667,8 @@ kbd {
         this.askGyro();
         if (this.state !== "playing" && this.state !== "countin") return;
         const p = pos(e);
-        const zone = this.zoneFor(p.x);
-        this.pointers.set(e.pointerId, { zone: zone, anchorY: p.y, value: 0 });
+        const zone = this.zoneFor(p.y);
+        this.pointers.set(e.pointerId, { zone: zone, ax: p.x, ay: p.y, x: 0, y: 0 });
         this.heldBy[zone] = true;
         if (this.mode === "solo") this.heldBy = [true, true];
         try { cv.setPointerCapture(e.pointerId); } catch (err) { /* noop */ }
@@ -2637,24 +2678,23 @@ kbd {
       cv.addEventListener("pointermove", (e) => {
         const d = this.pointers.get(e.pointerId);
         if (!d) return;
-        if (this.gyroLive()) { e.preventDefault(); return; }
-        const p = pos(e);
-        const v = clamp((d.anchorY - p.y) / (this.stage.h * GRAB_RANGE), -1, 1);
-        d.value = v;
-        if (this.state !== "playing" && this.state !== "countin") return;
-        if (this.mode === "solo") {
-          this.hands[0] = -v;
-          this.hands[1] = v;
-        } else {
-          this.hands[d.zone] = v;
-        }
         e.preventDefault();
+        if (this.gyroLive()) return;         /* the gyroscope is steering */
+        /* with no gyroscope, a drag becomes a little joystick */
+        const p = pos(e);
+        const sc = this.stage.h * GRAB_RANGE;
+        d.x = clamp((p.x - d.ax) / sc, -1, 1);
+        d.y = clamp((d.ay - p.y) / sc, -1, 1);
+        this.pads[d.zone].x = d.x;
+        this.pads[d.zone].y = d.y;
       });
 
       const release = (e) => {
         const d = this.pointers.get(e.pointerId);
         if (d) {
           this.heldBy[d.zone] = false;
+          this.pads[d.zone].x = 0;
+          this.pads[d.zone].y = 0;
           if (this.mode === "solo") this.heldBy = [false, false];
         }
         this.pointers.delete(e.pointerId);
@@ -2681,10 +2721,14 @@ kbd {
           return;
         }
         switch (e.code) {
-          case "KeyW": case "KeyA": this.keys.w = 1; break;
-          case "KeyS": case "KeyD": this.keys.s = 1; break;
+          case "KeyW": this.keys.w = 1; break;
+          case "KeyS": this.keys.s = 1; break;
+          case "KeyA": this.keys.a = 1; break;
+          case "KeyD": this.keys.d = 1; break;
           case "ArrowUp": this.keys.up = 1; e.preventDefault(); break;
           case "ArrowDown": this.keys.down = 1; e.preventDefault(); break;
+          case "ArrowLeft": this.keys.left = 1; e.preventDefault(); break;
+          case "ArrowRight": this.keys.right = 1; e.preventDefault(); break;
           case "Escape": case "KeyP":
             if (this.state === "playing" || this.state === "countin" || this.state === "paused") {
               this.togglePause();
@@ -2698,16 +2742,20 @@ kbd {
 
       window.addEventListener("keyup", (e) => {
         switch (e.code) {
-          case "KeyW": case "KeyA": this.keys.w = 0; break;
-          case "KeyS": case "KeyD": this.keys.s = 0; break;
+          case "KeyW": this.keys.w = 0; break;
+          case "KeyS": this.keys.s = 0; break;
+          case "KeyA": this.keys.a = 0; break;
+          case "KeyD": this.keys.d = 0; break;
           case "ArrowUp": this.keys.up = 0; break;
           case "ArrowDown": this.keys.down = 0; break;
+          case "ArrowLeft": this.keys.left = 0; break;
+          case "ArrowRight": this.keys.right = 0; break;
           default: break;
         }
       });
 
       window.addEventListener("blur", () => {
-        this.keys.w = this.keys.s = this.keys.up = this.keys.down = 0;
+        this.keys = { w: 0, s: 0, a: 0, d: 0, up: 0, down: 0, left: 0, right: 0 };
         this.pointers.clear();
         this.heldBy = [false, false];
       });
@@ -2725,18 +2773,19 @@ kbd {
       this.gates = [];
       for (let k = 0; k < lv.gates; k++) {
         this.gates.push({
-          u: lv.gateU(k),
+          x: lv.gateX(k),
+          z: lv.gateZ(k),
           expected: lv.gateAt(k),
           state: 0, q: 0, flash: 0,
         });
       }
       this.nextGate = 0;
-      this.hands = [0, 0];
       this.heldBy = [false, false];
-      this.pearlU = 0;
-      this.pearlV = 0;
-      this.prevU = 0;
-      this.prevT = -0.001;
+      this.pads = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
+      this.mx = 0; this.mz = 0;
+      this.vx = 0; this.vz = 0;
+      this.tiltX = 0; this.tiltY = 0;
+      if (MOTION) MOTION.setRange(lv.tiltRange);
       this.score = 0;
       this.combo = 0;
       this.maxCombo = 0;
@@ -2744,7 +2793,7 @@ kbd {
       this.babiMood = 0;
       this.beatPhase = -1;
       this.pointers.clear();
-      this.keys = { w: 0, s: 0, up: 0, down: 0 };
+      this.keys = { w: 0, s: 0, a: 0, d: 0, up: 0, down: 0, left: 0, right: 0 };
       this.lastCount = null;
       this.shake = 0;
 
@@ -2755,10 +2804,10 @@ kbd {
       this.el.topbar.classList.remove("hidden");
       this.el.countin.classList.remove("hidden");
       this.el.hint.textContent = this.gyroLive()
-        ? "hold the phone together — one thumb each — and lean it"
+        ? "one thumb at each end of the phone — then tip it"
         : this.mode === "solo"
-          ? "lift and lower — one long swing"
-          : "lift your own end, then let go";
+          ? "drag anywhere (or WASD) to tip the tray"
+          : "a thumb each: WASD and the arrows — tip it together";
       this.el.hint.classList.remove("hidden");
       this.el.hudLevel.textContent = lv.name;
       this.setControlChip();
@@ -2809,63 +2858,82 @@ kbd {
       const live = this.state === "playing" || this.state === "countin";
       if (!live) return;
 
-      /* ── hands ── */
+      /* ── where is the tray tipped right now? ── */
+      const lv = this.level;
       const gyro = this.gyroLive();
+      let tx = 0, ty = 0;
+
       if (gyro) {
-        /* both of you hold the phone: lean it and the plank follows.
-           the thumbs on the glass are the grip — let go and it levels. */
         MOTION.update(dt);
         const grip = this.heldBy[0] && (this.mode === "solo" || this.heldBy[1]);
-        const lean = grip ? MOTION.value : 0;
-        this.hands[0] += (lean - this.hands[0]) * Math.min(1, dt * (grip ? 26 : 8));
-        this.hands[1] = -this.hands[0];
+        if (grip) { tx = MOTION.tx; ty = MOTION.ty; }
         if (!grip && this.gripped) this.lostGrip += dt;
         else this.lostGrip = 0;
         this.gripped = grip;
         if (this.lostGrip > GRIP_GRACE && this.state === "playing") {
           this.lostGrip = 0;
-          this.breakCombo("hold the phone with both hands");
+          this.breakCombo("keep a thumb at each end");
           this.sound.soft("late");
         }
-      }
-
-      const k1 = (this.keys.w ? 1 : 0) - (this.keys.s ? 1 : 0);
-      const k2 = (this.keys.up ? 1 : 0) - (this.keys.down ? 1 : 0);
-      const spring = Math.min(1, dt * SPRING);
-      for (let i = 0; i < 2 && !gyro; i++) {
-        if (this.heldBy[i]) continue;
-        const kd = this.mode === "solo" ? (k1 || k2) : i === 0 ? k1 : k2;
-        if (kd) {
-          this.hands[i] = clamp(this.hands[i] + kd * KEY_RATE * dt, -1, 1);
-          if (this.mode === "solo") {
-            this.hands[0] = -this.hands[1];
+      } else {
+        /* no gyroscope: the two of you push with keys or a drag */
+        const keys = this.keys;
+        const raw = [
+          { x: (keys.d ? 1 : 0) - (keys.a ? 1 : 0), y: (keys.w ? 1 : 0) - (keys.s ? 1 : 0) },
+          { x: (keys.right ? 1 : 0) - (keys.left ? 1 : 0), y: (keys.up ? 1 : 0) - (keys.down ? 1 : 0) },
+        ];
+        for (let i = 0; i < 2; i++) {
+          let d = null;
+          this.pointers.forEach((p) => { if (p.zone === i) d = p; });
+          let wx = 0, wy = 0, stick = false;
+          const canPush = this.heldBy[i] || (!this.gyroLive() && !DWB.isTouch());
+          if (canPush) {
+            wx = raw[i].x; wy = raw[i].y;
+            if (d) { wx = d.x; wy = d.y; stick = true; }
           }
+          /* a thumb is already smooth; a key press needs easing */
+          const f = stick ? 1 : Math.min(1, dt * PAD_RATE * 2);
+          this.pads[i].x += (wx - this.pads[i].x) * f;
+          this.pads[i].y += (wy - this.pads[i].y) * f;
+        }
+        const p0 = this.pads[0], p1 = this.pads[1];
+        if (this.mode === "solo") {
+          tx = p0.x; ty = p0.y;
         } else {
-          this.hands[i] += (0 - this.hands[i]) * spring;
+          /* the tray only tips while the two of you push the same way */
+          const agree = Math.abs(p0.x - p1.x) < 0.5 && Math.abs(p0.y - p1.y) < 0.5;
+          if (agree) { tx = (p0.x + p1.x) * 0.5; ty = (p0.y + p1.y) * 0.5; }
         }
       }
 
-      const lv = this.level;
-      /* the plank only tilts when the two of you disagree: half the
-         difference, so one player alone can never tilt it far enough */
-      const tilt = clamp((this.hands[1] - this.hands[0]) * 0.5, -1, 1);
+      const f2 = Math.min(1, dt * FOLLOW);
+      this.tiltX += (clamp(tx, -1, 1) - this.tiltX) * f2;
+      this.tiltY += (clamp(ty, -1, 1) - this.tiltY) * f2;
+
       const t = this.sound.songTime();
       this.beatPhase = t < 0 ? -1 : (t / lv.spb) % 1;
 
-      /* ── the pearl: the plank's slope sets its speed, and it
-         answers your hands with a short lag, so you must lead ── */
-      const wanted = -lv.speed * tilt;
-      this.pearlV += (wanted - this.pearlV) * Math.min(1, dt / lv.lag);
-      this.pearlU += this.pearlV * dt;
+      /* ── the marble: gravity down the tilted tray, with a little lag ── */
+      const wx = lv.speed * this.tiltX;
+      const wz = -lv.speed * this.tiltY;
+      const kk = Math.min(1, dt / lv.lag);
+      this.vx += (wx - this.vx) * kk;
+      this.vz += (wz - this.vz) * kk;
+      this.mx += this.vx * dt;
+      this.mz += this.vz * dt;
 
-      if (this.pearlU > 1) {
-        this.pearlU = 1;
-        if (this.pearlV > END_PENALTY) this.hitTheEnd(1);
-        this.pearlV = -this.pearlV * END_BOUNCE;
-      } else if (this.pearlU < -1) {
-        this.pearlU = -1;
-        if (this.pearlV < -END_PENALTY) this.hitTheEnd(-1);
-        this.pearlV = -this.pearlV * END_BOUNCE;
+      const LIM = 0.97;
+      if (this.mx > LIM || this.mx < -LIM) {
+        const hard = Math.abs(this.vx) > RIM_PENALTY;
+        this.mx = this.mx > 0 ? LIM : -LIM;
+        this.vx = -this.vx * RIM_BOUNCE;
+        if (hard) this.hitTheEnd(1);
+      }
+      if (this.mz > LIM || this.mz < -LIM) {
+        const hard = Math.abs(this.vz) > RIM_PENALTY;
+        this.mz = this.mz > 0 ? LIM : -LIM;
+        this.vz = -this.vz * RIM_BOUNCE;
+        if (hard) this.hitTheEnd(1);
       }
 
       /* count-in */
@@ -2894,10 +2962,18 @@ kbd {
     }
 
     /** every ring is a snapshot: is the pearl inside it when the beat lands? */
+    gripOK() {
+      /* on a phone both thumbs must be on the glass; on a laptop there is
+         nothing to hold, so the keyboard or a drag counts on its own */
+      if (!this.gyroLive() && !DWB.isTouch()) return true;
+      return this.heldBy[0] && (this.mode === "solo" || this.heldBy[1]);
+    }
+
     judgeBeats(t) {
       let guard = 0;
       while (this.nextGate < this.gates.length && t >= this.gates[this.nextGate].expected && guard++ < 8) {
-        this.scoreGate(this.nextGate);
+        if (this.gripOK()) this.scoreGate(this.nextGate);
+        else this.missGate(this.nextGate, "let go");
         this.nextGate++;
       }
     }
@@ -2905,14 +2981,17 @@ kbd {
     scoreGate(i) {
       const g = this.gates[i];
       const lv = this.level;
-      const d = Math.abs(this.pearlU - g.u) / Math.max(0.35, lv.amp);
+      const d = Math.hypot(this.mx - g.x, this.mz - g.z);
       let tier = null;
       for (let j = 0; j < JUDGE.length; j++) {
-        if (d <= JUDGE[j].d) { tier = JUDGE[j]; break; }
+        if (d <= lv[JUDGE[j].d]) { tier = JUDGE[j]; break; }
       }
       if (!tier) {
-        const past = (this.pearlV > 0 && this.pearlU > g.u) || (this.pearlV < 0 && this.pearlU < g.u);
-        this.missGate(i, past ? "early" : "late");
+        /* ahead of the ring along the dance, or still behind it? */
+        const nx = lv.gateX(i + 1) - g.x;
+        const nz = lv.gateZ(i + 1) - g.z;
+        const along = (this.mx - g.x) * nx + (this.mz - g.z) * nz;
+        this.missGate(i, along > 0 ? "early" : "late");
         return;
       }
 
@@ -2943,17 +3022,21 @@ kbd {
       if (g.state !== 0) return;
       g.state = 2;
       this.counts.miss += 1;
-      this.breakCombo(why === "early" ? "a little early" : why === "late" ? "a little late" : why);
+      this.breakCombo(
+        why === "early" ? "a little early"
+          : why === "late" ? "a little late"
+            : why === "let go" ? "keep a thumb at each end"
+              : why
+      );
       this.sound.soft(why === "early" ? "early" : "late");
       this.setHud();
     }
 
-    hitTheEnd(dir) {
+    hitTheEnd() {
       this.shake = 1;
       this.sound.tangle();
-      if (this.combo > 2) this.popJudge("too far", "bad");
+      if (this.combo > 2) this.popJudge("off the tray", "bad");
       this.breakCombo(null);
-      void dir;
     }
 
     breakCombo(word) {
@@ -3041,26 +3124,26 @@ kbd {
       const demoTilt = Math.sin(this.demoT * 1.6) * 0.85;
       const demoLevel = LEVELS[0];
 
-      const tilt = demo ? demoTilt : clamp((this.hands[1] - this.hands[0]) * 0.5, -1, 1);
       const scene = {
         level: demo ? demoLevel : this.level,
-        tilt: tilt,
-        pearlU: demo ? Math.sin(this.demoT * 1.6) * 0.55 : this.pearlU,
-        pearlV: demo ? 0 : this.pearlV,
+        demo: demo,
+        tx: demo ? demoTilt : this.tiltX,
+        ty: demo ? Math.cos(this.demoT * 1.1) * 0.55 : this.tiltY,
+        mx: demo ? Math.sin(this.demoT * 1.6) * 0.45 : this.mx,
+        mz: demo ? Math.cos(this.demoT * 1.1) * 0.28 : this.mz,
+        vx: demo ? 0 : this.vx,
+        vz: demo ? 0 : this.vz,
         gates: demo ? [] : this.gates,
         nextGate: demo ? 0 : this.nextGate,
         phase: this.beatPhase >= 0 ? this.beatPhase : (this.demoT * 1.6) % 1,
-        hands: demo ? [-demoTilt, demoTilt] : this.hands,
+        heldBy: demo ? [true, true] : this.heldBy,
         babiMood: demo ? 0.7 : this.babiMood,
         showBars: !demo,
-        showHands: this.state === "countin" || (this.state === "playing" && this.li === 0 && this.el.hudProgress.style.width.replace("%", "") < 25),
+        showHands: !demo && (this.state === "countin" || (this.state === "playing" && this.li === 0 && this.nextGate < 6)),
         mode: this.mode,
-        pal0: "#ff9ecb",
-        pal1: "#8ff0e2",
         shake: this.shake,
       };
 
-      if (demo) scene.hands = [-demoTilt, demoTilt];
       this.stage.draw(scene, dt);
       requestAnimationFrame(this.frame);
     };
