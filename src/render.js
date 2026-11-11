@@ -15,7 +15,7 @@
   const TAU = Math.PI * 2;
   const FOV = (58 * Math.PI) / 180;
   const MARBLE_R = 0.100;
-  const RING_R = 0.205;
+  const RING_R = 0.25;
   const GRID = 1.15;          /* world spacing of the floor inlay */
 
   const isTouch = () =>
@@ -668,41 +668,55 @@
         if (p) pts.push(p);
       }
       if (pts.length < 2) return;
-      const pulse = 0.65 + 0.35 * Math.sin(this.time * 6);
-      const SP = 26;
-      const flow = (this.time * 95) % SP;
+      const pulse = 0.6 + 0.4 * Math.sin(this.time * 4.5);
+      const SP = 34;
+      const flow = (this.time * 60) % SP;
+      /* a smooth curve through the points, not a jagged polyline */
+      const path = () => {
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length - 1; i++) {
+          const mx = (pts[i].x + pts[i + 1].x) / 2, my = (pts[i].y + pts[i + 1].y) / 2;
+          ctx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
+        }
+        ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
+      };
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x, pts[0].y);
-      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-      /* wide soft glow under the line */
-      ctx.strokeStyle = C.out(pal.pearl, 0.15 * pulse + 0.07);
-      ctx.lineWidth = 15;
-      ctx.setLineDash([3, 11]);
+      /* colour fades from the pearl's warm white to the next ring's colour */
+      const a0 = pts[0], a1 = pts[pts.length - 1];
+      const grad = ctx.createLinearGradient(a0.x, a0.y, a1.x, a1.y);
+      grad.addColorStop(0, C.out(C.lite(pal.pearl, 0.75), 1));
+      grad.addColorStop(1, C.out(pal.ringNext, 1));
+      /* one soft glow pass */
+      path();
+      ctx.strokeStyle = C.out(pal.pearl, 0.10 * pulse + 0.05);
+      ctx.lineWidth = 9;
       ctx.stroke();
-      /* bright dashed core flowing toward the ring you owe */
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x, pts[0].y);
-      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-      ctx.strokeStyle = C.out(C.lite(pal.pearl, 0.55), 0.9 * pulse);
-      ctx.lineWidth = 3.2;
-      ctx.setLineDash([SP * 0.6, SP * 0.4]);
+      /* a slim bright dashed core flowing toward the ring */
+      path();
+      ctx.strokeStyle = grad;
+      ctx.globalAlpha = 0.85 * pulse;
+      ctx.lineWidth = 2.2;
+      ctx.setLineDash([SP * 0.55, SP * 0.45]);
       ctx.lineDashOffset = -flow;
       ctx.stroke();
       ctx.setLineDash([]);
-      /* an arrowhead at the next ring */
+      ctx.globalAlpha = 1;
+      /* a soft glowing chevron at the end, pointing along the path */
       const a = pts[pts.length - 1], b = pts[pts.length - 2] || pts[0];
       const seg = Math.hypot(a.x - b.x, a.y - b.y) || 1;
       const ux = (a.x - b.x) / seg, uy = (a.y - b.y) / seg;
       ctx.beginPath();
-      ctx.moveTo(a.x + ux * 12, a.y + uy * 12);
-      ctx.lineTo(a.x - uy * 7, a.y + ux * 7);
-      ctx.lineTo(a.x + uy * 7, a.y - ux * 7);
+      ctx.moveTo(a.x + ux * 14, a.y + uy * 14);
+      ctx.lineTo(a.x - uy * 6, a.y + ux * 6);
+      ctx.lineTo(a.x + uy * 6, a.y - ux * 6);
       ctx.closePath();
-      ctx.fillStyle = C.out(C.lite(pal.pearl, 0.6), 0.9 * pulse);
+      ctx.fillStyle = C.out(pal.ringNext, 0.85 * pulse);
+      ctx.shadowColor = C.out(pal.ringNext, 0.9);
+      ctx.shadowBlur = 14;
       ctx.fill();
       ctx.restore();
     }

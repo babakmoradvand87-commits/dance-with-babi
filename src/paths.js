@@ -17,7 +17,7 @@
     const sub = 6;                 /* samples per ring */
     const ds = step / sub;
     const want = Math.min(6000, Math.ceil((count * step * 1.35) / ds) + 8);
-    const a = 1.05, b = 0.78, c = 0.22, zz = 0.72;
+    const a = 1.05, b = 0.78, c = 0.22, zz = 0.60;
     const p1 = (seed * 1.91) % 6.28, p2 = (seed * 3.37) % 6.28, p3 = (seed * 5.13) % 6.28;
     const xs = new Float64Array(want + 1);
     const zs = new Float64Array(want + 1);
@@ -342,10 +342,13 @@
     const route = makeRoute(lv.seed, lv.step, lv.gates);
     lv.points = route.points;
     const lastK = route.points.length - 1;
-    lv.speed = Math.max(1.25, lv.step / lv.spb / 0.60);
-    lv.perfect = lv.step * 0.24;
-    lv.good = lv.step * 0.48;
-    lv.edge = lv.step * 0.72;
+    /* the pace of the dance IS the song's tempo (one ring per beat), but
+       the marble gets a little more than half a beat per ring and its top
+       speed is capped, so fast songs stay fun instead of frantic */
+    lv.speed = Math.min(3.1, Math.max(1.25, lv.step / lv.spb / 0.78));
+    lv.perfect = lv.step * 0.30;
+    lv.good = lv.step * 0.60;
+    lv.edge = lv.step * 0.88;
     lv.gateX = function (i) {
       if (i < 0) i = 0;
       if (i <= lastK) return lv.points[i][0];
