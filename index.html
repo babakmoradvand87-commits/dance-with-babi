@@ -2737,8 +2737,8 @@ kbd {
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
       const gx0 = Math.round(f.x / 1.7), gz0 = Math.round(f.z / 1.7);
-      for (let a = -6; a <= 6; a++) {
-        for (let b = -3; b <= 8; b++) {
+      for (let a = -4; a <= 4; a++) {
+        for (let b = -1; b <= 6; b++) {
           const hsh = Math.sin((gx0 + a) * 12.9898 + (gz0 + b) * 78.233) * 43758.5453;
           const fr = hsh - Math.floor(hsh);
           if (fr > 0.34) continue;
