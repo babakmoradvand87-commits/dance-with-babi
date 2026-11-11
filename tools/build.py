@@ -16,7 +16,7 @@ TEMPLATE = ROOT / "tools" / "template.html"
 OUT = ROOT / "index.html"
 
 STYLE = ROOT / "src" / "style.css"
-SCRIPTS = ["math3d.js", "paths.js", "audio.js", "render.js", "game.js"]
+SCRIPTS = ["math3d.js", "paths.js", "motion.js", "audio.js", "render.js", "game.js"]
 
 
 def read(path: Path) -> str:

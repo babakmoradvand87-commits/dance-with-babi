@@ -547,6 +547,25 @@ kbd {
   color: rgba(240, 232, 255, 0.82);
 }
 .steps.fa b { color: #ffd28a; }
+
+/* ── the control chip: gyroscope or keys ─────────────────── */
+.ctl {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: rgba(236, 228, 255, 0.55);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  white-space: nowrap;
+}
+.ctl.live {
+  color: #0d0a14;
+  background: linear-gradient(180deg, #8ff0e2, #5fd6c6);
+  border-color: transparent;
+  box-shadow: 0 0 16px rgba(143, 240, 226, 0.35);
+}
 </style>
 </head>
 <body>
@@ -558,6 +577,7 @@ kbd {
     <button class="icon-btn" id="btn-pause" aria-label="Pause">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="5" width="3.4" height="14" rx="1.4"/><rect x="13.6" y="5" width="3.4" height="14" rx="1.4"/></svg>
     </button>
+    <span id="ctl" class="ctl">touch · keyboard</span>
     <div class="level-chip">
       <span id="hud-level">First Bow</span>
       <div class="progress"><i id="hud-progress"></i></div>
@@ -601,8 +621,8 @@ kbd {
           </svg>
         </div>
         <h1>Dance<span class="with">with</span>Babi</h1>
-        <p class="tagline">A duet for two players and one screen.<br/>One plank, a hand on each end. Rock it, and the pearl dances.</p>
-        <p class="tagline fa" dir="rtl" lang="fa">یک تخته، دو سر، دو نفر. هرکس یک سر را بالا و پایین می‌برد و مروارید روی تخته می‌رقصد.</p>
+        <p class="tagline">A duet for two players and one phone.<br/>Hold it together, lean it like a tray, and the pearl rolls.</p>
+        <p class="tagline fa" dir="rtl" lang="fa">یک گوشی، دو نفر. گوشی را با هم بگیرید و مثل سینی کج کنید؛ مروارید روی تخته می‌غلتد.</p>
         <div class="title-actions">
           <button class="btn primary" data-go="levels">Begin the dance</button>
           <button class="btn ghost" data-go="howto">How to play</button>
@@ -630,7 +650,7 @@ kbd {
 
         <div class="panel-foot">
           <div class="hint">
-            <kbd>W</kbd><kbd>S</kbd> player one &nbsp;·&nbsp; <kbd>↑</kbd><kbd>↓</kbd> player two &nbsp;·&nbsp; on touch: lift your half of the screen
+            on a phone: hold it together with one thumb each, then lean it &nbsp;·&nbsp; on a keyboard: <kbd>W</kbd><kbd>S</kbd> player one, <kbd>↑</kbd><kbd>↓</kbd> player two
           </div>
           <button class="btn tiny ghost" data-go="howto">How to play</button>
         </div>
@@ -650,22 +670,22 @@ kbd {
           <li>
             <span class="num">1</span>
             <div>
-              <h3>One end each</h3>
-              <p>You are both holding the same plank. Player one holds the <em>left</em> end, player two the <em>right</em> one. On touch: lift a finger in your half of the screen. On a keyboard: <kbd>W</kbd><kbd>S</kbd> and <kbd>↑</kbd><kbd>↓</kbd>.</p>
+              <h3>Hold the phone together</h3>
+              <p>The phone <em>is</em> the plank. Both of you hold it, one thumb on the glass each — one thumb in each half of the screen. Your thumbs are the grip: let go with one hand and the plank goes slack.</p>
             </div>
           </li>
           <li>
             <span class="num">2</span>
             <div>
-              <h3>One up, one down</h3>
-              <p>The plank only tilts when the two of you <em>disagree</em>: your end up, your partner's end down. If you both lift together the plank stays level and the pearl does not move an inch — so no one can carry this dance alone.</p>
+              <h3>Lean it like a tray</h3>
+              <p>The gyroscope reads how you lean the phone: right side down and the plank tips right, the pearl rolls downhill. Hold it level and the pearl coasts — that is how you stop it. Whatever pose you start in becomes "level", so get comfortable first. On a laptop there is no gyroscope: use <kbd>W</kbd><kbd>S</kbd> and <kbd>↑</kbd><kbd>↓</kbd>, one end each.</p>
             </div>
           </li>
           <li>
             <span class="num">3</span>
             <div>
               <h3>The slope is the speed</h3>
-              <p>Steeper plank, faster pearl — and it answers your hands a heartbeat late, so you have to <em>lead</em>. Start the swing before you need it and level the plank to stop it.</p>
+              <p>Lean harder, roll faster — and the pearl answers a heartbeat late, so you have to <em>lead</em>. Start the lean before you need it and level the phone to stop the pearl dead.</p>
             </div>
           </li>
           <li>
@@ -677,7 +697,7 @@ kbd {
           </li>
         </ol>
         <div class="steps fa" dir="rtl" lang="fa">
-          <p><b>خلاصه به فارسی:</b> هر بازیکن یک سر تخته را بالا می‌برد و پایین می‌آورد. اگر هر دو با هم بالا ببرید تخته صاف می‌ماند و مروارید حرکت نمی‌کند؛ پس باید یکی بالا و دیگری پایین باشد. شیب تخته سرعت مروارید است و مروارید با کمی تأخیر جواب می‌دهد، پس باید یک ضرب زودتر شروع کنید. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد.</p>
+          <p><b>خلاصه به فارسی:</b> گوشی همان تخته است. هر دو نفر گوشی را با هم می‌گیرید و هر کدام یک شست روی صفحه می‌گذارید؛ انگشت‌ها «گرفتن» تخته‌اند و اگر یکی رها کند تخته شل می‌شود. با کج کردن گوشی (ژیروسکوپ) تخته کج می‌شود و مروارید به سمت پایین‌تر می‌غلتد؛ گوشی را صاف بگیرید تا مروارید بایستد. هرچه شیب بیشتر، سرعت بیشتر، و مروارید با کمی تأخیر جواب می‌دهد، پس یک ضرب زودتر شروع کنید. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد. روی لپ‌تاپ که ژیروسکوپ نیست، با کلیدهای <kbd>W</kbd>/<kbd>S</kbd> و <kbd>↑</kbd>/<kbd>↓</kbd> بازی کنید.</p>
         </div>
         <div class="panel-foot">
           <div class="hint">Headphones help. Volume is your friend, the music is your metronome.</div>
@@ -975,6 +995,111 @@ kbd {
   DWB.LEVELS = LEVELS;
   DWB.RAIL_HALF = RAIL_HALF;
   DWB.TAU = TAU;
+})();
+
+/* ==== src/motion.js ==== */
+/* ──────────────────────────────────────────────────────────────
+   Dance with Babi — motion.js
+   The phone *is* the plank. Two players hold one device, and the
+   way they lean it is what tilts the plank on screen.
+
+   We read the gravity vector out of DeviceOrientationEvent and
+   project it onto the screen plane; the component along the
+   screen's x axis is the lean. That works whether the phone is
+   held flat like a tray or upright like a book, in portrait or
+   landscape, because it is the physics, not a special case.
+   ────────────────────────────────────────────────────────────── */
+(function () {
+  const DWB = window.DWB;
+  const clamp = DWB.clamp;
+  const D2R = Math.PI / 180;
+  const MAX_LEAN = (26 * Math.PI) / 180; /* a 26° lean is full tilt */
+  const SMOOTH = 16;                     /* how quickly the pearl follows */
+
+  const Motion = {
+    enabled: false,
+    has: false,
+    reason: "",
+    lean: 0,   /* radians, + = the screen's right side is down */
+    value: 0,  /* -1..1 after calibration */
+    zero: 0,
+    _bound: null,
+
+    supported() {
+      return typeof window !== "undefined" && typeof window.DeviceOrientationEvent !== "undefined";
+    },
+
+    /* must be called from a user gesture (iOS asks for permission) */
+    async enable() {
+      if (this.enabled) return true;
+      if (!this.supported()) { this.reason = "unsupported"; return false; }
+      const DOE = window.DeviceOrientationEvent;
+      try {
+        if (typeof DOE.requestPermission === "function") {
+          const res = await DOE.requestPermission();
+          if (res !== "granted") { this.reason = "denied"; return false; }
+        }
+      } catch (err) {
+        this.reason = "denied";
+        return false;
+      }
+      if (!this._bound) this._bound = (ev) => Motion.read(ev);
+      window.addEventListener("deviceorientation", this._bound, true);
+      if (window.screen && window.screen.orientation && window.screen.orientation.addEventListener) {
+        window.screen.orientation.addEventListener("change", () => { Motion.has = false; });
+      }
+      this.enabled = true;
+      this.reason = "";
+      return true;
+    },
+
+    read(ev) {
+      if (!ev || (ev.beta == null && ev.gamma == null)) return;
+      const be = (ev.beta || 0) * D2R;
+      const ga = (ev.gamma || 0) * D2R;
+
+      /* gravity inside the device frame is minus the third row of the
+         W3C rotation matrix Rz(alpha)·Rx(beta)·Ry(gamma) */
+      const gx = Math.cos(be) * Math.sin(ga);
+      const gy = -Math.sin(be);
+
+      /* express it in the screen's own frame (landscape, upside down…) */
+      const ang =
+        ((window.screen && window.screen.orientation && window.screen.orientation.angle) ||
+          window.orientation || 0) * D2R;
+      const sx = gx * Math.cos(ang) - gy * Math.sin(ang);
+
+      this.lean = Math.asin(clamp(sx, -1, 1));
+      this.has = true;
+    },
+
+    update(dt) {
+      if (!this.enabled || !this.has) return;
+      const want = clamp((this.lean - this.zero) / MAX_LEAN, -1, 1);
+      this.value += (want - this.value) * Math.min(1, dt * SMOOTH);
+      if (Math.abs(this.value) < 0.004) this.value = 0;
+    },
+
+    /* whatever pose you are holding it in right now becomes "level" */
+    calibrate() {
+      if (this.has) this.zero = this.lean;
+      this.value = 0;
+    },
+
+    reset() {
+      this.has = false;
+      this.lean = 0;
+      this.value = 0;
+      this.zero = 0;
+    },
+
+    /* how far past "level" you are right now, for the HUD */
+    leanDegrees() {
+      return ((this.lean - this.zero) / D2R) | 0;
+    },
+  };
+
+  DWB.Motion = Motion;
 })();
 
 /* ==== src/audio.js ==== */
@@ -2204,12 +2329,14 @@ kbd {
 (function () {
   const DWB = window.DWB;
   const LEVELS = DWB.LEVELS;
+  const MOTION = DWB.Motion;
   const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
 
   const KEY_RATE = 2.6;      /* how fast a key raises your end */
   const GRAB_RANGE = 0.30;   /* fraction of the screen height for a full raise */
   const SPRING = 5.5;        /* how quickly an end falls back when let go */
+  const GRIP_GRACE = 0.45;   /* you may lose your grip for this long */
   const END_BOUNCE = 0.34;
   const END_PENALTY = 0.55;  /* how hard the pearl must hit the end to count */
 
@@ -2244,6 +2371,7 @@ kbd {
         hudCombo: document.getElementById("hud-combo"),
         countin: document.getElementById("countin"),
         hint: document.getElementById("hint"),
+        ctl: document.getElementById("ctl"),
         judge: document.getElementById("judge"),
         grid: document.getElementById("level-grid"),
         sound: document.getElementById("btn-sound"),
@@ -2271,6 +2399,8 @@ kbd {
       this.nextGate = 0;
       this.hands = [0, 0];
       this.heldBy = [false, false];
+      this.lostGrip = 0;
+      this.gripped = false;
       this.pearlU = 0;
       this.pearlV = 0;
       this.prevU = 0;
@@ -2450,6 +2580,33 @@ kbd {
       });
     }
 
+    /* ── the gyroscope ─────────────────────────────────────── */
+    gyroLive() {
+      return !!(MOTION && MOTION.enabled && MOTION.has);
+    }
+
+    /* must run inside a real user gesture (iOS asks first) */
+    askGyro() {
+      if (!MOTION || this.gyroAsked) return;
+      this.gyroAsked = true;
+      MOTION.enable().then((ok) => {
+        this.gyroAllowed = ok;
+        this.setControlChip();
+        if (ok) {
+          MOTION.calibrate();
+          this.el.hint.textContent = "hold the phone together and lean it";
+        }
+      });
+    }
+
+    setControlChip() {
+      const el = this.el.ctl;
+      if (!el) return;
+      const gyro = this.gyroLive();
+      el.textContent = gyro ? "gyroscope" : "touch · keyboard";
+      el.classList.toggle("live", gyro);
+    }
+
     /* ── input: raise and lower your end of the plank ──────── */
     zoneFor(x) {
       if (this.mode === "solo") return 0;
@@ -2465,6 +2622,7 @@ kbd {
 
       cv.addEventListener("pointerdown", (e) => {
         this.sound.ensure();
+        this.askGyro();
         if (this.state !== "playing" && this.state !== "countin") return;
         const p = pos(e);
         const zone = this.zoneFor(p.x);
@@ -2478,6 +2636,7 @@ kbd {
       cv.addEventListener("pointermove", (e) => {
         const d = this.pointers.get(e.pointerId);
         if (!d) return;
+        if (this.gyroLive()) { e.preventDefault(); return; }
         const p = pos(e);
         const v = clamp((d.anchorY - p.y) / (this.stage.h * GRAB_RANGE), -1, 1);
         d.value = v;
@@ -2502,6 +2661,8 @@ kbd {
       cv.addEventListener("pointerup", release);
       cv.addEventListener("pointercancel", release);
       cv.addEventListener("pointerleave", release);
+
+      window.addEventListener("touchstart", () => this.askGyro(), { passive: true });
 
       window.addEventListener("keydown", (e) => {
         if (e.repeat) {
@@ -2578,14 +2739,18 @@ kbd {
 
       this.sound.ensure();
       this.sound.startLevel(lv);
+      if (MOTION && MOTION.enabled) MOTION.calibrate();
       this.state = "countin";
       this.el.topbar.classList.remove("hidden");
       this.el.countin.classList.remove("hidden");
-      this.el.hint.textContent = this.mode === "solo"
-        ? "lift and lower — one long swing"
-        : "lift your own end, then let go";
+      this.el.hint.textContent = this.gyroLive()
+        ? "hold the phone together — one thumb each — and lean it"
+        : this.mode === "solo"
+          ? "lift and lower — one long swing"
+          : "lift your own end, then let go";
       this.el.hint.classList.remove("hidden");
       this.el.hudLevel.textContent = lv.name;
+      this.setControlChip();
       this.el.hudProgress.style.width = "0%";
       this.setHud();
       this.show(null);
@@ -2605,6 +2770,7 @@ kbd {
       if (this.state === "paused") {
         this.state = this.resumeState;
         this.sound.resume();
+        if (MOTION && MOTION.enabled) MOTION.calibrate();
         this.show(null);
         this.el.countin.classList.toggle("hidden", this.state !== "countin");
         this.el.hint.classList.toggle("hidden", this.state !== "countin");
@@ -2633,10 +2799,29 @@ kbd {
       if (!live) return;
 
       /* ── hands ── */
+      const gyro = this.gyroLive();
+      if (gyro) {
+        /* both of you hold the phone: lean it and the plank follows.
+           the thumbs on the glass are the grip — let go and it levels. */
+        MOTION.update(dt);
+        const grip = this.heldBy[0] && (this.mode === "solo" || this.heldBy[1]);
+        const lean = grip ? MOTION.value : 0;
+        this.hands[0] += (lean - this.hands[0]) * Math.min(1, dt * (grip ? 26 : 8));
+        this.hands[1] = -this.hands[0];
+        if (!grip && this.gripped) this.lostGrip += dt;
+        else this.lostGrip = 0;
+        this.gripped = grip;
+        if (this.lostGrip > GRIP_GRACE && this.state === "playing") {
+          this.lostGrip = 0;
+          this.breakCombo("hold the phone with both hands");
+          this.sound.soft("late");
+        }
+      }
+
       const k1 = (this.keys.w ? 1 : 0) - (this.keys.s ? 1 : 0);
       const k2 = (this.keys.up ? 1 : 0) - (this.keys.down ? 1 : 0);
       const spring = Math.min(1, dt * SPRING);
-      for (let i = 0; i < 2; i++) {
+      for (let i = 0; i < 2 && !gyro; i++) {
         if (this.heldBy[i]) continue;
         const kd = this.mode === "solo" ? (k1 || k2) : i === 0 ? k1 : k2;
         if (kd) {

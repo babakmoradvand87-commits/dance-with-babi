@@ -534,3 +534,22 @@ kbd {
   color: rgba(240, 232, 255, 0.82);
 }
 .steps.fa b { color: #ffd28a; }
+
+/* ── the control chip: gyroscope or keys ─────────────────── */
+.ctl {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: rgba(236, 228, 255, 0.55);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  white-space: nowrap;
+}
+.ctl.live {
+  color: #0d0a14;
+  background: linear-gradient(180deg, #8ff0e2, #5fd6c6);
+  border-color: transparent;
+  box-shadow: 0 0 16px rgba(143, 240, 226, 0.35);
+}

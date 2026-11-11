@@ -7,12 +7,14 @@
 (function () {
   const DWB = window.DWB;
   const LEVELS = DWB.LEVELS;
+  const MOTION = DWB.Motion;
   const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
 
   const KEY_RATE = 2.6;      /* how fast a key raises your end */
   const GRAB_RANGE = 0.30;   /* fraction of the screen height for a full raise */
   const SPRING = 5.5;        /* how quickly an end falls back when let go */
+  const GRIP_GRACE = 0.45;   /* you may lose your grip for this long */
   const END_BOUNCE = 0.34;
   const END_PENALTY = 0.55;  /* how hard the pearl must hit the end to count */
 
@@ -47,6 +49,7 @@
         hudCombo: document.getElementById("hud-combo"),
         countin: document.getElementById("countin"),
         hint: document.getElementById("hint"),
+        ctl: document.getElementById("ctl"),
         judge: document.getElementById("judge"),
         grid: document.getElementById("level-grid"),
         sound: document.getElementById("btn-sound"),
@@ -74,6 +77,8 @@
       this.nextGate = 0;
       this.hands = [0, 0];
       this.heldBy = [false, false];
+      this.lostGrip = 0;
+      this.gripped = false;
       this.pearlU = 0;
       this.pearlV = 0;
       this.prevU = 0;
@@ -253,6 +258,33 @@
       });
     }
 
+    /* ── the gyroscope ─────────────────────────────────────── */
+    gyroLive() {
+      return !!(MOTION && MOTION.enabled && MOTION.has);
+    }
+
+    /* must run inside a real user gesture (iOS asks first) */
+    askGyro() {
+      if (!MOTION || this.gyroAsked) return;
+      this.gyroAsked = true;
+      MOTION.enable().then((ok) => {
+        this.gyroAllowed = ok;
+        this.setControlChip();
+        if (ok) {
+          MOTION.calibrate();
+          this.el.hint.textContent = "hold the phone together and lean it";
+        }
+      });
+    }
+
+    setControlChip() {
+      const el = this.el.ctl;
+      if (!el) return;
+      const gyro = this.gyroLive();
+      el.textContent = gyro ? "gyroscope" : "touch · keyboard";
+      el.classList.toggle("live", gyro);
+    }
+
     /* ── input: raise and lower your end of the plank ──────── */
     zoneFor(x) {
       if (this.mode === "solo") return 0;
@@ -268,6 +300,7 @@
 
       cv.addEventListener("pointerdown", (e) => {
         this.sound.ensure();
+        this.askGyro();
         if (this.state !== "playing" && this.state !== "countin") return;
         const p = pos(e);
         const zone = this.zoneFor(p.x);
@@ -281,6 +314,7 @@
       cv.addEventListener("pointermove", (e) => {
         const d = this.pointers.get(e.pointerId);
         if (!d) return;
+        if (this.gyroLive()) { e.preventDefault(); return; }
         const p = pos(e);
         const v = clamp((d.anchorY - p.y) / (this.stage.h * GRAB_RANGE), -1, 1);
         d.value = v;
@@ -305,6 +339,8 @@
       cv.addEventListener("pointerup", release);
       cv.addEventListener("pointercancel", release);
       cv.addEventListener("pointerleave", release);
+
+      window.addEventListener("touchstart", () => this.askGyro(), { passive: true });
 
       window.addEventListener("keydown", (e) => {
         if (e.repeat) {
@@ -381,14 +417,18 @@
 
       this.sound.ensure();
       this.sound.startLevel(lv);
+      if (MOTION && MOTION.enabled) MOTION.calibrate();
       this.state = "countin";
       this.el.topbar.classList.remove("hidden");
       this.el.countin.classList.remove("hidden");
-      this.el.hint.textContent = this.mode === "solo"
-        ? "lift and lower — one long swing"
-        : "lift your own end, then let go";
+      this.el.hint.textContent = this.gyroLive()
+        ? "hold the phone together — one thumb each — and lean it"
+        : this.mode === "solo"
+          ? "lift and lower — one long swing"
+          : "lift your own end, then let go";
       this.el.hint.classList.remove("hidden");
       this.el.hudLevel.textContent = lv.name;
+      this.setControlChip();
       this.el.hudProgress.style.width = "0%";
       this.setHud();
       this.show(null);
@@ -408,6 +448,7 @@
       if (this.state === "paused") {
         this.state = this.resumeState;
         this.sound.resume();
+        if (MOTION && MOTION.enabled) MOTION.calibrate();
         this.show(null);
         this.el.countin.classList.toggle("hidden", this.state !== "countin");
         this.el.hint.classList.toggle("hidden", this.state !== "countin");
@@ -436,10 +477,29 @@
       if (!live) return;
 
       /* ── hands ── */
+      const gyro = this.gyroLive();
+      if (gyro) {
+        /* both of you hold the phone: lean it and the plank follows.
+           the thumbs on the glass are the grip — let go and it levels. */
+        MOTION.update(dt);
+        const grip = this.heldBy[0] && (this.mode === "solo" || this.heldBy[1]);
+        const lean = grip ? MOTION.value : 0;
+        this.hands[0] += (lean - this.hands[0]) * Math.min(1, dt * (grip ? 26 : 8));
+        this.hands[1] = -this.hands[0];
+        if (!grip && this.gripped) this.lostGrip += dt;
+        else this.lostGrip = 0;
+        this.gripped = grip;
+        if (this.lostGrip > GRIP_GRACE && this.state === "playing") {
+          this.lostGrip = 0;
+          this.breakCombo("hold the phone with both hands");
+          this.sound.soft("late");
+        }
+      }
+
       const k1 = (this.keys.w ? 1 : 0) - (this.keys.s ? 1 : 0);
       const k2 = (this.keys.up ? 1 : 0) - (this.keys.down ? 1 : 0);
       const spring = Math.min(1, dt * SPRING);
-      for (let i = 0; i < 2; i++) {
+      for (let i = 0; i < 2 && !gyro; i++) {
         if (this.heldBy[i]) continue;
         const kd = this.mode === "solo" ? (k1 || k2) : i === 0 ? k1 : k2;
         if (kd) {
