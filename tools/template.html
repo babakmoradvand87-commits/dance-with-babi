@@ -27,6 +27,7 @@
 </head>
 <body>
 <canvas id="stage" aria-label="Dance with Babi play field"></canvas>
+<div id="backdrop" style="background-image:var(--poster)" aria-hidden="true"></div>
 
 <div id="ui">
   <!-- ─────────────────────────── HUD ─────────────────────────── -->
@@ -58,7 +59,7 @@
 
     <!-- WELCOME — the poster is the door; one button, nothing else -->
     <section class="screen" id="screen-login">
-      <div class="login-art" style="background-image:url(&quot;__DWB_POSTER_B64__&quot;)" role="img" aria-label="Dance with Babi — a couple dancing while holding one phone, friends around them, music notes in the air"></div>
+      <div class="login-art" style="background-image:var(--poster)" role="img" aria-label="Dance with Babi — a couple dancing while holding one phone, friends around them, music notes in the air"></div>
       <button class="btn primary login-go" id="btn-start" type="button">START DANCING</button>
     </section>
 

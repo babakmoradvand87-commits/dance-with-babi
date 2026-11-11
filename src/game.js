@@ -41,6 +41,7 @@
     constructor() {
       this.el = {
         stage: document.getElementById("stage"),
+        backdrop: document.getElementById("backdrop"),
         topbar: document.getElementById("topbar"),
         screens: document.getElementById("screens"),
         hudLevel: document.getElementById("hud-level"),
@@ -110,6 +111,15 @@
       this.renderLevels();
       this.setMode(this.mode);
       this.bindLogin();
+      this.started = false;
+      try { history.replaceState({ dwb: "menu" }, ""); } catch (e) { /* noop */ }
+      /* once START was pressed, the browser back key must never return
+         to the login poster — it just bounces back to the dance list */
+      window.addEventListener("popstate", () => {
+        if (!this.started) return;
+        try { history.pushState({ dwb: "menu" }, ""); } catch (e) { /* noop */ }
+        this.goLevels();
+      });
       this.show("login");
       this.lastT = performance.now() / 1000;
       requestAnimationFrame(this.frame);
@@ -143,12 +153,18 @@
           store.set("dwb.p2", n.p2 || "Player two");
         }
         this.paintNames();
-        this.state = "levels";
-        this.el.topbar.classList.add("hidden");
-        this.el.hint.classList.add("hidden");
-        this.renderLevels();
-        this.show("levels");
+        this.started = true;
+        try { history.pushState({ dwb: "menu" }, ""); } catch (e) { /* noop */ }
+        this.goLevels();
       });
+    }
+
+    goLevels() {
+      this.state = "levels";
+      this.el.topbar.classList.add("hidden");
+      this.el.hint.classList.add("hidden");
+      this.renderLevels();
+      this.show("levels");
     }
 
     paintNames() {
@@ -161,6 +177,11 @@
     }
 
     show(name) {
+      /* the login poster is a one-time door: after START it can never come back */
+      if (name === "login" && this.started) name = "levels";
+      /* before a dance starts, the poster is the backdrop of every menu */
+      const MENU = { login: 1, title: 1, levels: 1, howto: 1 };
+      if (this.el.backdrop) this.el.backdrop.classList.toggle("hidden", !MENU[name]);
       const map = {
         title: "screen-title",
         levels: "screen-levels",
@@ -901,7 +922,9 @@
         shake: this.shake,
       };
 
-      this.stage.draw(scene, dt);
+      /* while a menu is open the poster backdrop covers the canvas —
+         don't burn battery rendering a world nobody can see */
+      if (this.el.screens.classList.contains("hidden")) this.stage.draw(scene, dt);
       requestAnimationFrame(this.frame);
     };
   }

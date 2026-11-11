@@ -28,9 +28,18 @@ def main() -> None:
     html = read(TEMPLATE)
 
     css = read(STYLE).strip()
+    # the key-art poster is inlined ONCE as a CSS variable so both the
+    # login screen and the menu backdrop can share it (keeps index.html
+    # single-file with zero network requests)
+    poster = ROOT / "assets" / "poster-login.jpg"
+    if poster.exists():
+        b64 = base64.b64encode(poster.read_bytes()).decode("ascii")
+        poster_var = ":root{--poster:url(\"data:image/jpeg;base64,%s\")}" % b64
+    else:
+        poster_var = ":root{--poster:none}"
     html = html.replace(
         "<!-- /* INLINE:STYLE */ -->",
-        "<style>\n" + css + "\n</style>",
+        "<style>" + poster_var + "</style>\n<style>\n" + css + "\n</style>",
     )
 
     js = "\n\n".join(
@@ -42,14 +51,7 @@ def main() -> None:
         "<script>\n" + js + "\n</script>",
     )
 
-    # the login screen shows the key-art poster; inline it so the page
-    # stays a single self-contained file with zero network requests
-    poster = ROOT / "assets" / "poster-login.jpg"
-    if poster.exists():
-        b64 = base64.b64encode(poster.read_bytes()).decode("ascii")
-        html = html.replace("__DWB_POSTER_B64__", "data:image/jpeg;base64," + b64)
-    else:
-        html = html.replace("__DWB_POSTER_B64__", "data:,")
+    html = html.replace("__DWB_POSTER_B64__", "var(--poster)")
 
     OUT.write_text(html, encoding="utf-8")
     kb = len(html.encode("utf-8")) / 1024

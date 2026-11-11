@@ -46,6 +46,21 @@ body { touch-action: none; }
   touch-action: none;
 }
 
+/* the key-art poster is the backdrop of every menu, until a dance starts */
+#backdrop {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center 22%;
+}
+#backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(6, 4, 12, 0.5) 0%, rgba(6, 4, 12, 0.28) 42%, rgba(6, 4, 12, 0.72) 100%);
+}
+
 #ui {
   position: fixed;
   inset: 0;
