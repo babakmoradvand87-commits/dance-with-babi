@@ -259,13 +259,84 @@
         floor: "#160a10", halo: "#e0bdff", aura2: "#ffd28a",
       },
     },
+    {
+      id: "encore-a",
+      name: "Encore",
+      style: "Chart track",
+      subtitle: "One more for the road",
+      blurb: "A real chart track, synced ring by ring.",
+      bpm: 120, gates: 240, intro: 8, level: 10,
+      step: 0.9, lag: 0.07, tiltRange: 25, difficulty: 3,
+      space: "velvet", seed: 101,
+      stepsPerBar: 8, drums: "tech",
+      prog: [[57, 60, 64], [53, 57, 60], [55, 59, 62], [52, 55, 59]],
+      mel: [76, 72, 69, 72, 76, 79, 74, 71],
+      pal: {
+        bg0: "#0a0410", bg1: "#1f0a24", fog: "#140718",
+        ring: "#e0a0ff", ringNext: "#ffb0d8",
+        rimA: "#ffb0d8", rimB: "#a0d8ff",
+        pearl: "#fff6ff", pearl2: "#e0a0ff",
+        floor: "#120812", halo: "#e0a0ff", aura2: "#ffb0d8",
+      },
+    },
+    {
+      id: "encore-b",
+      name: "Encore",
+      style: "Chart track",
+      subtitle: "Last dance of the night",
+      blurb: "A real chart track, synced ring by ring.",
+      bpm: 120, gates: 240, intro: 8, level: 10,
+      step: 0.92, lag: 0.07, tiltRange: 25, difficulty: 3,
+      space: "ocean", seed: 113,
+      stepsPerBar: 8, drums: "bigroom",
+      prog: [[57, 60, 64], [59, 62, 67], [57, 60, 64], [55, 59, 62]],
+      mel: [76, 79, 83, 79, 76, 72, 74, 79],
+      pal: {
+        bg0: "#03080f", bg1: "#07202e", fog: "#061520",
+        ring: "#63d8ff", ringNext: "#8ff0e2",
+        rimA: "#8ff0e2", rimB: "#63d8ff",
+        pearl: "#f2fbff", pearl2: "#8fd0ff",
+        floor: "#071620", halo: "#63d8ff", aura2: "#8ff0e2",
+      },
+    },
   ];
 
   /* ── derive the timing and the ribbon for every track ─────── */
+  /* real recordings from the user's Drive folder, analysed offline:
+     bpm = onset autocorrelation, offset = beat-0 phase, dur = decoded length;
+     the ring grid IS the song's own beat grid, so rings land on the music */
+  const TRACKS = [
+    { audio: "tracks/01-ahang-faransavi-mp3.mp3", name: "ahang faransavi", bpm: 141.03, offset: 0.096, dur: 268.29 },
+    { audio: "tracks/02-ahang-toki-ei-tango-mp3.mp3", name: "ahang toki ei — tango", bpm: 141.92, offset: 0.149, dur: 226.82 },
+    { audio: "tracks/03-and-she-was-talking-heads-mp3.mp3", name: "And She Was — Talking Heads", bpm: 126.2, offset: 0.186, dur: 219.6 },
+    { audio: "tracks/04-dance-me-to-the-end-of-love-leonard-cohen-mp3.mp3", name: "Dance Me to the End of Love — Leonard Cohen", bpm: 132.6, offset: 0.352, dur: 289.44 },
+    { audio: "tracks/05-enrike-tango-mp3.mp3", name: "enrike — tango", bpm: 109.9, offset: 0.249, dur: 333.11 },
+    { audio: "tracks/06-feel-so-close-calvin-harris-mp3.mp3", name: "feel so close — calvin harris", bpm: 126.75, offset: 0.265, dur: 208.17 },
+    { audio: "tracks/07-i-love-you-baby-frank-sinatra-mp3.mp3", name: "I love you baby — Frank Sinatra", bpm: 120.75, offset: 0.191, dur: 221.01 },
+    { audio: "tracks/08-royals-lorde-mp3.mp3", name: "Royals — Lorde", bpm: 136.36, offset: 0.355, dur: 190.22 },
+    { audio: "tracks/09-selna-gomez-dance-mp3.mp3", name: "selna gomez — dance", bpm: 110.61, offset: 0.376, dur: 200.68 },
+    { audio: "tracks/10-shut-up-and-dance-walk-the-moon-mp3.mp3", name: "Shut Up and Dance — Walk the Moon", bpm: 128.13, offset: 0.265, dur: 197.72 },
+    { audio: "tracks/11-theres-nothing-holdin-me-back-shawn-mendes-mp3.mp3", name: "Theres Nothing Holdin Me Back — Shawn Mendes", bpm: 120.75, offset: 0.118, dur: 199.46 },
+    { audio: "tracks/12-what-do-you-mean-justin-bieber-mp3.mp3", name: "What Do You Mean — Justin Bieber", bpm: 123.75, offset: 0.383, dur: 207.65 },
+  ];
+
   LEVELS.forEach((lv, index) => {
     lv.index = index;
+    const t = TRACKS[index];
+    if (t) {
+      lv.audio = t.audio;
+      lv.name = t.name;
+      lv.style = "Chart track";
+      lv.bpm = t.bpm;
+      lv.beatOffset = t.offset;
+      lv.dur = t.dur;
+    }
     lv.spb = 60 / lv.bpm;
-    lv.gates = Math.round(144 / lv.spb);   /* every dance stays 2:24 */
+    /* a real song runs almost its full length (minus the count-in lead
+       and a small tail); a synth fallback stays 2:24 */
+    lv.gates = lv.dur
+      ? Math.max(40, Math.floor((lv.dur - (lv.beatOffset || 0) - (lv.intro || 8) * lv.spb - 2) / lv.spb))
+      : Math.round(144 / lv.spb);
     const route = makeRoute(lv.seed, lv.step, lv.gates);
     lv.points = route.points;
     const lastK = route.points.length - 1;

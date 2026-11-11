@@ -58,14 +58,16 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  /* same-origin assets: cache-first, refresh in the background */
+  /* same-origin assets: cache-first, refresh in the background.
+     (the big mp3s may exceed the storage quota on small phones — a
+     failed put must never break playback, the network copy still works) */
   e.respondWith(
     caches.match(e.request).then((hit) =>
       hit ||
       fetch(e.request).then((res) => {
         if (res && res.ok) {
           const copy = res.clone();
-          caches.open(VERSION).then((c) => c.put(e.request, copy));
+          caches.open(VERSION).then((c) => c.put(e.request, copy)).catch(() => {});
         }
         return res;
       })

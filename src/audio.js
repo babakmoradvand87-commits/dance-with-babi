@@ -63,6 +63,11 @@
       this.muted = false;
       this.ready = false;
       this._hookIdx = 0;
+      /* real-recording mode: the level ships its own mp3 and the game
+         clock is the media element's position on the song's beat grid */
+      this.fileMode = false;
+      this.media = null;          /* HTMLAudioElement */
+      this.gridZero = 0;          /* song position (s) that maps to t = 0 */
     }
 
     /* ── setup ─────────────────────────────────────────────── */
@@ -153,6 +158,7 @@
     setMuted(m) {
       this.muted = !!m;
       if (this.master) this.master.gain.value = this.muted ? 0 : 0.82;
+      if (this.media) this.media.muted = !!m;
     }
 
     /* ── transport ─────────────────────────────────────────── */
@@ -166,6 +172,7 @@
       /* the count-in happens in negative song time: the track starts
          `intro` beats early so the dancers can feel the tempo */
       const lead = level.intro * level.spb;
+      if (level.audio) { this._startFile(level, lead); return; }
       this.pointer = -Math.round(level.intro * 2);
       if (this.ctx) {
         this.t0 = this.ctx.currentTime + 0.16 + lead;
@@ -179,8 +186,53 @@
       this._schedule();
     }
 
+    /* a level with its own recording: play the file and put t = 0 on the
+       song's first downbeat + one intro bar, so every gate k lands exactly
+       on beat k of the real music (gateAt(k) = k * spb) */
+    _startFile(level, lead) {
+      this._fileStop();
+      this.fileMode = true;
+      this.gridZero = (level.beatOffset || 0) + lead;
+      if (typeof Audio !== "undefined") {
+        if (!this.media) {
+          this.media = new Audio();
+          this.media.preload = "auto";
+          this.media.addEventListener("error", () => {
+            /* the file is missing (e.g. offline first run): fall back to
+               the synth engine for this level instead of hanging */
+            if (this.fileMode && this.level && this.level.audio) {
+              this.level.audio = null;
+              this.startLevel(this.level);
+            }
+          });
+        }
+        this.media.muted = this.muted;
+        if (this.media.getAttribute("src") !== level.audio) {
+          this.media.setAttribute("src", level.audio);
+        }
+        try { this.media.currentTime = 0; } catch (e) {}
+        try {
+          const p = this.media.play();
+          if (p && p.catch) p.catch(() => {});
+        } catch (e) {}
+      }
+      this._clearTimer();
+    }
+
+    _fileStop() {
+      if (this.media) {
+        try { this.media.pause(); this.media.currentTime = 0; } catch (e) {}
+      }
+      this.fileMode = false;
+    }
+
+    mediaEnded() {
+      return !!(this.fileMode && this.media && this.media.ended);
+    }
+
     stop() {
       this._clearTimer();
+      this._fileStop();
       this.level = null;
       this.paused = true;
       if (this.ctx && this.musicGain) {
@@ -195,6 +247,7 @@
       if (this.paused) return;
       this.frozen = this.songTime();
       this.paused = true;
+      if (this.fileMode) { if (this.media) { try { this.media.pause(); } catch (e) {} } return; }
       if (this.ctx && this.musicGain) {
         const now = this.ctx.currentTime;
         this.musicGain.gain.cancelScheduledValues(now);
@@ -206,6 +259,10 @@
     resume() {
       if (!this.paused) return;
       this.paused = false;
+      if (this.fileMode) {
+        if (this.media) { try { const p = this.media.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
+        return;
+      }
       if (this.ctx) {
         this.t0 = this.ctx.currentTime - this.frozen;
         const now = this.ctx.currentTime;
@@ -220,6 +277,10 @@
 
     songTime() {
       if (this.paused) return this.frozen;
+      if (this.fileMode) {
+        const pos = this.media ? this.media.currentTime : 0;
+        return pos - this.gridZero;
+      }
       if (this.ctx) return this.ctx.currentTime - this.t0;
       if (this.fallbackOrigin !== null) return (performance.now() - this.fallbackOrigin) / 1000;
       return 0;

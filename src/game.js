@@ -254,7 +254,8 @@
         p.textContent = lv.subtitle;
         const meta = document.createElement("div");
         meta.className = "lc-meta";
-        meta.textContent = (lv.style ? lv.style + " · " : "") + lv.bpm + " bpm · " + lv.gates + " rings";
+        meta.textContent = (lv.style ? lv.style + " · " : "") + lv.bpm + " bpm · " + lv.gates + " rings" +
+          (lv.dur ? " · " + Math.floor(lv.dur / 60) + ":" + String(Math.round(lv.dur % 60)).padStart(2, "0") : "");
         body.appendChild(h);
         body.appendChild(p);
         body.appendChild(meta);
@@ -691,7 +692,9 @@
       this.tiltY += (clamp(ty, -1, 1) - this.tiltY) * f2;
 
       const t = this.sound.songTime();
-      this.beatPhase = t < 0 ? -1 : (t / lv.spb) % 1;
+      /* on a real recording the pulse must land on the song's own
+         downbeats, so shift the phase by the measured beat-0 offset */
+      this.beatPhase = t < 0 ? -1 : ((t + (lv.beatOffset || 0)) / lv.spb) % 1;
 
       /* ── the marble: gravity down the tilted tray, with a little lag ── */
       const wx = lv.speed * this.tiltX;
@@ -739,7 +742,8 @@
       this.el.hudProgress.style.width = ((this.nextGate / this.gates.length) * 100).toFixed(1) + "%";
 
       const last = this.gates[this.gates.length - 1];
-      if (this.nextGate >= this.gates.length && last && t > last.expected + 1.7) this.finish();
+      if (this.nextGate >= this.gates.length && last &&
+          (t > last.expected + 1.7 || this.sound.mediaEnded())) this.finish();
     }
 
     /** every ring is a snapshot: is the pearl inside it when the beat lands? */
