@@ -23,6 +23,8 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Dance with Babi" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'" />
 <!-- /* INLINE:STYLE */ -->
 </head>
 <body>
@@ -220,5 +222,24 @@
 </div>
 
 <!-- /* INLINE:SCRIPT */ -->
+<script>
+/* PWA: install the service worker → offline play + automatic updates.
+   Navigations are network-first in sw.js, so a new deploy reaches
+   installed apps on the next launch; if the app is open we reload
+   as soon as no dance is running. */
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("/sw.js").catch(function () { /* offline-first still works */ });
+  });
+  navigator.serviceWorker.addEventListener("controllerchange", function () {
+    var g = window.game;
+    if (g && (g.state === "playing" || g.state === "countin" || g.state === "paused")) {
+      window.__dwbPendingReload = true; /* reload once we are back at a menu */
+    } else {
+      location.reload();
+    }
+  });
+}
+</script>
 </body>
 </html>

@@ -1,0 +1,17 @@
+{
+  "name": "Dance with Babi",
+  "short_name": "DWB",
+  "description": "A two-player dancing game for one phone. Hold it together, a thumb at each end, and tip it: the marble on screen rolls exactly the way your phone leans.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08050f",
+  "theme_color": "#08050f",
+  "lang": "en",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -10,6 +10,8 @@
   const MOTION = DWB.Motion;
   const clamp = DWB.clamp;
   const TAU = Math.PI * 2;
+  /* escape anything that may have come from storage before it goes into HTML */
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   const GRAB_RANGE = 0.24;   /* fraction of the screen for a full tilt */
   const GRIP_GRACE = 0.45;   /* you may lose your grip for this long */
@@ -169,7 +171,7 @@
 
     paintNames() {
       if (this.el.titleNames) {
-        this.el.titleNames.innerHTML = "dancing tonight: <em>" + this.duet() + "</em>";
+        this.el.titleNames.innerHTML = "dancing tonight: <em>" + esc(this.duet()) + "</em>";
       }
       if (this.el.resKicker && this.state === "results") {
         this.el.resKicker.textContent = this.duet() + " · dance complete";
@@ -182,6 +184,13 @@
       /* before a dance starts, the poster is the backdrop of every menu */
       const MENU = { login: 1, title: 1, levels: 1, howto: 1 };
       if (this.el.backdrop) this.el.backdrop.classList.toggle("hidden", !MENU[name]);
+      /* a service-worker update arrived while a dance was running:
+         apply it now that we are back at a menu */
+      if (window.__dwbPendingReload && MENU[name]) {
+        window.__dwbPendingReload = false;
+        location.reload();
+        return;
+      }
       const map = {
         title: "screen-title",
         levels: "screen-levels",
@@ -869,7 +878,7 @@
         ["streak", this.maxCombo],
       ].forEach((row) => {
         const d = document.createElement("div");
-        d.innerHTML = "<b>" + row[1] + "</b>" + row[0];
+        d.innerHTML = "<b>" + esc(row[1]) + "</b>" + esc(row[0]);
         this.el.resBreak.appendChild(d);
       });
 
