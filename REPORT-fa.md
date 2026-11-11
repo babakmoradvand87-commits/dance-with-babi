@@ -178,5 +178,5 @@ Lighthouse کامل در این sandbox اجرا نشد (Chrome بدون libها
 
 ### ریسک‌های باقی‌مانده (诚实انه)
 - **نصب واقعی روی دستگاه Android/iOS** هنوز با دست تست نشده — همهٔ معیارهای installability پاس شده‌اند، اما تأیید نهایی با Chrome → ⋮ → Install و Safari → Share → Add to Home Screen روی گوشی واقعی است.
-- **R1 předchozí** (permission ژیروسکوپ iOS در Safari واقعی) هنوز نیاز به تست دستی دارد.
-- رفتار auto-update بعد از اولین update واقعی (v1→v2 همین حالا ship شد) با `tests/sw.js` شبیه‌سازی و پاس شده است؛ تأیید نهایی روی دستگاه واقعی remains to be done by a human.
+- **R1** (permission ژیروسکوپ iOS در Safari واقعی) هنوز نیاز به تست دستی دارد.
+- رفتار auto-update بعد از اولین update واقعی (v1→v2 همین حالا ship شد) با `tests/sw.js` شبیه‌سازی و پاس شده است؛ تأیید نهایی روی دستگاه واقعی هنوز به‌صورت دستی انجام نشده است.
