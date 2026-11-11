@@ -50,6 +50,9 @@
         countin: document.getElementById("countin"),
         hint: document.getElementById("hint"),
         ctl: document.getElementById("ctl"),
+        motionBtn: document.getElementById("btn-motion"),
+        motionLabel: document.getElementById("motion-label"),
+        motionNote: document.getElementById("motion-note"),
         judge: document.getElementById("judge"),
         grid: document.getElementById("level-grid"),
         sound: document.getElementById("btn-sound"),
@@ -239,6 +242,14 @@
         }
       });
 
+      if (this.el.motionBtn) {
+        this.el.motionBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.sound.ensure();
+          this.askGyro(true);
+        });
+      }
+
       this.el.pause.addEventListener("click", () => this.togglePause());
       this.el.sound.addEventListener("click", () => {
         this.sound.setMuted(!this.sound.muted);
@@ -263,26 +274,40 @@
     }
 
     /* must run inside a real user gesture (iOS asks first) */
-    askGyro() {
-      if (!MOTION || this.gyroAsked) return;
-      this.gyroAsked = true;
-      MOTION.enable().then((ok) => {
+    askGyro(force) {
+      if (!MOTION) return;
+      MOTION.enable(force).then((ok) => {
         this.gyroAllowed = ok;
-        this.setControlChip();
-        if (ok) {
-          MOTION.calibrate();
-          this.el.hint.textContent = "hold the phone together and lean it";
-        }
+        if (ok) MOTION.calibrate();
+        this.syncMotionUI();
       });
     }
 
-    setControlChip() {
+    /* keep the little label honest about what is actually driving the tray */
+    syncMotionUI() {
+      if (MOTION) MOTION.tick();
+      const live = this.gyroLive();
       const el = this.el.ctl;
-      if (!el) return;
-      const gyro = this.gyroLive();
-      el.textContent = gyro ? "gyroscope " + (MOTION.flip < 0 ? "↺" : "↻") : "touch · keyboard";
-      el.classList.toggle("live", gyro);
+      if (el) {
+        el.textContent = live
+          ? "motion " + (MOTION.flip < 0 ? "↺" : "↻")
+          : "touch · keyboard";
+        el.classList.toggle("live", live);
+      }
+      if (this.el.motionBtn) {
+        this.el.motionBtn.classList.toggle("live", live);
+        this.el.motionBtn.classList.toggle("bad", MOTION.state === "denied" || MOTION.state === "unsupported");
+      }
+      if (this.el.motionLabel) {
+        this.el.motionLabel.textContent = live ? MOTION.statusText() : "Gyroscope: " + MOTION.statusText();
+      }
+      if (this.el.motionNote) {
+        this.el.motionNote.textContent = MOTION.note || "";
+        this.el.motionNote.classList.toggle("hidden", !MOTION.note);
+      }
     }
+
+    setControlChip() { this.syncMotionUI(); }
 
     /* ── input: two thumbs, one at each end of the phone ───── */
     zoneFor(y) {
@@ -340,6 +365,9 @@
       cv.addEventListener("pointerleave", release);
 
       window.addEventListener("touchstart", () => this.askGyro(), { passive: true });
+      window.addEventListener("pointerdown", () => {
+        if (!this.gyroLive()) this.askGyro();
+      }, true);
 
       /* some phones lean the other way round — one tap puts it right */
       if (this.el.ctl) {
@@ -760,13 +788,20 @@
       const demoTilt = Math.sin(this.demoT * 1.6) * 0.85;
       const demoLevel = LEVELS[0];
 
+      /* before the dance starts, the menu doubles as a sensor test:
+         tip the phone and the marble on screen rolls with it */
+      const sensing = MOTION && MOTION.enabled;
+      if (sensing) MOTION.update(dt);
+      const liveTilt = sensing && MOTION.has;
+      this.syncMotionUI();
+
       const scene = {
         level: demo ? demoLevel : this.level,
         demo: demo,
-        tx: demo ? demoTilt : this.tiltX,
-        ty: demo ? Math.cos(this.demoT * 1.1) * 0.55 : this.tiltY,
-        mx: demo ? Math.sin(this.demoT * 1.6) * 0.45 : this.mx,
-        mz: demo ? Math.cos(this.demoT * 1.1) * 0.28 : this.mz,
+        tx: demo ? (liveTilt ? MOTION.tx : demoTilt) : this.tiltX,
+        ty: demo ? (liveTilt ? MOTION.ty : Math.cos(this.demoT * 1.1) * 0.55) : this.tiltY,
+        mx: demo ? (liveTilt ? MOTION.tx * 0.62 : Math.sin(this.demoT * 1.6) * 0.45) : this.mx,
+        mz: demo ? (liveTilt ? -MOTION.ty * 0.62 : Math.cos(this.demoT * 1.1) * 0.28) : this.mz,
         vx: demo ? 0 : this.vx,
         vz: demo ? 0 : this.vz,
         gates: demo ? [] : this.gates,

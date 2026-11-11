@@ -44,6 +44,8 @@
 | | |
 |---|---|
 | 📱 **ژیروسکوپ دو محوره** | کج کردن گوشی به هر سمت → مروارید همان طرف می‌غلتد (HTTPS لازم است؛ iOS اجازه می‌پرسد) |
+| 🧭 **تست سنسور** | صفحهٔ اول خودش تراز حبابی است: گوشی را کج کنید، اگر حباب و مروارید حرکت کردند ژیروسکوپ وصل است |
+| 🔘 **دکمهٔ Gyroscope** | اگر سبز نشد، روی دکمهٔ «Gyroscope» بزنید و Allow بدهید |
 | 👍 **دو شست** | یکی بالا، یکی پایین؛ اگر یکی برداشته شود سینی صاف می‌شود |
 | ⌨️ **جایگزین رومیزی** | `WASD` برای نفر اول، کلیدهای جهت‌دار برای نفر دوم؛ سینی فقط با فشارِ هم‌جهتِ هر دو کج می‌شود |
 | 🕺 **حالت تک‌نفره** | یک نفر، هر دو شست — برای تمرین |
@@ -118,6 +120,14 @@ A few notes on the design:
   `performance.now()`.
 * **The count-in happens in negative song time.** The waltz starts six beats before the first ring so both
   players can feel the tempo before anything is asked of them.
+* **The menu is a sensor test.** Before you start, the title screen shows the same tilt maths the dance
+  uses: tip the phone and the demo marble rolls with it. If it does not move, the gyroscope is not
+  connected — the button under the title tells you why (no sensor / permission refused / no data) and the
+  little chip in the top bar shows `motion` when the sensor is live and `touch · keyboard` when it is not.
+  Text is fine-tuning: an embedded preview cannot reach the sensor, so open the page directly.
+
+* **Two sensor paths.** `DeviceOrientationEvent` is used when the browser reports it; if a phone only
+  offers `DeviceMotionEvent`, the gravity vector is rebuilt from `accelerationIncludingGravity` instead.
 * **No failure state.** You cannot lose a dance; you can only leave with fewer stars.
 * **Balance is tested, not guessed.** `tests/smoke.js` plays every dance with a model of two skilled dancers
   and checks the score, and with models of lazy, one-sided and idle players to make sure they *don't* score.

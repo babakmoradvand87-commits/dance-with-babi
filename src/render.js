@@ -160,6 +160,7 @@
       this.drawMarble(scene, pal);
       this.drawParticles();
       if (scene.showBars) this.drawGrips(scene, pal);
+      this.drawLevel(scene, pal);
       this.drawVignette();
     }
 
@@ -615,13 +616,66 @@
       ctx.restore();
     }
 
+    /* ── a bubble level, like the one in the iPhone's Measure app ── */
+    drawLevel(scene, pal) {
+      const ctx = this.ctx;
+      const R = Math.min(54, this.w * 0.11);
+      const cx = this.w / 2;
+      const cy = this.h - R - 62;
+      const tx = clamp(this.tiltX, -1, 1);
+      const ty = clamp(this.tiltY, -1, 1);
+      const flat = Math.hypot(tx, ty) < 0.07;
+      const col = flat ? "#8ff0e2" : "#ffd28a";
+
+      ctx.save();
+      /* the ring */
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, TAU);
+      ctx.fillStyle = "rgba(8,4,18,0.42)";
+      ctx.fill();
+      ctx.strokeStyle = C.rgba(col, flat ? 0.95 : 0.45);
+      ctx.lineWidth = flat ? 2.4 : 1.6;
+      if (flat) { ctx.shadowColor = col; ctx.shadowBlur = 14; }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      /* crosshair + tolerance ring */
+      ctx.strokeStyle = "rgba(255,255,255,0.18)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx - R * 0.92, cy); ctx.lineTo(cx + R * 0.92, cy);
+      ctx.moveTo(cx, cy - R * 0.92); ctx.lineTo(cx, cy + R * 0.92);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.34, 0, TAU);
+      ctx.strokeStyle = C.rgba(col, 0.25);
+      ctx.stroke();
+
+      /* the bubble */
+      const bx = cx + tx * R * 0.74;
+      const by = cy + ty * R * 0.74;
+      const bg = ctx.createRadialGradient(bx - R * 0.1, by - R * 0.12, 0, bx, by, R * 0.30);
+      bg.addColorStop(0, "rgba(255,255,255,0.98)");
+      bg.addColorStop(1, C.rgba(col, 0.75));
+      ctx.beginPath();
+      ctx.arc(bx, by, R * 0.26, 0, TAU);
+      ctx.fillStyle = bg;
+      ctx.shadowColor = C.rgba(col, 0.9);
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.restore();
+
+      void scene;
+      void pal;
+    }
+
     /* ── the two thumbs, one at each end of the screen ─────── */
     drawGrips(scene, pal) {
       const ctx = this.ctx;
       const held = scene.heldBy || [false, false];
       const pads = [
-        { x: this.w / 2, y: this.h - 34, color: pal.rimA, label: isTouch() ? "PLAYER ONE · BOTTOM" : "PLAYER ONE · WASD", on: held[0] },
-        { x: this.w / 2, y: 74, color: pal.rimB, label: isTouch() ? "PLAYER TWO · TOP" : "PLAYER TWO · ARROWS", on: held[1] },
+        { x: this.w / 2, y: this.h - 24, color: pal.rimA, label: isTouch() ? "PLAYER ONE · BOTTOM" : "PLAYER ONE · WASD", on: held[0] },
+        { x: this.w / 2, y: 62, color: pal.rimB, label: isTouch() ? "PLAYER TWO · TOP" : "PLAYER TWO · ARROWS", on: held[1] },
       ];
       for (let i = 0; i < pads.length; i++) {
         const p = pads[i];
@@ -647,24 +701,7 @@
         ctx.restore();
       }
 
-      /* a spirit level, so you can see the tray is flat */
-      const lv = { x: this.w / 2, y: this.h - 76, w: 132, h: 18 };
-      ctx.save();
-      ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(lv.x - lv.w / 2, lv.y - lv.h / 2, lv.w, lv.h, 9);
-      else ctx.rect(lv.x - lv.w / 2, lv.y - lv.h / 2, lv.w, lv.h);
-      ctx.fillStyle = "rgba(255,255,255,0.05)";
-      ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,0.10)";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      const bx = lv.x + clamp(this.tiltX, -1, 1) * (lv.w / 2 - 10);
-      const by = lv.y - clamp(this.tiltY, -1, 1) * 3;
-      ctx.beginPath();
-      ctx.arc(bx, by, 4.5, 0, TAU);
-      ctx.fillStyle = "rgba(255,255,255,0.85)";
-      ctx.fill();
-      ctx.restore();
+
     }
 
     drawVignette() {
