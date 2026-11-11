@@ -281,7 +281,7 @@
       const el = this.el.ctl;
       if (!el) return;
       const gyro = this.gyroLive();
-      el.textContent = gyro ? "gyroscope" : "touch · keyboard";
+      el.textContent = gyro ? "gyroscope " + (MOTION.flip < 0 ? "↺" : "↻") : "touch · keyboard";
       el.classList.toggle("live", gyro);
     }
 
@@ -341,6 +341,16 @@
       cv.addEventListener("pointerleave", release);
 
       window.addEventListener("touchstart", () => this.askGyro(), { passive: true });
+
+      /* some phones lean the other way round — one tap puts it right */
+      if (this.el.ctl) {
+        this.el.ctl.addEventListener("click", () => {
+          if (!this.gyroLive()) return;
+          MOTION.flip = -MOTION.flip;
+          this.setControlChip();
+          this.popJudge(MOTION.flip > 0 ? "lean ↻" : "lean ↺", "soft");
+        });
+      }
 
       window.addEventListener("keydown", (e) => {
         if (e.repeat) {

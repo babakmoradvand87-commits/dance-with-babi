@@ -31,7 +31,8 @@
    اگر یکی شستش را بردارد تخته شل می‌شود و مروارید می‌ایستد — پس هیچ‌کس نمی‌تواند تنهایی برقصد.
 2. **شیب = سرعت.** گوشی را کج کنید: سمت پایین‌تر، سرازیری تخته است و مروارید به همان سمت می‌غلتد. گوشی را صاف
    بگیرید تا مروارید بایستد. هر позی که در آن شروع کنید «صاف» حساب می‌شود؛ برای تنظیم مجدد، بازی را pause و
-   دوباره resume کنید. مروارید با یک تأخیر کوتاه (~۱۵۰ میلی‌ثانیه) جواب می‌دهد، پس باید یک ضرب زودتر شروع کنید.
+   دوباره resume کنید. اگر جهت کج‌شدن برعکس بود، روی برچسب **gyroscope** در نوار بالا بزنید تا برعکس شود.
+   مروارید با یک تأخیر کوتاه (~۱۵۰ میلی‌ثانیه) جواب می‌دهد، پس باید یک ضرب زودتر شروع کنید.
 3. **روی ضرب داخل حلقه.** قضاوت لحظه‌ای است: همان‌جا که ضرب می‌خورد، فاصلهٔ مروارید تا حلقه اندازه گرفته
    می‌شود — *perfect* / *good* / *on the edge*. اگر از سر تخته رد شوید، مروارید به دیواره می‌خورد و کمبو می‌شکند.
 
@@ -59,7 +60,8 @@
 2. **Lean it like a tray (gyroscope).** The game reads `DeviceOrientationEvent` — how you physically lean the
    device — not finger dragging. Right side down, plank tips right, pearl rolls downhill. Hold it level and
    the pearl coasts. Whatever pose you hold when the dance starts becomes "level"; pause and resume to
-   re-centre. On a laptop with no gyroscope, one end each: <kbd>W</kbd>/<kbd>S</kbd> and <kbd>↑</kbd>/<kbd>↓</kbd>.
+   re-centre. If your phone leans the other way round, tap the **gyroscope** chip in the top bar to invert it.
+   On a laptop with no gyroscope, one end each: <kbd>W</kbd>/<kbd>S</kbd> and <kbd>↑</kbd>/<kbd>↓</kbd>.
 3. **The slope is the speed.** Steeper means faster, and the pearl answers your hands about 150 ms late. You
    are steering a pendulum, so *lead* the beat and level the plank to stop it.
 4. **Be in the ring on the beat.** Each ring is snapshotted the instant the beat lands: the closer the pearl

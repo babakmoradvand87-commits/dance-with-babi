@@ -23,6 +23,7 @@
     lean: 0,   /* radians, + = the screen's right side is down */
     value: 0,  /* -1..1 after calibration */
     zero: 0,
+    flip: 1,   /* tap the HUD chip to invert the lean direction */
     _bound: null,
 
     supported() {
@@ -75,7 +76,7 @@
 
     update(dt) {
       if (!this.enabled || !this.has) return;
-      const want = clamp((this.lean - this.zero) / MAX_LEAN, -1, 1);
+      const want = clamp((this.lean - this.zero) / MAX_LEAN, -1, 1) * this.flip;
       this.value += (want - this.value) * Math.min(1, dt * SMOOTH);
       if (Math.abs(this.value) < 0.004) this.value = 0;
     },

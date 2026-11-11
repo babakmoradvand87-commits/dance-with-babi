@@ -1023,6 +1023,7 @@ kbd {
     lean: 0,   /* radians, + = the screen's right side is down */
     value: 0,  /* -1..1 after calibration */
     zero: 0,
+    flip: 1,   /* tap the HUD chip to invert the lean direction */
     _bound: null,
 
     supported() {
@@ -1075,7 +1076,7 @@ kbd {
 
     update(dt) {
       if (!this.enabled || !this.has) return;
-      const want = clamp((this.lean - this.zero) / MAX_LEAN, -1, 1);
+      const want = clamp((this.lean - this.zero) / MAX_LEAN, -1, 1) * this.flip;
       this.value += (want - this.value) * Math.min(1, dt * SMOOTH);
       if (Math.abs(this.value) < 0.004) this.value = 0;
     },
@@ -2603,7 +2604,7 @@ kbd {
       const el = this.el.ctl;
       if (!el) return;
       const gyro = this.gyroLive();
-      el.textContent = gyro ? "gyroscope" : "touch · keyboard";
+      el.textContent = gyro ? "gyroscope " + (MOTION.flip < 0 ? "↺" : "↻") : "touch · keyboard";
       el.classList.toggle("live", gyro);
     }
 
@@ -2663,6 +2664,16 @@ kbd {
       cv.addEventListener("pointerleave", release);
 
       window.addEventListener("touchstart", () => this.askGyro(), { passive: true });
+
+      /* some phones lean the other way round — one tap puts it right */
+      if (this.el.ctl) {
+        this.el.ctl.addEventListener("click", () => {
+          if (!this.gyroLive()) return;
+          MOTION.flip = -MOTION.flip;
+          this.setControlChip();
+          this.popJudge(MOTION.flip > 0 ? "lean ↻" : "lean ↺", "soft");
+        });
+      }
 
       window.addEventListener("keydown", (e) => {
         if (e.repeat) {
