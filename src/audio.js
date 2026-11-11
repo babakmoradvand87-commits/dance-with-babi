@@ -21,14 +21,25 @@
   const PENTA = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22, 24];
 
   /* drum maps: step indices inside a bar of `stepsPerBar` eighth notes
-     (in an 8-step bar the beats are the even steps 0,2,4,6) */
+     (in an 8-step bar the beats are the even steps 0,2,4,6).
+     Patterns follow the globally trending dance genres: tech house,
+     afro-house, k-pop, filmi, reggaeton dembow, disco, d'n'b, big room. */
   const DRUMS = {
-    waltz: { kick: [0], clap: [], hat: [2, 4], open: [], bass: [0, 4], pop: [], lead: [2, 5] },
-    house: { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 2, 4, 6], pop: [3, 7], lead: [0, 2, 3, 4, 6] },
-    pop:   { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 4], pop: [3], lead: [0, 3, 4, 6] },
-    afro:  { kick: [0, 3, 6], clap: [4], hat: [1, 3, 5, 7], open: [], bass: [0, 3, 6], pop: [5], lead: [1, 4, 6, 7] },
-    break: { kick: [0, 3, 6], clap: [4], hat: [1, 2, 3, 5, 6, 7], open: [7], bass: [0, 6], pop: [], lead: [2, 5, 7] },
+    waltz:     { kick: [0], clap: [], hat: [2, 4], open: [], bass: [0, 4], pop: [], lead: [2, 5] },
+    tech:      { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 2, 4, 6], pop: [3, 7], lead: [0, 2, 3, 4, 6] },
+    afrohouse: { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 3, 4, 6], pop: [5], lead: [0, 3, 6, 7] },
+    kpop:      { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 2, 4, 6], pop: [3, 7], lead: [0, 2, 4, 6, 7] },
+    filmi:     { kick: [0, 2, 4, 6], clap: [4], hat: [1, 3, 5, 7], open: [], bass: [0, 4], pop: [3, 6], lead: [1, 4, 6] },
+    dembow:    { kick: [3, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 3, 6], pop: [2], lead: [3, 6, 7] },
+    disco:     { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [3, 7], bass: [0, 2, 4, 6], pop: [], lead: [0, 4, 6] },
+    dnb:       { kick: [0, 7], clap: [4], hat: [0, 1, 2, 3, 4, 5, 6, 7], open: [], bass: [0, 7], pop: [], lead: [2, 5, 6] },
+    bigroom:   { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 2, 4, 6], pop: [3, 7], lead: [0, 1, 2, 3, 4, 5, 6, 7] },
   };
+  /* legacy names keep working */
+  DRUMS.house = DRUMS.tech;
+  DRUMS.pop = DRUMS.disco;
+  DRUMS.afro = DRUMS.afrohouse;
+  DRUMS.break = DRUMS.dnb;
 
   /* the shape of a 2:24 dance: eight-bar sections that keep changing */
   const ARR = ["intro", "drop", "verse", "build", "drop", "break", "build", "final"];
@@ -279,7 +290,7 @@
         if ((drop || build) && D.clap.indexOf(st) >= 0) this._clap(when, drop ? 0.13 : 0.09);
         if (build && bar % 8 === 7 && st % 2 === 1) this._snare(when, 0.04 + st * 0.008);
         if (D.hat.indexOf(st) >= 0) this._hat(when, intro ? 0.018 : drop ? 0.038 : 0.028);
-        if (drop && D.open.indexOf(st) >= 0) this._open(when, 0.05);
+        if (drop && D.open.indexOf(st) >= 0 && bar % 2 === 1) this._open(when, 0.05);
       } else if (st === 0) {
         this._kick(when, 0.22);                /* half-time heartbeat in the break */
       }
@@ -299,7 +310,10 @@
         if (drop) {
           if (D.lead.indexOf(st) >= 0) {
             this._hookIdx++;
-            const note = mel[(bar * 2 + this._hookIdx) % mel.length] + (this._hookIdx % 4 === 3 ? 12 : 0);
+            /* two-bar call & response: the even bar calls, the odd bar
+               answers an octave up — the rhythm is built for two dancers */
+            const answer = bar % 2 === 1;
+            const note = mel[(bar * 2 + this._hookIdx) % mel.length] + (answer ? 12 : 0);
             this._lead(midi(note), when, e * (final ? 2.2 : 1.6), final ? 0.075 : 0.06);
           }
         } else if (verse) {

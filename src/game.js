@@ -82,7 +82,7 @@
       this.sound.setMuted(store.get("dwb.muted", false));
       this.el.sound.classList.toggle("muted", this.sound.muted);
 
-      this.state = "title";
+      this.state = "login";
       this.mode = store.get("dwb.mode", "duet") || "duet";
       this.li = 0;
       this.level = null;
@@ -196,7 +196,6 @@
         return;
       }
       const map = {
-        title: "screen-title",
         levels: "screen-levels",
         howto: "screen-howto",
         pause: "screen-pause",
@@ -901,7 +900,7 @@
 
       this.update(dt);
 
-      const demo = !this.level || this.state === "title" || this.state === "levels" || this.state === "howto";
+      const demo = !this.level || this.state === "levels" || this.state === "howto" || this.state === "login";
       this.demoT = (this.demoT || 0) + dt;
       const demoTilt = Math.sin(this.demoT * 1.6) * 0.85;
       const demoLevel = LEVELS[0];

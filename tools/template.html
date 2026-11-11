@@ -65,59 +65,11 @@
       <button class="btn primary login-go" id="btn-start" type="button">START DANCING</button>
     </section>
 
-    <!-- TITLE -->
-    <section class="screen" id="screen-title">
-      <div class="panel title-panel">
-        <div class="emblem">
-          <svg viewBox="0 0 120 120" aria-hidden="true">
-            <defs>
-              <linearGradient id="emb-a" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#ffb3d9"/><stop offset="1" stop-color="#ff8ab8"/>
-              </linearGradient>
-              <linearGradient id="emb-b" x1="1" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#8ff0e2"/><stop offset="1" stop-color="#69c7ff"/>
-              </linearGradient>
-              <radialGradient id="emb-p" cx="0.35" cy="0.3" r="0.8">
-                <stop offset="0" stop-color="#fffdf6"/><stop offset="0.55" stop-color="#ffd28a"/><stop offset="1" stop-color="#ffab5e"/>
-              </radialGradient>
-            </defs>
-            <circle cx="45" cy="60" r="28" fill="none" stroke="url(#emb-a)" stroke-width="2.6" opacity=".95"/>
-            <circle cx="75" cy="60" r="28" fill="none" stroke="url(#emb-b)" stroke-width="2.6" opacity=".95"/>
-            <circle cx="60" cy="60" r="9" fill="url(#emb-p)"/>
-          </svg>
-        </div>
-        <h1>Dance<span class="with">with</span>Babi</h1>
-        <p class="tagline">Two dancers, one phone, a floor with no edge.<br/>Hold it together and tip it any way — the pearl runs the way you lean.</p>
-        <p class="tagline fa" dir="rtl" lang="fa">یک صفحهٔ بی‌انتها، دو نفر، یک گوشی. با هم بگیریدش و هر طرف که کج کنید، مروارید همان طرف می‌رود.</p>
-        <div class="title-actions">
-          <button class="btn primary" data-go="levels">Begin the dance</button>
-          <button class="btn ghost" data-go="howto">How to play</button>
-        </div>
-        <button class="motion-btn" id="btn-motion" type="button">
-          <i class="dot" aria-hidden="true"></i>
-          <span id="motion-label">Gyroscope: tap to switch it on</span>
-        </button>
-        <p class="motion-note hidden" id="motion-note"></p>
-        <div class="sensor" id="sensor">
-          <b id="sensor-state">sensor: off</b>
-          <span id="sensor-raw">no samples yet</span>
-          <span id="sensor-tilt">tilt —</span>
-        </div>
-        <p class="motion-tip">Tip the phone and the marble above will roll with it — that is the whole game.
-          If nothing moves, <a href="./sensor.html">open the sensor test</a>.</p>
-        
-        <p class="foot-note" id="title-names">inspired by <em>Bounden</em> · built with plain canvas &amp; web audio</p>
-      </div>
-    </section>
-
     <!-- LEVEL SELECT -->
     <section class="screen hidden" id="screen-levels">
       <div class="panel wide">
         <div class="panel-head">
           <h2>Choose a dance</h2>
-          <button class="icon-btn small" data-go="title" aria-label="Back">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
         </div>
 
         <div class="mode-switch" role="group" aria-label="Mode">
@@ -131,7 +83,7 @@
           <div class="hint">
             on a phone: a thumb at each end, then tip it &nbsp;·&nbsp; on a keyboard: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> and <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd>
           </div>
-          <button class="btn tiny ghost" data-go="howto">How to play</button>
+          <button class="btn tiny ghost" data-go="howto">How to play · راهنمای بازی</button>
         </div>
       </div>
     </section>
@@ -140,51 +92,51 @@
     <section class="screen hidden" id="screen-howto">
       <div class="panel wide">
         <div class="panel-head">
-          <h2>How to dance</h2>
-          <button class="icon-btn small" data-go="levels" aria-label="Back">
+          <h2>چطور برقصیم؟</h2>
+          <button class="icon-btn small" data-go="levels" aria-label="بازگشت">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
-        <ol class="steps">
+        <ol class="steps" dir="rtl" lang="fa">
           <li>
-            <span class="num">1</span>
+            <span class="num">۱</span>
             <div>
-              <h3>Two thumbs, two ends</h3>
-              <p>One of you holds the phone at the bottom, the other at the top, and <em>each keeps a thumb on the glass</em> — one thumb in the lower half of the screen, one in the upper half. Those thumbs are the grip: if either one lifts, the tray goes flat and the rings stop counting.</p>
+              <h3>دو شست، دو سر گوشی</h3>
+              <p>یکی از شما گوشی را از پایین می‌گیرد و دیگری از بالا؛ و <em>هر دو یک شست روی صفحه می‌گذارند</em> — یکی در نیمهٔ پایین صفحه، یکی در نیمهٔ بالا. این دو تماس «دستهٔ» بازی هستند: اگر یکی برداشته شود، رقص همان‌جا متوقف می‌شود.</p>
             </div>
           </li>
           <li>
-            <span class="num">2</span>
+            <span class="num">۲</span>
             <div>
-              <h3>Tip it any way at all</h3>
-              <p>The game measures how far the phone has <em>rotated</em> away from the pose you started in — both directions, in any hold. Tip the top edge down and the marble runs away from you; tip the right edge down and it runs right; tip it diagonally and it goes diagonally. Hold the phone flat and the marble coasts to a stop. Get comfortable first: <em>hold it around 30–60° from flat</em>, since a phone held bolt upright cannot feel a sideways roll (no accelerometer can). Whatever pose you hold when the dance starts counts as zero, and you can tap the <b>gyroscope</b> chip in the top bar to invert the lean. On a laptop: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> for one of you, the arrow keys for the other.</p>
+              <h3>گوشی را به هر طرف کج کنید</h3>
+              <p>بازی «میزان چرخش» گوشی نسبت به لحظهٔ شروع را می‌سنجد؛ پس کج کردن به <em>هر سمتی</em> کار می‌کند — بالا، پایین، چپ، راست یا مورب. لبهٔ بالا را پایین ببرید، مروارید به همان سمت می‌غلتد. گوشی را حدود ۳۰ تا ۶۰ درجه نگه دارید (گوشیِ کاملاً عمودی چرخشِ جانبی را حس نمی‌کند). همان حالتی که گوشی را اول گرفته‌اید «نقطهٔ صفر» شماست. روی لپ‌تاپ هم با کلیدهای <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> و کلیدهای جهت‌نما بازی کنید.</p>
             </div>
           </li>
           <li>
-            <span class="num">3</span>
+            <span class="num">۳</span>
             <div>
-              <h3>The slope is the speed</h3>
-              <p>Tip harder, roll faster — and the marble answers a heartbeat late, so you have to <em>lead</em> it. Start the tip before you need it, and flatten the phone to stop the marble dead.</p>
+              <h3>شیب یعنی سرعت</h3>
+              <p>هرچه بیشتر کج کنید، مروارید سریع‌تر می‌غلتد — و با یک لحظه تأخیر جواب می‌دهد، پس باید <em>جلوتر از آن</em> فکر کنید: قبل از اینکه لازمش دارید کج کنید، و برای توقف کامل گوشی را صاف بگیرید.</p>
             </div>
           </li>
           <li>
-            <span class="num">4</span>
+            <span class="num">۴</span>
             <div>
-              <h3>Be in the ring on the beat</h3>
-              <p>Every ring is one beat of the waltz, and they walk around the tray. It is judged the moment the drum lands — <em>perfect</em>, <em>good</em>, <em>on the edge</em>. Tip too far and the marble hits the rim of the tray and your streak snaps.</p>
+              <h3>روی ضرب، داخل حلقه</h3>
+              <p>هر حلقه یک ضرب موسیقی است و دور زمین می‌چرخد؛ در لحظهٔ فرود ضرب داوری می‌شود: <em>perfect</em>، <em>good</em> یا <em>edge</em>. اگر خیلی کج کنید، مروارید به لبه می‌خورد و کامبوی شما می‌شکند.</p>
             </div>
           </li>
         </ol>
-        <div class="steps fa" dir="rtl" lang="fa">
-          <p><b>خلاصه به فارسی:</b> گوشی همان سینی است. یکی گوشی را از پایین و دیگری از بالا می‌گیرد و <b>هر کدام یک شست روی صفحه</b> می‌گذارد (یکی در نیمهٔ پایین، یکی در نیمهٔ بالا). اگر یکی شستش را بردارد سینی صاف می‌شود و امتیاز نمی‌گیرید. با ژیروسکوپ، کج کردن گوشی به <b>هر طرف</b> مروارید را همان طرف می‌غلتد: لبهٔ بالا را پایین بگیرید، مروارید دور می‌شود؛ سمت راست را پایین بگیرید، به راست می‌رود؛ کجِ مورب، مورب می‌رود. گوشی را در حدود ۳۰ تا ۶۰ درجه بگیرید (نه کاملاً ایستاده، چون در حالت کاملاً عمودی هیچ گوشی‌ای چرخش جانبی را حس نمی‌کند). گوشی را صاف بگیرید تا مروارید بایستد. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد. اگر جهت برعکس بود، روی برچسب «gyroscope» در نوار بالا بزنید. روی لپ‌تاپ: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> و کلیدهای جهت‌دار، و سینی فقط وقتی کج می‌شود که هر دو یک طرف را فشار دهید.</p>
+        <div class="signoff">
+          <p class="signoff-fa" dir="rtl" lang="fa">یادتون نره! بابک رو هم دعوت کنید 😎</p>
+          <p class="signoff-en">Good Games Need Good People!</p>
         </div>
         <div class="panel-foot">
-          <div class="hint">Headphones help. Volume is your friend, the music is your metronome.</div>
-          <button class="btn primary" data-go="levels">I'm ready</button>
+          <div class="hint" dir="rtl" lang="fa">هدفون بگذارید؛ موسیقی مترونوم شماست.</div>
+          <button class="btn primary" data-go="levels">آماده‌ام!</button>
         </div>
       </div>
     </section>
-
     <!-- PAUSE -->
     <section class="screen hidden" id="screen-pause">
       <div class="panel">

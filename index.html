@@ -102,6 +102,25 @@ body { touch-action: none; }
 
 .hidden { display: none !important; }
 
+/* ── sign-off block at the bottom of the how-to ──────────── */
+.signoff {
+  margin: 22px 0 4px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px dashed rgba(255, 210, 138, 0.45);
+  background: rgba(255, 210, 138, 0.07);
+  text-align: center;
+}
+.signoff-fa { margin: 0 0 6px; font-size: 17px; font-weight: 700; color: var(--gold); }
+.signoff-en {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: rgba(247, 238, 248, 0.78);
+}
+
 /* ── install banner (menus only) ─────────────────────────── */
 #install-banner {
   position: fixed;
@@ -326,10 +345,10 @@ body { touch-action: none; }
   /* frosted glass: the key-art poster behind the menu shows through,
      blurred — with a gold hairline drawn as a gradient border */
   background:
-    linear-gradient(180deg, rgba(24, 15, 38, 0.38), rgba(10, 6, 19, 0.52)) padding-box,
-    linear-gradient(150deg, rgba(255, 210, 138, 0.55), rgba(255, 158, 203, 0.16) 40%, rgba(143, 240, 226, 0.30)) border-box;
-  backdrop-filter: blur(26px) saturate(150%) brightness(1.12);
-  -webkit-backdrop-filter: blur(26px) saturate(150%) brightness(1.12);
+    linear-gradient(180deg, rgba(24, 15, 38, 0.30), rgba(10, 6, 19, 0.44)) padding-box,
+    linear-gradient(150deg, rgba(255, 210, 138, 0.6), rgba(255, 158, 203, 0.18) 40%, rgba(143, 240, 226, 0.32)) border-box;
+  backdrop-filter: blur(30px) saturate(160%) brightness(1.15);
+  -webkit-backdrop-filter: blur(30px) saturate(160%) brightness(1.15);
   box-shadow:
     0 30px 90px rgba(0, 0, 0, 0.62),
     0 2px 0 rgba(255, 255, 255, 0.05) inset,
@@ -881,59 +900,11 @@ kbd {
       <button class="btn primary login-go" id="btn-start" type="button">START DANCING</button>
     </section>
 
-    <!-- TITLE -->
-    <section class="screen" id="screen-title">
-      <div class="panel title-panel">
-        <div class="emblem">
-          <svg viewBox="0 0 120 120" aria-hidden="true">
-            <defs>
-              <linearGradient id="emb-a" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#ffb3d9"/><stop offset="1" stop-color="#ff8ab8"/>
-              </linearGradient>
-              <linearGradient id="emb-b" x1="1" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#8ff0e2"/><stop offset="1" stop-color="#69c7ff"/>
-              </linearGradient>
-              <radialGradient id="emb-p" cx="0.35" cy="0.3" r="0.8">
-                <stop offset="0" stop-color="#fffdf6"/><stop offset="0.55" stop-color="#ffd28a"/><stop offset="1" stop-color="#ffab5e"/>
-              </radialGradient>
-            </defs>
-            <circle cx="45" cy="60" r="28" fill="none" stroke="url(#emb-a)" stroke-width="2.6" opacity=".95"/>
-            <circle cx="75" cy="60" r="28" fill="none" stroke="url(#emb-b)" stroke-width="2.6" opacity=".95"/>
-            <circle cx="60" cy="60" r="9" fill="url(#emb-p)"/>
-          </svg>
-        </div>
-        <h1>Dance<span class="with">with</span>Babi</h1>
-        <p class="tagline">Two dancers, one phone, a floor with no edge.<br/>Hold it together and tip it any way — the pearl runs the way you lean.</p>
-        <p class="tagline fa" dir="rtl" lang="fa">یک صفحهٔ بی‌انتها، دو نفر، یک گوشی. با هم بگیریدش و هر طرف که کج کنید، مروارید همان طرف می‌رود.</p>
-        <div class="title-actions">
-          <button class="btn primary" data-go="levels">Begin the dance</button>
-          <button class="btn ghost" data-go="howto">How to play</button>
-        </div>
-        <button class="motion-btn" id="btn-motion" type="button">
-          <i class="dot" aria-hidden="true"></i>
-          <span id="motion-label">Gyroscope: tap to switch it on</span>
-        </button>
-        <p class="motion-note hidden" id="motion-note"></p>
-        <div class="sensor" id="sensor">
-          <b id="sensor-state">sensor: off</b>
-          <span id="sensor-raw">no samples yet</span>
-          <span id="sensor-tilt">tilt —</span>
-        </div>
-        <p class="motion-tip">Tip the phone and the marble above will roll with it — that is the whole game.
-          If nothing moves, <a href="./sensor.html">open the sensor test</a>.</p>
-        
-        <p class="foot-note" id="title-names">inspired by <em>Bounden</em> · built with plain canvas &amp; web audio</p>
-      </div>
-    </section>
-
     <!-- LEVEL SELECT -->
     <section class="screen hidden" id="screen-levels">
       <div class="panel wide">
         <div class="panel-head">
           <h2>Choose a dance</h2>
-          <button class="icon-btn small" data-go="title" aria-label="Back">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
         </div>
 
         <div class="mode-switch" role="group" aria-label="Mode">
@@ -947,7 +918,7 @@ kbd {
           <div class="hint">
             on a phone: a thumb at each end, then tip it &nbsp;·&nbsp; on a keyboard: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> and <kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd>
           </div>
-          <button class="btn tiny ghost" data-go="howto">How to play</button>
+          <button class="btn tiny ghost" data-go="howto">How to play · راهنمای بازی</button>
         </div>
       </div>
     </section>
@@ -956,51 +927,51 @@ kbd {
     <section class="screen hidden" id="screen-howto">
       <div class="panel wide">
         <div class="panel-head">
-          <h2>How to dance</h2>
-          <button class="icon-btn small" data-go="levels" aria-label="Back">
+          <h2>چطور برقصیم؟</h2>
+          <button class="icon-btn small" data-go="levels" aria-label="بازگشت">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
-        <ol class="steps">
+        <ol class="steps" dir="rtl" lang="fa">
           <li>
-            <span class="num">1</span>
+            <span class="num">۱</span>
             <div>
-              <h3>Two thumbs, two ends</h3>
-              <p>One of you holds the phone at the bottom, the other at the top, and <em>each keeps a thumb on the glass</em> — one thumb in the lower half of the screen, one in the upper half. Those thumbs are the grip: if either one lifts, the tray goes flat and the rings stop counting.</p>
+              <h3>دو شست، دو سر گوشی</h3>
+              <p>یکی از شما گوشی را از پایین می‌گیرد و دیگری از بالا؛ و <em>هر دو یک شست روی صفحه می‌گذارند</em> — یکی در نیمهٔ پایین صفحه، یکی در نیمهٔ بالا. این دو تماس «دستهٔ» بازی هستند: اگر یکی برداشته شود، رقص همان‌جا متوقف می‌شود.</p>
             </div>
           </li>
           <li>
-            <span class="num">2</span>
+            <span class="num">۲</span>
             <div>
-              <h3>Tip it any way at all</h3>
-              <p>The game measures how far the phone has <em>rotated</em> away from the pose you started in — both directions, in any hold. Tip the top edge down and the marble runs away from you; tip the right edge down and it runs right; tip it diagonally and it goes diagonally. Hold the phone flat and the marble coasts to a stop. Get comfortable first: <em>hold it around 30–60° from flat</em>, since a phone held bolt upright cannot feel a sideways roll (no accelerometer can). Whatever pose you hold when the dance starts counts as zero, and you can tap the <b>gyroscope</b> chip in the top bar to invert the lean. On a laptop: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> for one of you, the arrow keys for the other.</p>
+              <h3>گوشی را به هر طرف کج کنید</h3>
+              <p>بازی «میزان چرخش» گوشی نسبت به لحظهٔ شروع را می‌سنجد؛ پس کج کردن به <em>هر سمتی</em> کار می‌کند — بالا، پایین، چپ، راست یا مورب. لبهٔ بالا را پایین ببرید، مروارید به همان سمت می‌غلتد. گوشی را حدود ۳۰ تا ۶۰ درجه نگه دارید (گوشیِ کاملاً عمودی چرخشِ جانبی را حس نمی‌کند). همان حالتی که گوشی را اول گرفته‌اید «نقطهٔ صفر» شماست. روی لپ‌تاپ هم با کلیدهای <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> و کلیدهای جهت‌نما بازی کنید.</p>
             </div>
           </li>
           <li>
-            <span class="num">3</span>
+            <span class="num">۳</span>
             <div>
-              <h3>The slope is the speed</h3>
-              <p>Tip harder, roll faster — and the marble answers a heartbeat late, so you have to <em>lead</em> it. Start the tip before you need it, and flatten the phone to stop the marble dead.</p>
+              <h3>شیب یعنی سرعت</h3>
+              <p>هرچه بیشتر کج کنید، مروارید سریع‌تر می‌غلتد — و با یک لحظه تأخیر جواب می‌دهد، پس باید <em>جلوتر از آن</em> فکر کنید: قبل از اینکه لازمش دارید کج کنید، و برای توقف کامل گوشی را صاف بگیرید.</p>
             </div>
           </li>
           <li>
-            <span class="num">4</span>
+            <span class="num">۴</span>
             <div>
-              <h3>Be in the ring on the beat</h3>
-              <p>Every ring is one beat of the waltz, and they walk around the tray. It is judged the moment the drum lands — <em>perfect</em>, <em>good</em>, <em>on the edge</em>. Tip too far and the marble hits the rim of the tray and your streak snaps.</p>
+              <h3>روی ضرب، داخل حلقه</h3>
+              <p>هر حلقه یک ضرب موسیقی است و دور زمین می‌چرخد؛ در لحظهٔ فرود ضرب داوری می‌شود: <em>perfect</em>، <em>good</em> یا <em>edge</em>. اگر خیلی کج کنید، مروارید به لبه می‌خورد و کامبوی شما می‌شکند.</p>
             </div>
           </li>
         </ol>
-        <div class="steps fa" dir="rtl" lang="fa">
-          <p><b>خلاصه به فارسی:</b> گوشی همان سینی است. یکی گوشی را از پایین و دیگری از بالا می‌گیرد و <b>هر کدام یک شست روی صفحه</b> می‌گذارد (یکی در نیمهٔ پایین، یکی در نیمهٔ بالا). اگر یکی شستش را بردارد سینی صاف می‌شود و امتیاز نمی‌گیرید. با ژیروسکوپ، کج کردن گوشی به <b>هر طرف</b> مروارید را همان طرف می‌غلتد: لبهٔ بالا را پایین بگیرید، مروارید دور می‌شود؛ سمت راست را پایین بگیرید، به راست می‌رود؛ کجِ مورب، مورب می‌رود. گوشی را در حدود ۳۰ تا ۶۰ درجه بگیرید (نه کاملاً ایستاده، چون در حالت کاملاً عمودی هیچ گوشی‌ای چرخش جانبی را حس نمی‌کند). گوشی را صاف بگیرید تا مروارید بایستد. هر حلقه یک ضرب والس است و باید مروارید دقیقاً روی ضرب داخل حلقه باشد. اگر جهت برعکس بود، روی برچسب «gyroscope» در نوار بالا بزنید. روی لپ‌تاپ: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> و کلیدهای جهت‌دار، و سینی فقط وقتی کج می‌شود که هر دو یک طرف را فشار دهید.</p>
+        <div class="signoff">
+          <p class="signoff-fa" dir="rtl" lang="fa">یادتون نره! بابک رو هم دعوت کنید 😎</p>
+          <p class="signoff-en">Good Games Need Good People!</p>
         </div>
         <div class="panel-foot">
-          <div class="hint">Headphones help. Volume is your friend, the music is your metronome.</div>
-          <button class="btn primary" data-go="levels">I'm ready</button>
+          <div class="hint" dir="rtl" lang="fa">هدفون بگذارید؛ موسیقی مترونوم شماست.</div>
+          <button class="btn primary" data-go="levels">آماده‌ام!</button>
         </div>
       </div>
     </section>
-
     <!-- PAUSE -->
     <section class="screen hidden" id="screen-pause">
       <div class="panel">
@@ -1276,13 +1247,13 @@ kbd {
     {
       id: "neon-rooftop",
       name: "Neon Rooftop",
-      style: "Synthwave",
+      style: "Tech house",
       subtitle: "The city hums under you",
       blurb: "Four on the floor, wide chords, a bass that leans forward.",
-      bpm: 100, gates: 240, intro: 8, level: 2,
+      bpm: 122, gates: 240, intro: 8, level: 2,
       step: 0.84, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "tokyo", seed: 11,
-      stepsPerBar: 8, drums: "house",
+      stepsPerBar: 8, drums: "tech",
       prog: [[57, 60, 64], [53, 57, 60], [55, 60, 64], [50, 55, 59]],
       mel: [76, 79, 72, 74, 76, 71, 74, 67],
       pal: {
@@ -1296,13 +1267,13 @@ kbd {
     {
       id: "sahara-groove",
       name: "Sahara Groove",
-      style: "Afrobeat",
+      style: "Afro house",
       subtitle: "Let the drums argue",
       blurb: "Syncopated and warm. The pearl wants to go sideways.",
-      bpm: 104, gates: 250, intro: 8, level: 3,
+      bpm: 122, gates: 250, intro: 8, level: 3,
       step: 0.86, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "sahara", seed: 23,
-      stepsPerBar: 8, drums: "afro",
+      stepsPerBar: 8, drums: "afrohouse",
       prog: [[57, 60, 64], [55, 59, 62], [53, 57, 60], [52, 56, 59]],
       mel: [72, 74, 76, 79, 77, 74, 72, 69],
       pal: {
@@ -1319,10 +1290,10 @@ kbd {
       style: "K-pop electropop",
       subtitle: "Sharp, bright, fast",
       blurb: "Tight drums, a bright lead, no room to drift.",
-      bpm: 112, gates: 269, intro: 8, level: 4,
+      bpm: 128, gates: 269, intro: 8, level: 4,
       step: 0.88, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "velvet", seed: 31,
-      stepsPerBar: 8, drums: "house",
+      stepsPerBar: 8, drums: "kpop",
       prog: [[60, 64, 67], [57, 60, 64], [59, 62, 67], [55, 59, 62]],
       mel: [79, 76, 74, 76, 79, 83, 81, 76],
       pal: {
@@ -1339,10 +1310,10 @@ kbd {
       style: "Filmi strings",
       subtitle: "Both of you, one flourish",
       blurb: "Sliding melody over a walking bass. Big, generous phrases.",
-      bpm: 98, gates: 235, intro: 6, level: 5,
+      bpm: 104, gates: 235, intro: 6, level: 5,
       step: 0.82, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "garden", seed: 41,
-      stepsPerBar: 8, drums: "afro",
+      stepsPerBar: 8, drums: "filmi",
       prog: [[57, 60, 64], [57, 62, 65], [55, 58, 62], [53, 57, 60]],
       mel: [72, 75, 76, 79, 76, 75, 72, 68],
       pal: {
@@ -1356,13 +1327,13 @@ kbd {
     {
       id: "fuego",
       name: "Fuego",
-      style: "Latin pop",
+      style: "Reggaeton",
       subtitle: "Hips before hands",
       blurb: "Dembow bounce. The ring is never where you left it.",
-      bpm: 96, gates: 230, intro: 8, level: 6,
+      bpm: 100, gates: 230, intro: 8, level: 6,
       step: 0.85, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "ember", seed: 53,
-      stepsPerBar: 8, drums: "afro",
+      stepsPerBar: 8, drums: "dembow",
       prog: [[57, 60, 64], [50, 53, 57], [55, 58, 62], [52, 55, 59]],
       mel: [74, 72, 69, 72, 74, 77, 76, 72],
       pal: {
@@ -1376,13 +1347,13 @@ kbd {
     {
       id: "tokyo-rain",
       name: "Tokyo Rain",
-      style: "City pop",
+      style: "Disco pop",
       subtitle: "Slow it down and listen",
       blurb: "Seventh chords, soft brushes, a long trailing line.",
-      bpm: 92, gates: 221, intro: 6, level: 7,
+      bpm: 118, gates: 221, intro: 6, level: 7,
       step: 0.80, lag: 0.07, tiltRange: 27, difficulty: 1,
       space: "ice", seed: 61,
-      stepsPerBar: 8, drums: "pop",
+      stepsPerBar: 8, drums: "disco",
       prog: [[60, 64, 67], [57, 60, 64], [53, 57, 60], [55, 59, 62]],
       mel: [79, 76, 72, 74, 76, 72, 71, 67],
       pal: {
@@ -1396,13 +1367,13 @@ kbd {
     {
       id: "moonlit-spin",
       name: "Moonlit Spin",
-      style: "Dream pop",
+      style: "Disco house",
       subtitle: "Further, faster, hold the line",
       blurb: "The curve widens at the corners. Lead the pearl a beat early.",
-      bpm: 108, gates: 259, intro: 8, level: 8,
+      bpm: 124, gates: 259, intro: 8, level: 8,
       step: 0.88, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "nebula", seed: 71,
-      stepsPerBar: 8, drums: "house",
+      stepsPerBar: 8, drums: "tech",
       prog: [[57, 60, 64], [55, 59, 62], [53, 57, 60], [50, 55, 59]],
       mel: [76, 74, 71, 74, 76, 79, 83, 79],
       pal: {
@@ -1419,10 +1390,10 @@ kbd {
       style: "Liquid drum & bass",
       subtitle: "Nothing to bump into",
       blurb: "Rolling breaks, one long breath. The floor is the whole world.",
-      bpm: 120, gates: 288, intro: 8, level: 9,
+      bpm: 174, gates: 288, intro: 8, level: 9,
       step: 0.90, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "space", seed: 83,
-      stepsPerBar: 8, drums: "break",
+      stepsPerBar: 8, drums: "dnb",
       prog: [[57, 60, 64], [53, 57, 60], [60, 63, 67], [55, 58, 62]],
       mel: [72, 79, 74, 76, 72, 79, 81, 76],
       pal: {
@@ -1436,13 +1407,13 @@ kbd {
     {
       id: "babis-finale",
       name: "Babi's Finale",
-      style: "Grand finale",
+      style: "Big room finale",
       subtitle: "All the way, every beat",
       blurb: "The fastest dance of the evening. The pearl has no time to settle.",
-      bpm: 116, gates: 278, intro: 8, level: 10,
+      bpm: 128, gates: 278, intro: 8, level: 10,
       step: 0.92, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "ember", seed: 97,
-      stepsPerBar: 8, drums: "house",
+      stepsPerBar: 8, drums: "bigroom",
       prog: [[57, 60, 64], [59, 62, 67], [57, 60, 64], [55, 59, 62]],
       mel: [76, 79, 83, 79, 76, 72, 74, 79],
       pal: {
@@ -1459,6 +1430,7 @@ kbd {
   LEVELS.forEach((lv, index) => {
     lv.index = index;
     lv.spb = 60 / lv.bpm;
+    lv.gates = Math.round(144 / lv.spb);   /* every dance stays 2:24 */
     const route = makeRoute(lv.seed, lv.step, lv.gates);
     lv.points = route.points;
     const lastK = route.points.length - 1;
@@ -1784,14 +1756,25 @@ kbd {
   const PENTA = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22, 24];
 
   /* drum maps: step indices inside a bar of `stepsPerBar` eighth notes
-     (in an 8-step bar the beats are the even steps 0,2,4,6) */
+     (in an 8-step bar the beats are the even steps 0,2,4,6).
+     Patterns follow the globally trending dance genres: tech house,
+     afro-house, k-pop, filmi, reggaeton dembow, disco, d'n'b, big room. */
   const DRUMS = {
-    waltz: { kick: [0], clap: [], hat: [2, 4], open: [], bass: [0, 4], pop: [], lead: [2, 5] },
-    house: { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 2, 4, 6], pop: [3, 7], lead: [0, 2, 3, 4, 6] },
-    pop:   { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 4], pop: [3], lead: [0, 3, 4, 6] },
-    afro:  { kick: [0, 3, 6], clap: [4], hat: [1, 3, 5, 7], open: [], bass: [0, 3, 6], pop: [5], lead: [1, 4, 6, 7] },
-    break: { kick: [0, 3, 6], clap: [4], hat: [1, 2, 3, 5, 6, 7], open: [7], bass: [0, 6], pop: [], lead: [2, 5, 7] },
+    waltz:     { kick: [0], clap: [], hat: [2, 4], open: [], bass: [0, 4], pop: [], lead: [2, 5] },
+    tech:      { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 2, 4, 6], pop: [3, 7], lead: [0, 2, 3, 4, 6] },
+    afrohouse: { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 3, 4, 6], pop: [5], lead: [0, 3, 6, 7] },
+    kpop:      { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 2, 4, 6], pop: [3, 7], lead: [0, 2, 4, 6, 7] },
+    filmi:     { kick: [0, 2, 4, 6], clap: [4], hat: [1, 3, 5, 7], open: [], bass: [0, 4], pop: [3, 6], lead: [1, 4, 6] },
+    dembow:    { kick: [3, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 3, 6], pop: [2], lead: [3, 6, 7] },
+    disco:     { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [3, 7], bass: [0, 2, 4, 6], pop: [], lead: [0, 4, 6] },
+    dnb:       { kick: [0, 7], clap: [4], hat: [0, 1, 2, 3, 4, 5, 6, 7], open: [], bass: [0, 7], pop: [], lead: [2, 5, 6] },
+    bigroom:   { kick: [0, 2, 4, 6], clap: [2, 6], hat: [1, 3, 5, 7], open: [7], bass: [0, 2, 4, 6], pop: [3, 7], lead: [0, 1, 2, 3, 4, 5, 6, 7] },
   };
+  /* legacy names keep working */
+  DRUMS.house = DRUMS.tech;
+  DRUMS.pop = DRUMS.disco;
+  DRUMS.afro = DRUMS.afrohouse;
+  DRUMS.break = DRUMS.dnb;
 
   /* the shape of a 2:24 dance: eight-bar sections that keep changing */
   const ARR = ["intro", "drop", "verse", "build", "drop", "break", "build", "final"];
@@ -2042,7 +2025,7 @@ kbd {
         if ((drop || build) && D.clap.indexOf(st) >= 0) this._clap(when, drop ? 0.13 : 0.09);
         if (build && bar % 8 === 7 && st % 2 === 1) this._snare(when, 0.04 + st * 0.008);
         if (D.hat.indexOf(st) >= 0) this._hat(when, intro ? 0.018 : drop ? 0.038 : 0.028);
-        if (drop && D.open.indexOf(st) >= 0) this._open(when, 0.05);
+        if (drop && D.open.indexOf(st) >= 0 && bar % 2 === 1) this._open(when, 0.05);
       } else if (st === 0) {
         this._kick(when, 0.22);                /* half-time heartbeat in the break */
       }
@@ -2062,7 +2045,10 @@ kbd {
         if (drop) {
           if (D.lead.indexOf(st) >= 0) {
             this._hookIdx++;
-            const note = mel[(bar * 2 + this._hookIdx) % mel.length] + (this._hookIdx % 4 === 3 ? 12 : 0);
+            /* two-bar call & response: the even bar calls, the odd bar
+               answers an octave up — the rhythm is built for two dancers */
+            const answer = bar % 2 === 1;
+            const note = mel[(bar * 2 + this._hookIdx) % mel.length] + (answer ? 12 : 0);
             this._lead(midi(note), when, e * (final ? 2.2 : 1.6), final ? 0.075 : 0.06);
           }
         } else if (verse) {
@@ -3721,7 +3707,7 @@ kbd {
       this.sound.setMuted(store.get("dwb.muted", false));
       this.el.sound.classList.toggle("muted", this.sound.muted);
 
-      this.state = "title";
+      this.state = "login";
       this.mode = store.get("dwb.mode", "duet") || "duet";
       this.li = 0;
       this.level = null;
@@ -3835,7 +3821,6 @@ kbd {
         return;
       }
       const map = {
-        title: "screen-title",
         levels: "screen-levels",
         howto: "screen-howto",
         pause: "screen-pause",
@@ -4540,7 +4525,7 @@ kbd {
 
       this.update(dt);
 
-      const demo = !this.level || this.state === "title" || this.state === "levels" || this.state === "howto";
+      const demo = !this.level || this.state === "levels" || this.state === "howto" || this.state === "login";
       this.demoT = (this.demoT || 0) + dt;
       const demoTilt = Math.sin(this.demoT * 1.6) * 0.85;
       const demoLevel = LEVELS[0];

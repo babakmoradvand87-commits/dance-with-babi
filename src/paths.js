@@ -78,13 +78,13 @@
     {
       id: "neon-rooftop",
       name: "Neon Rooftop",
-      style: "Synthwave",
+      style: "Tech house",
       subtitle: "The city hums under you",
       blurb: "Four on the floor, wide chords, a bass that leans forward.",
-      bpm: 100, gates: 240, intro: 8, level: 2,
+      bpm: 122, gates: 240, intro: 8, level: 2,
       step: 0.84, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "tokyo", seed: 11,
-      stepsPerBar: 8, drums: "house",
+      stepsPerBar: 8, drums: "tech",
       prog: [[57, 60, 64], [53, 57, 60], [55, 60, 64], [50, 55, 59]],
       mel: [76, 79, 72, 74, 76, 71, 74, 67],
       pal: {
@@ -98,13 +98,13 @@
     {
       id: "sahara-groove",
       name: "Sahara Groove",
-      style: "Afrobeat",
+      style: "Afro house",
       subtitle: "Let the drums argue",
       blurb: "Syncopated and warm. The pearl wants to go sideways.",
-      bpm: 104, gates: 250, intro: 8, level: 3,
+      bpm: 122, gates: 250, intro: 8, level: 3,
       step: 0.86, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "sahara", seed: 23,
-      stepsPerBar: 8, drums: "afro",
+      stepsPerBar: 8, drums: "afrohouse",
       prog: [[57, 60, 64], [55, 59, 62], [53, 57, 60], [52, 56, 59]],
       mel: [72, 74, 76, 79, 77, 74, 72, 69],
       pal: {
@@ -121,10 +121,10 @@
       style: "K-pop electropop",
       subtitle: "Sharp, bright, fast",
       blurb: "Tight drums, a bright lead, no room to drift.",
-      bpm: 112, gates: 269, intro: 8, level: 4,
+      bpm: 128, gates: 269, intro: 8, level: 4,
       step: 0.88, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "velvet", seed: 31,
-      stepsPerBar: 8, drums: "house",
+      stepsPerBar: 8, drums: "kpop",
       prog: [[60, 64, 67], [57, 60, 64], [59, 62, 67], [55, 59, 62]],
       mel: [79, 76, 74, 76, 79, 83, 81, 76],
       pal: {
@@ -141,10 +141,10 @@
       style: "Filmi strings",
       subtitle: "Both of you, one flourish",
       blurb: "Sliding melody over a walking bass. Big, generous phrases.",
-      bpm: 98, gates: 235, intro: 6, level: 5,
+      bpm: 104, gates: 235, intro: 6, level: 5,
       step: 0.82, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "garden", seed: 41,
-      stepsPerBar: 8, drums: "afro",
+      stepsPerBar: 8, drums: "filmi",
       prog: [[57, 60, 64], [57, 62, 65], [55, 58, 62], [53, 57, 60]],
       mel: [72, 75, 76, 79, 76, 75, 72, 68],
       pal: {
@@ -158,13 +158,13 @@
     {
       id: "fuego",
       name: "Fuego",
-      style: "Latin pop",
+      style: "Reggaeton",
       subtitle: "Hips before hands",
       blurb: "Dembow bounce. The ring is never where you left it.",
-      bpm: 96, gates: 230, intro: 8, level: 6,
+      bpm: 100, gates: 230, intro: 8, level: 6,
       step: 0.85, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "ember", seed: 53,
-      stepsPerBar: 8, drums: "afro",
+      stepsPerBar: 8, drums: "dembow",
       prog: [[57, 60, 64], [50, 53, 57], [55, 58, 62], [52, 55, 59]],
       mel: [74, 72, 69, 72, 74, 77, 76, 72],
       pal: {
@@ -178,13 +178,13 @@
     {
       id: "tokyo-rain",
       name: "Tokyo Rain",
-      style: "City pop",
+      style: "Disco pop",
       subtitle: "Slow it down and listen",
       blurb: "Seventh chords, soft brushes, a long trailing line.",
-      bpm: 92, gates: 221, intro: 6, level: 7,
+      bpm: 118, gates: 221, intro: 6, level: 7,
       step: 0.80, lag: 0.07, tiltRange: 27, difficulty: 1,
       space: "ice", seed: 61,
-      stepsPerBar: 8, drums: "pop",
+      stepsPerBar: 8, drums: "disco",
       prog: [[60, 64, 67], [57, 60, 64], [53, 57, 60], [55, 59, 62]],
       mel: [79, 76, 72, 74, 76, 72, 71, 67],
       pal: {
@@ -198,13 +198,13 @@
     {
       id: "moonlit-spin",
       name: "Moonlit Spin",
-      style: "Dream pop",
+      style: "Disco house",
       subtitle: "Further, faster, hold the line",
       blurb: "The curve widens at the corners. Lead the pearl a beat early.",
-      bpm: 108, gates: 259, intro: 8, level: 8,
+      bpm: 124, gates: 259, intro: 8, level: 8,
       step: 0.88, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "nebula", seed: 71,
-      stepsPerBar: 8, drums: "house",
+      stepsPerBar: 8, drums: "tech",
       prog: [[57, 60, 64], [55, 59, 62], [53, 57, 60], [50, 55, 59]],
       mel: [76, 74, 71, 74, 76, 79, 83, 79],
       pal: {
@@ -221,10 +221,10 @@
       style: "Liquid drum & bass",
       subtitle: "Nothing to bump into",
       blurb: "Rolling breaks, one long breath. The floor is the whole world.",
-      bpm: 120, gates: 288, intro: 8, level: 9,
+      bpm: 174, gates: 288, intro: 8, level: 9,
       step: 0.90, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "space", seed: 83,
-      stepsPerBar: 8, drums: "break",
+      stepsPerBar: 8, drums: "dnb",
       prog: [[57, 60, 64], [53, 57, 60], [60, 63, 67], [55, 58, 62]],
       mel: [72, 79, 74, 76, 72, 79, 81, 76],
       pal: {
@@ -238,13 +238,13 @@
     {
       id: "babis-finale",
       name: "Babi's Finale",
-      style: "Grand finale",
+      style: "Big room finale",
       subtitle: "All the way, every beat",
       blurb: "The fastest dance of the evening. The pearl has no time to settle.",
-      bpm: 116, gates: 278, intro: 8, level: 10,
+      bpm: 128, gates: 278, intro: 8, level: 10,
       step: 0.92, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "ember", seed: 97,
-      stepsPerBar: 8, drums: "house",
+      stepsPerBar: 8, drums: "bigroom",
       prog: [[57, 60, 64], [59, 62, 67], [57, 60, 64], [55, 59, 62]],
       mel: [76, 79, 83, 79, 76, 72, 74, 79],
       pal: {
@@ -261,6 +261,7 @@
   LEVELS.forEach((lv, index) => {
     lv.index = index;
     lv.spb = 60 / lv.bpm;
+    lv.gates = Math.round(144 / lv.spb);   /* every dance stays 2:24 */
     const route = makeRoute(lv.seed, lv.step, lv.gates);
     lv.points = route.points;
     const lastK = route.points.length - 1;
