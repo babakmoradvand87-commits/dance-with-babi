@@ -31,6 +31,14 @@
 <canvas id="stage" aria-label="Dance with Babi play field"></canvas>
 <div id="backdrop" style="background-image:var(--poster)" aria-hidden="true"></div>
 
+<!-- update bar: shown while the service worker downloads a new version -->
+<div id="updbar" class="hidden" role="status" aria-live="polite">
+  <img src="/icon-192.png" alt="Dance with Babi">
+  <span class="fa" dir="rtl" lang="fa">در حال بروزرسانی…</span>
+  <span class="en">updating…</span>
+  <i class="fill"></i>
+</div>
+
 <div id="ui">
   <!-- ─────────────────────────── HUD ─────────────────────────── -->
   <header id="topbar" class="hidden">
@@ -189,10 +197,26 @@
    installed apps on the next launch; if the app is open we reload
    as soon as no dance is running. */
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  function dwbUpdBar(show) {
+    var b = document.getElementById("updbar");
+    if (b) b.classList.toggle("hidden", !show);
+  }
   window.addEventListener("load", function () {
-    navigator.serviceWorker.register("/sw.js").catch(function () { /* offline-first still works */ });
+    navigator.serviceWorker.register("/sw.js").then(function (reg) {
+      /* a newer worker is already waiting → show the bar right away */
+      if (reg.waiting && navigator.serviceWorker.controller) dwbUpdBar(true);
+      reg.addEventListener("updatefound", function () {
+        var w = reg.installing;
+        if (!w) return;
+        w.addEventListener("statechange", function () {
+          if (w.state === "installed" && navigator.serviceWorker.controller) dwbUpdBar(true);
+          if (w.state === "activated") dwbUpdBar(false);
+        });
+      });
+    }).catch(function () { /* offline-first still works */ });
   });
   navigator.serviceWorker.addEventListener("controllerchange", function () {
+    dwbUpdBar(false);
     var g = window.game;
     if (g && (g.state === "playing" || g.state === "countin" || g.state === "paused")) {
       window.__dwbPendingReload = true; /* reload once we are back at a menu */
