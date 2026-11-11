@@ -715,3 +715,42 @@ kbd {
   letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.3);
 }
+
+/* ── the entry screen: the key-art poster itself, ONE button ── */
+#screen-login {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+  background: #08050f;
+}
+.login-art {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 20%;
+}
+.login-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(8, 5, 15, 0.22) 0%, rgba(8, 5, 15, 0) 26%,
+    rgba(8, 5, 15, 0.04) 52%, rgba(8, 5, 15, 0.8) 100%);
+}
+#screen-login .login-go {
+  position: absolute;
+  left: 50%;
+  bottom: calc(34px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 17px 36px;
+  font-size: 15px;
+  letter-spacing: 0.24em;
+  border-radius: 999px;
+  white-space: nowrap;
+  z-index: 2;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 34px rgba(255, 210, 138, 0.25);
+}

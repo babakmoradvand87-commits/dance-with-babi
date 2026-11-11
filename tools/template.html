@@ -9,7 +9,20 @@
 <meta property="og:title" content="Dance with Babi" />
 <meta property="og:description" content="A two-player dancing game for one phone. Tip the phone any way you like and the marble rolls; land it in the ring on the beat." />
 <meta property="og:type" content="website" />
+<meta property="og:site_name" content="Dance with Babi" />
+<meta property="og:image" content="https://petavu.ir/poster.jpg" />
+<meta property="og:image:secure_url" content="https://petavu.ir/poster.jpg" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content="1024" />
+<meta property="og:image:height" content="1280" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://petavu.ir/poster.jpg" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0714'/%3E%3Ccircle cx='25' cy='32' r='13' fill='none' stroke='%23ff9ecb' stroke-width='3'/%3E%3Ccircle cx='39' cy='32' r='13' fill='none' stroke='%238ff0e2' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23ffd28a'/%3E%3C/svg%3E" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Dance with Babi" />
 <!-- /* INLINE:STYLE */ -->
 </head>
 <body>
@@ -43,41 +56,10 @@
   <!-- ──────────────────────── SCREENS ──────────────────────── -->
   <main id="screens">
 
-    <!-- WELCOME (the door to the ballroom) -->
+    <!-- WELCOME — the poster is the door; one button, nothing else -->
     <section class="screen" id="screen-login">
-      <div class="panel login-panel">
-        <div class="login-mark">
-          <svg viewBox="0 0 64 64" aria-hidden="true">
-            <defs>
-              <linearGradient id="lg-gold" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#fff3d6"/><stop offset="0.5" stop-color="#ffd28a"/><stop offset="1" stop-color="#c9973f"/>
-              </linearGradient>
-            </defs>
-            <circle cx="32" cy="32" r="29" fill="none" stroke="url(#lg-gold)" stroke-width="1.1" opacity=".85"/>
-            <circle cx="32" cy="32" r="23" fill="none" stroke="url(#lg-gold)" stroke-width=".6" opacity=".5"/>
-            <circle cx="24" cy="32" r="12" fill="none" stroke="#ff9ecb" stroke-width="2" opacity=".9"/>
-            <circle cx="40" cy="32" r="12" fill="none" stroke="#8ff0e2" stroke-width="2" opacity=".9"/>
-            <circle cx="32" cy="32" r="4" fill="#ffd28a"/>
-          </svg>
-        </div>
-        <p class="kicker">the ballroom is open</p>
-        <h1 class="login-title">Dance<span class="with">with</span>Babi</h1>
-        <p class="tagline login-tag">Two dancers, one phone. Sign the guest book and the floor is yours.</p>
-
-        <form id="login-form" class="login-form" autocomplete="off">
-          <label class="field">
-            <span>Player one</span>
-            <input id="login-p1" type="text" maxlength="14" placeholder="your name" enterkeyhint="next" />
-          </label>
-          <label class="field">
-            <span>Player two</span>
-            <input id="login-p2" type="text" maxlength="14" placeholder="their name" enterkeyhint="go" />
-          </label>
-          <button class="btn primary login-go" type="submit">Enter the ballroom</button>
-        </form>
-
-        <p class="login-note">No account, no e-mail — the names stay on this phone.</p>
-      </div>
+      <div class="login-art" style="background-image:url(&quot;__DWB_POSTER_B64__&quot;)" role="img" aria-label="Dance with Babi — a couple dancing while holding one phone, friends around them, music notes in the air"></div>
+      <button class="btn primary login-go" id="btn-start" type="button">START DANCING</button>
     </section>
 
     <!-- TITLE -->

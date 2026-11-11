@@ -67,9 +67,7 @@
         resScore: document.getElementById("res-score"),
         resBest: document.getElementById("res-best"),
         resBreak: document.getElementById("res-breakdown"),
-        loginForm: document.getElementById("login-form"),
-        loginP1: document.getElementById("login-p1"),
-        loginP2: document.getElementById("login-p2"),
+        startBtn: document.getElementById("btn-start"),
         titleNames: document.getElementById("title-names"),
         again: document.getElementById("btn-again"),
         next: document.getElementById("btn-next"),
@@ -112,7 +110,7 @@
       this.renderLevels();
       this.setMode(this.mode);
       this.bindLogin();
-      this.show(this.names().p1 ? "title" : "login");
+      this.show("login");
       this.lastT = performance.now() / 1000;
       requestAnimationFrame(this.frame);
     }
@@ -132,25 +130,24 @@
     }
 
     bindLogin() {
-      const form = this.el.loginForm;
-      if (!form) return;
-      const n = this.names();
-      if (this.el.loginP1) this.el.loginP1.value = n.p1;
-      if (this.el.loginP2) this.el.loginP2.value = n.p2;
-      form.addEventListener("submit", (ev) => {
-        ev.preventDefault();
-        const p1 = (this.el.loginP1 && this.el.loginP1.value || "").trim().slice(0, 14);
-        const p2 = (this.el.loginP2 && this.el.loginP2.value || "").trim().slice(0, 14);
-        store.set("dwb.p1", p1 || "Player one");
-        store.set("dwb.p2", p2 || "Player two");
-        this.paintNames();
-        this.show("title");
-      });
-      form.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter" && ev.target && ev.target.id === "login-p1") {
-          ev.preventDefault();
-          if (this.el.loginP2) this.el.loginP2.focus();
+      /* the entry screen is the poster plus ONE button — straight to the dances */
+      const btn = this.el.startBtn;
+      if (!btn) return;
+      btn.addEventListener("click", () => {
+        this.sound.ensure();
+        this.sound.ui();
+        if (MOTION) this.askGyro(true);   /* iOS motion permission is asked inside this tap */
+        const n = this.names();
+        if (!n.p1 || !n.p2) {
+          store.set("dwb.p1", n.p1 || "Player one");
+          store.set("dwb.p2", n.p2 || "Player two");
         }
+        this.paintNames();
+        this.state = "levels";
+        this.el.topbar.classList.add("hidden");
+        this.el.hint.classList.add("hidden");
+        this.renderLevels();
+        this.show("levels");
       });
     }
 

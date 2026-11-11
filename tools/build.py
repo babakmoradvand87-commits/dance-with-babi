@@ -9,6 +9,7 @@ iframe, or served by GitHub Pages without a single extra request.
 
     python3 tools/build.py
 """
+import base64
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -40,6 +41,15 @@ def main() -> None:
         "<!-- /* INLINE:SCRIPT */ -->",
         "<script>\n" + js + "\n</script>",
     )
+
+    # the login screen shows the key-art poster; inline it so the page
+    # stays a single self-contained file with zero network requests
+    poster = ROOT / "assets" / "poster-login.jpg"
+    if poster.exists():
+        b64 = base64.b64encode(poster.read_bytes()).decode("ascii")
+        html = html.replace("__DWB_POSTER_B64__", "data:image/jpeg;base64," + b64)
+    else:
+        html = html.replace("__DWB_POSTER_B64__", "data:,")
 
     OUT.write_text(html, encoding="utf-8")
     kb = len(html.encode("utf-8")) / 1024
