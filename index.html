@@ -665,6 +665,69 @@ kbd {
 }
 .sensor.live b { color: #6fe3d0; }
 .sensor.live { border-color: rgba(143, 240, 226, 0.28); }
+
+/* ─────────────────────── the door ─────────────────────── */
+.login-panel {
+  max-width: 420px;
+  padding: 34px 28px 26px;
+}
+.login-mark { width: 74px; height: 74px; margin: 0 auto 6px; animation: floaty 8s ease-in-out infinite; }
+.login-mark svg { width: 100%; height: 100%; overflow: visible; }
+.login-panel .kicker {
+  margin: 10px 0 0;
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(255, 210, 138, 0.75);
+}
+.panel h1.login-title {
+  font-size: clamp(30px, 8vw, 44px);
+  margin: 8px 0 0;
+}
+.panel h1.login-title .with {
+  font-size: 0.34em;
+  letter-spacing: 0.42em;
+  margin: 8px 0 0;
+}
+.tagline.login-tag { font-size: 13px; max-width: 27em; margin: 12px auto 0; }
+.tagline.login-tag::before { display: none; }
+
+.login-form { display: flex; flex-direction: column; gap: 14px; margin: 24px 0 0; }
+.field { display: block; text-align: left; }
+.field span {
+  display: block;
+  font-size: 9.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 210, 138, 0.62);
+  margin: 0 0 6px 2px;
+}
+.field input {
+  width: 100%;
+  padding: 12px 2px 11px;
+  font-family: var(--serif);
+  font-size: 19px;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 210, 138, 0.28);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field input::placeholder { color: rgba(255, 255, 255, 0.22); font-style: italic; }
+.field input:focus {
+  border-bottom-color: rgba(255, 210, 138, 0.9);
+  box-shadow: 0 12px 24px -18px rgba(255, 210, 138, 0.9);
+}
+.login-go { margin-top: 8px; padding: 15px 20px; font-size: 14.5px; }
+.login-note {
+  margin: 16px 0 0;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.3);
+}
 </style>
 </head>
 <body>
@@ -697,6 +760,43 @@ kbd {
 
   <!-- ──────────────────────── SCREENS ──────────────────────── -->
   <main id="screens">
+
+    <!-- WELCOME (the door to the ballroom) -->
+    <section class="screen" id="screen-login">
+      <div class="panel login-panel">
+        <div class="login-mark">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <defs>
+              <linearGradient id="lg-gold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#fff3d6"/><stop offset="0.5" stop-color="#ffd28a"/><stop offset="1" stop-color="#c9973f"/>
+              </linearGradient>
+            </defs>
+            <circle cx="32" cy="32" r="29" fill="none" stroke="url(#lg-gold)" stroke-width="1.1" opacity=".85"/>
+            <circle cx="32" cy="32" r="23" fill="none" stroke="url(#lg-gold)" stroke-width=".6" opacity=".5"/>
+            <circle cx="24" cy="32" r="12" fill="none" stroke="#ff9ecb" stroke-width="2" opacity=".9"/>
+            <circle cx="40" cy="32" r="12" fill="none" stroke="#8ff0e2" stroke-width="2" opacity=".9"/>
+            <circle cx="32" cy="32" r="4" fill="#ffd28a"/>
+          </svg>
+        </div>
+        <p class="kicker">the ballroom is open</p>
+        <h1 class="login-title">Dance<span class="with">with</span>Babi</h1>
+        <p class="tagline login-tag">Two dancers, one phone. Sign the guest book and the floor is yours.</p>
+
+        <form id="login-form" class="login-form" autocomplete="off">
+          <label class="field">
+            <span>Player one</span>
+            <input id="login-p1" type="text" maxlength="14" placeholder="your name" enterkeyhint="next" />
+          </label>
+          <label class="field">
+            <span>Player two</span>
+            <input id="login-p2" type="text" maxlength="14" placeholder="their name" enterkeyhint="go" />
+          </label>
+          <button class="btn primary login-go" type="submit">Enter the ballroom</button>
+        </form>
+
+        <p class="login-note">No account, no e-mail — the names stay on this phone.</p>
+      </div>
+    </section>
 
     <!-- TITLE -->
     <section class="screen" id="screen-title">
@@ -739,7 +839,7 @@ kbd {
         <p class="motion-tip">Tip the phone and the marble above will roll with it — that is the whole game.
           If nothing moves, <a href="./sensor.html">open the sensor test</a>.</p>
         
-        <p class="foot-note">inspired by <em>Bounden</em> · built with plain canvas &amp; web audio</p>
+        <p class="foot-note" id="title-names">inspired by <em>Bounden</em> · built with plain canvas &amp; web audio</p>
       </div>
     </section>
 
@@ -1067,7 +1167,7 @@ kbd {
       style: "Warm waltz",
       subtitle: "Up, down, find the sway",
       blurb: "A slow three-four. The pearl swings away from you and back.",
-      bpm: 84, gates: 24, intro: 6, level: 1,
+      bpm: 84, gates: 202, intro: 6, level: 1,
       step: 0.78, lag: 0.07, tiltRange: 26, difficulty: 1,
       space: "aurora", seed: 3,
       stepsPerBar: 6, drums: "waltz",
@@ -1087,7 +1187,7 @@ kbd {
       style: "Synthwave",
       subtitle: "The city hums under you",
       blurb: "Four on the floor, wide chords, a bass that leans forward.",
-      bpm: 100, gates: 30, intro: 8, level: 2,
+      bpm: 100, gates: 240, intro: 8, level: 2,
       step: 0.84, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "tokyo", seed: 11,
       stepsPerBar: 8, drums: "house",
@@ -1107,7 +1207,7 @@ kbd {
       style: "Afrobeat",
       subtitle: "Let the drums argue",
       blurb: "Syncopated and warm. The pearl wants to go sideways.",
-      bpm: 104, gates: 32, intro: 8, level: 3,
+      bpm: 104, gates: 250, intro: 8, level: 3,
       step: 0.86, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "sahara", seed: 23,
       stepsPerBar: 8, drums: "afro",
@@ -1127,7 +1227,7 @@ kbd {
       style: "K-pop electropop",
       subtitle: "Sharp, bright, fast",
       blurb: "Tight drums, a bright lead, no room to drift.",
-      bpm: 112, gates: 34, intro: 8, level: 4,
+      bpm: 112, gates: 269, intro: 8, level: 4,
       step: 0.88, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "velvet", seed: 31,
       stepsPerBar: 8, drums: "house",
@@ -1147,7 +1247,7 @@ kbd {
       style: "Filmi strings",
       subtitle: "Both of you, one flourish",
       blurb: "Sliding melody over a walking bass. Big, generous phrases.",
-      bpm: 98, gates: 30, intro: 6, level: 5,
+      bpm: 98, gates: 235, intro: 6, level: 5,
       step: 0.82, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "garden", seed: 41,
       stepsPerBar: 8, drums: "afro",
@@ -1167,7 +1267,7 @@ kbd {
       style: "Latin pop",
       subtitle: "Hips before hands",
       blurb: "Dembow bounce. The ring is never where you left it.",
-      bpm: 96, gates: 32, intro: 8, level: 6,
+      bpm: 96, gates: 230, intro: 8, level: 6,
       step: 0.85, lag: 0.07, tiltRange: 26, difficulty: 2,
       space: "ember", seed: 53,
       stepsPerBar: 8, drums: "afro",
@@ -1187,7 +1287,7 @@ kbd {
       style: "City pop",
       subtitle: "Slow it down and listen",
       blurb: "Seventh chords, soft brushes, a long trailing line.",
-      bpm: 92, gates: 28, intro: 6, level: 7,
+      bpm: 92, gates: 221, intro: 6, level: 7,
       step: 0.80, lag: 0.07, tiltRange: 27, difficulty: 1,
       space: "ice", seed: 61,
       stepsPerBar: 8, drums: "pop",
@@ -1207,7 +1307,7 @@ kbd {
       style: "Dream pop",
       subtitle: "Further, faster, hold the line",
       blurb: "The curve widens at the corners. Lead the pearl a beat early.",
-      bpm: 108, gates: 36, intro: 8, level: 8,
+      bpm: 108, gates: 259, intro: 8, level: 8,
       step: 0.88, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "nebula", seed: 71,
       stepsPerBar: 8, drums: "house",
@@ -1227,7 +1327,7 @@ kbd {
       style: "Liquid drum & bass",
       subtitle: "Nothing to bump into",
       blurb: "Rolling breaks, one long breath. The floor is the whole world.",
-      bpm: 120, gates: 40, intro: 8, level: 9,
+      bpm: 120, gates: 288, intro: 8, level: 9,
       step: 0.90, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "space", seed: 83,
       stepsPerBar: 8, drums: "break",
@@ -1247,7 +1347,7 @@ kbd {
       style: "Grand finale",
       subtitle: "All the way, every beat",
       blurb: "The fastest dance of the evening. The pearl has no time to settle.",
-      bpm: 116, gates: 44, intro: 8, level: 10,
+      bpm: 116, gates: 278, intro: 8, level: 10,
       step: 0.92, lag: 0.07, tiltRange: 25, difficulty: 3,
       space: "ember", seed: 97,
       stepsPerBar: 8, drums: "house",
@@ -1799,28 +1899,41 @@ kbd {
       const D = DRUMS[L.drums] || DRUMS.waltz;
       const e = spb / 2;               /* an eighth */
 
-      if (st === 0) this._pad(chord, when, e * per * 1.02);
+      /* the tune has a shape: eight bars of intro, verse, chorus, breath —
+         the same band, playing differently, for two and a half minutes */
+      const section = Math.floor(bar / 8) % 4;
+      const intro = section === 0;
+      const chorus = section === 2;
+      const breath = section === 3;
+
+      if (st === 0) this._pad(chord, when, e * per * (breath ? 1.6 : 1.02), breath ? 0.9 : 1);
 
       for (let i = 0; i < D.bass.length; i++) {
-        if (D.bass[i] === st) {
-          const up = i % 2 === 1;
-          this._bass(midi(chord[0] - 12 + (up ? 7 : 0)), when, e * 1.7, up ? 0.10 : 0.16);
-        }
+        if (D.bass[i] !== st) continue;
+        if (intro && st !== 0) continue;
+        if (breath && st !== 0) continue;
+        const up = i % 2 === 1;
+        this._bass(midi(chord[0] - 12 + (up ? 7 : 0)), when, e * 1.7, up ? 0.10 : 0.16);
       }
 
-      const arp = chord[st % chord.length] + 12 + (st === per - 1 ? 12 : 0);
-      this._harp(midi(arp), when, 0.055 * ARP_PATTERN[st % ARP_PATTERN.length]);
+      if (!intro && !breath) {
+        const arp = chord[st % chord.length] + 12 + (st === per - 1 ? 12 : 0);
+        this._harp(midi(arp), when, 0.055 * ARP_PATTERN[st % ARP_PATTERN.length]);
+      }
 
       for (let i = 0; i < D.lead.length; i++) {
-        if (D.lead[i] === st) {
-          const lift = st > per / 2 ? 12 : 0;
-          this._bell(midi(mel[bar % mel.length] + lift), when, 0.045);
-        }
+        if (D.lead[i] !== st) continue;
+        if (intro) continue;
+        const lift = st > per / 2 ? 12 : 0;
+        this._bell(midi(mel[bar % mel.length] + lift), when, chorus ? 0.058 : 0.042);
+        if (chorus) this._bell(midi(mel[bar % mel.length] + lift + 12), when + e * 0.5, 0.022);
       }
 
-      if (D.kick.indexOf(st) >= 0) this._kick(when, 0.30);
-      if (D.snare.indexOf(st) >= 0) this._snare(when, L.drums === "break" ? 0.10 : 0.085);
-      if (D.hat.indexOf(st) >= 0) this._hat(when, L.drums === "break" ? 0.030 : 0.038);
+      if (!intro && !breath) {
+        if (D.kick.indexOf(st) >= 0) this._kick(when, chorus ? 0.32 : 0.26);
+        if (D.snare.indexOf(st) >= 0) this._snare(when, L.drums === "break" ? 0.10 : 0.085);
+      }
+      if (!breath && D.hat.indexOf(st) >= 0) this._hat(when, chorus ? 0.046 : 0.032);
     }
 
     /* ── instruments ───────────────────────────────────────── */
@@ -1874,11 +1987,12 @@ kbd {
       });
     }
 
-    _pad(chord, when, dur) {
+    _pad(chord, when, dur, level) {
       const ctx = this.ctx;
       const g = ctx.createGain();
+      const peak = 0.055 * (level == null ? 1 : level);
       g.gain.setValueAtTime(0.0001, when);
-      g.gain.exponentialRampToValueAtTime(0.055, when + 0.5);
+      g.gain.exponentialRampToValueAtTime(Math.max(0.001, peak), when + 0.5);
       g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
       const lp = ctx.createBiquadFilter();
       lp.type = "lowpass";
@@ -2397,8 +2511,7 @@ kbd {
       if (this._post) ctx.drawImage(this._post, 0, 0, this.w, this.h);
       else this.drawPost(pal);
 
-      if (scene.showBars && !scene.demo) this.drawGrips(scene, pal);
-      if (!scene.demo) this.drawLevel(scene, pal);
+      if (!scene.demo) this.drawThumbs(scene, pal);
 
       if (t0) {
         const ms = performance.now() - t0;
@@ -2677,6 +2790,39 @@ kbd {
         const p = this.PT(gates[k].x, gates[k].z, 0.002);
         if (p) pts.push(p);
       }
+      if (pts.length > 1) {
+        /* chevrons flowing along the ribbon, so the way is obvious */
+        const SP = 46;
+        const flow = (this.time * 62) % SP;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        let carry = -flow;
+        for (let i = 1; i < pts.length; i++) {
+          const ax = pts[i - 1].x, ay = pts[i - 1].y;
+          const bx = pts[i].x, by = pts[i].y;
+          const seg = Math.hypot(bx - ax, by - ay) || 1;
+          const ux = (bx - ax) / seg, uy = (by - ay) / seg;
+          let d = carry;
+          while (d < seg) {
+            if (d > 0) {
+              const x = ax + ux * d, y = ay + uy * d;
+              const fade = clamp(1 - i / pts.length, 0.15, 1);
+              ctx.beginPath();
+              ctx.moveTo(x - ux * 4 - uy * 5, y - uy * 4 + ux * 5);
+              ctx.lineTo(x + ux * 3, y + uy * 3);
+              ctx.lineTo(x - ux * 4 + uy * 5, y - uy * 4 - ux * 5);
+              ctx.strokeStyle = C.out(C.lite(pal.ringNext, 0.65), 0.55 * fade);
+              ctx.lineWidth = 2;
+              ctx.lineCap = "round";
+              ctx.stroke();
+            }
+            d += SP;
+          }
+          carry = d - seg;
+        }
+        ctx.restore();
+      }
+
       if (pts.length > 1) {
         /* a wide soft band, then a bright core */
         for (let pass = 0; pass < 2; pass++) {
@@ -3046,100 +3192,108 @@ kbd {
       }
     }
 
-    /* ── a bubble level, like the one in the iPhone's Measure app ── */
-    drawLevel(scene, pal) {
+    /* ── where the thumbs go: one at the bottom, one at the top ── */
+    drawThumbs(scene, pal) {
       const ctx = this.ctx;
       const w = this.w, h = this.h;
+      const held = scene.heldBy || [false, false];
+      const sensor = !!scene.sensor;
+      const pads = [
+        {
+          x: w / 2, y: h - 92, r: 27, color: pal.rimA, on: held[0],
+          label: isTouch() ? "PLAYER ONE" : "W A S D",
+          hint: "thumb here",
+        },
+        {
+          x: w / 2, y: 120, r: 27, color: pal.rimB, on: held[1],
+          label: isTouch() ? "PLAYER TWO" : "ARROWS",
+          hint: "thumb here",
+        },
+      ];
+      const pulse = 0.5 + 0.5 * Math.sin(this.time * 2.1);
 
-      if (!scene.sensor) {
-        const pw = 176, ph = 26;
-        const x = w / 2 - pw / 2, y = h - 62;
-        this.pill(x, y, pw, ph, "rgba(255,170,120,0.5)", "rgba(255,140,90,0.10)", null);
+      for (let i = 0; i < pads.length; i++) {
+        const p = pads[i];
+        const on = p.on;
+        const a = on ? 1 : 0.35 + 0.25 * pulse;
+
         ctx.save();
-        ctx.fillStyle = "rgba(255,196,160,0.95)";
-        ctx.font = "600 9.5px ui-sans-serif, system-ui, sans-serif";
-        ctx.textBaseline = "middle";
-        this.spaced("TOUCH MODE · NO SENSOR", w / 2, y + ph / 2 + 0.5, 1.1, "center");
-        ctx.restore();
-        return;
-      }
+        /* soft halo */
+        this.glow(p.color, p.x, p.y, p.r * (on ? 3.0 : 2.2), on ? 0.16 : 0.06);
 
-      const R = Math.min(52, w * 0.105);
-      const cx = w / 2;
-      const cy = h - R - 62;
-      const tx = clamp(this.tiltX, -1, 1);
-      const ty = clamp(this.tiltY, -1, 1);
-      const flat = Math.hypot(tx, ty) < 0.07;
-      const col = flat ? "#8ff0e2" : "#ffd28a";
-
-      ctx.save();
-      const gl = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.35, 0, cx, cy, R);
-      gl.addColorStop(0, "rgba(255,255,255,0.10)");
-      gl.addColorStop(0.55, "rgba(12,6,24,0.55)");
-      gl.addColorStop(1, "rgba(4,2,10,0.72)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, TAU);
-      ctx.fillStyle = gl;
-      ctx.fill();
-
-      const bez = ctx.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
-      bez.addColorStop(0, C.out(C.lite(col, 0.5), flat ? 0.95 : 0.5));
-      bez.addColorStop(0.5, C.out(col, flat ? 0.7 : 0.28));
-      bez.addColorStop(1, C.out(C.dark(col, 0.3), flat ? 0.6 : 0.22));
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, TAU);
-      ctx.strokeStyle = bez;
-      ctx.lineWidth = flat ? 2.4 : 1.7;
-      if (flat) { ctx.shadowColor = C.out(col, 1); ctx.shadowBlur = 16; }
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      for (let i = 0; i < 12; i++) {
-        const a = (i / 12) * TAU;
-        const r0 = R * (i % 3 === 0 ? 0.80 : 0.86);
-        const r1 = R * 0.93;
+        /* the ring the thumb goes in */
         ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0);
-        ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
-        ctx.strokeStyle = "rgba(255,255,255," + (i % 3 === 0 ? 0.26 : 0.13) + ")";
-        ctx.lineWidth = 1;
+        ctx.arc(p.x, p.y, p.r, 0, TAU);
+        ctx.fillStyle = on ? C.out(p.color, 0.16) : "rgba(10,5,20,0.42)";
+        ctx.fill();
+        ctx.setLineDash(on ? [] : [4, 5]);
+        ctx.strokeStyle = C.out(p.color, a);
+        ctx.lineWidth = on ? 2.2 : 1.4;
         ctx.stroke();
+        ctx.setLineDash([]);
+
+        /* a print inside: an oval and a little arc */
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y + 1, p.r * 0.30, p.r * 0.40, 0, 0, TAU);
+        ctx.strokeStyle = on ? C.out(C.lite(p.color, 0.6), 0.9) : C.out(p.color, 0.55);
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y + p.r * 0.62, p.r * 0.42, 1.15 * Math.PI, 1.85 * Math.PI);
+        ctx.strokeStyle = C.out(p.color, on ? 0.7 : 0.28);
+        ctx.lineWidth = 1.3;
+        ctx.stroke();
+
+        if (on) {
+          /* a tick when the thumb is down */
+          ctx.beginPath();
+          ctx.arc(p.x + p.r * 0.72, p.y - p.r * 0.72, 6.5, 0, TAU);
+          ctx.fillStyle = C.out(p.color, 0.95);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(p.x + p.r * 0.72 - 2.6, p.y - p.r * 0.72);
+          ctx.lineTo(p.x + p.r * 0.72 - 0.6, p.y - p.r * 0.72 + 2.2);
+          ctx.lineTo(p.x + p.r * 0.72 + 3.0, p.y - p.r * 0.72 - 2.4);
+          ctx.strokeStyle = "#0b0714";
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+        }
+
+        /* the name under it */
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.font = "600 9.5px ui-sans-serif, system-ui, -apple-system, sans-serif";
+        ctx.fillStyle = on ? C.out(C.lite(p.color, 0.55), 0.98) : C.out(p.color, 0.55);
+        const label = on ? p.label + " · HOLDING" : p.label;
+        this.spaced(label, p.x, p.y + p.r + 15, 1.0, "center");
+        if (!on) {
+          ctx.font = "500 8.5px ui-sans-serif, system-ui, sans-serif";
+          ctx.fillStyle = "rgba(255,255,255,0.34)";
+          this.spaced(p.hint, p.x, p.y + p.r + 27, 0.6, "center");
+        }
+        ctx.restore();
       }
 
-      ctx.strokeStyle = "rgba(255,255,255,0.20)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(cx - R * 0.62, cy); ctx.lineTo(cx + R * 0.62, cy);
-      ctx.moveTo(cx, cy - R * 0.62); ctx.lineTo(cx, cy + R * 0.62);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(cx, cy, R * 0.34, 0, TAU);
-      ctx.setLineDash([3, 4]);
-      ctx.strokeStyle = C.out(col, 0.30);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      const bx = cx + tx * R * 0.70;
-      const by = cy + ty * R * 0.70;
-      this.glow(col, bx, by, R * 0.80, 0.32);
-      const bg = ctx.createRadialGradient(bx - R * 0.09, by - R * 0.11, 0, bx, by, R * 0.285);
-      bg.addColorStop(0, "rgba(255,255,255,0.99)");
-      bg.addColorStop(0.55, C.out(C.lite(col, 0.55), 0.95));
-      bg.addColorStop(1, C.out(col, 0.75));
-      ctx.beginPath();
-      ctx.arc(bx, by, R * 0.255, 0, TAU);
-      ctx.fillStyle = bg;
-      ctx.fill();
-      ctx.strokeStyle = C.out(C.lite(col, 0.8), 0.55);
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      ctx.fillStyle = flat ? C.out(col, 0.85) : "rgba(255,255,255,0.30)";
-      ctx.font = "600 8px ui-sans-serif, system-ui, sans-serif";
-      ctx.textBaseline = "middle";
-      this.spaced(flat ? "LEVEL" : "TIP TO LEVEL", cx, cy + R + 11, 1.6, "center");
-      ctx.restore();
-      void pal;
+      /* a quiet chip in the corner, only when the sensor is missing */
+      if (!sensor) {
+        ctx.save();
+        this.pill(14, 96, 132, 22, "rgba(255,180,140,0.45)", "rgba(255,140,90,0.10)", null);
+        ctx.font = "600 8px ui-sans-serif, system-ui, sans-serif";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "left";
+        ctx.fillStyle = "rgba(255,196,160,0.9)";
+        this.spaced("NO SENSOR · TOUCH", 26, 107, 0.9, "left");
+        ctx.restore();
+      } else {
+        ctx.save();
+        this.pill(14, 96, 96, 22, "rgba(143,240,226,0.35)", "rgba(143,240,226,0.07)", null);
+        ctx.font = "600 8px ui-sans-serif, system-ui, sans-serif";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "left";
+        ctx.fillStyle = "rgba(143,240,226,0.85)";
+        this.spaced("GYROSCOPE", 26, 107, 0.9, "left");
+        ctx.restore();
+      }
     }
 
     /* ── atmosphere over everything ────────────────────────────── */
@@ -3306,6 +3460,10 @@ kbd {
         resScore: document.getElementById("res-score"),
         resBest: document.getElementById("res-best"),
         resBreak: document.getElementById("res-breakdown"),
+        loginForm: document.getElementById("login-form"),
+        loginP1: document.getElementById("login-p1"),
+        loginP2: document.getElementById("login-p2"),
+        titleNames: document.getElementById("title-names"),
         again: document.getElementById("btn-again"),
         next: document.getElementById("btn-next"),
       };
@@ -3346,12 +3504,58 @@ kbd {
       if (MOTION && !MOTION.needsPermission()) MOTION.enable().then(() => this.syncMotionUI());
       this.renderLevels();
       this.setMode(this.mode);
-      this.show("title");
+      this.bindLogin();
+      this.show(this.names().p1 ? "title" : "login");
       this.lastT = performance.now() / 1000;
       requestAnimationFrame(this.frame);
     }
 
     /* ── screens ───────────────────────────────────────────── */
+    names() {
+      return {
+        p1: String(store.get("dwb.p1", "") || "").trim(),
+        p2: String(store.get("dwb.p2", "") || "").trim(),
+      };
+    }
+
+    duet() {
+      const n = this.names();
+      if (n.p1 && n.p2) return n.p1 + " & " + n.p2;
+      return n.p1 || n.p2 || "the two of you";
+    }
+
+    bindLogin() {
+      const form = this.el.loginForm;
+      if (!form) return;
+      const n = this.names();
+      if (this.el.loginP1) this.el.loginP1.value = n.p1;
+      if (this.el.loginP2) this.el.loginP2.value = n.p2;
+      form.addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        const p1 = (this.el.loginP1 && this.el.loginP1.value || "").trim().slice(0, 14);
+        const p2 = (this.el.loginP2 && this.el.loginP2.value || "").trim().slice(0, 14);
+        store.set("dwb.p1", p1 || "Player one");
+        store.set("dwb.p2", p2 || "Player two");
+        this.paintNames();
+        this.show("title");
+      });
+      form.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter" && ev.target && ev.target.id === "login-p1") {
+          ev.preventDefault();
+          if (this.el.loginP2) this.el.loginP2.focus();
+        }
+      });
+    }
+
+    paintNames() {
+      if (this.el.titleNames) {
+        this.el.titleNames.innerHTML = "dancing tonight: <em>" + this.duet() + "</em>";
+      }
+      if (this.el.resKicker && this.state === "results") {
+        this.el.resKicker.textContent = this.duet() + " · dance complete";
+      }
+    }
+
     show(name) {
       const map = {
         title: "screen-title",
@@ -3359,6 +3563,7 @@ kbd {
         howto: "screen-howto",
         pause: "screen-pause",
         results: "screen-results",
+        login: "screen-login",
       };
       document.querySelectorAll("#screens .screen").forEach((s) => s.classList.add("hidden"));
       this.el.screens.classList.remove("hidden");
@@ -4017,7 +4222,7 @@ kbd {
       const unlocked = this.unlocked();
       if (stars >= 1 && this.li + 1 >= unlocked) store.set("dwb.unlocked", Math.min(LEVELS.length, this.li + 2));
 
-      this.el.resKicker.textContent = stars === 3 ? "a flawless duet" : stars === 2 ? "a lovely dance" : stars === 1 ? "the dance is complete" : "you kept hold of each other";
+      this.el.resKicker.textContent = this.duet() + " · " + (stars === 3 ? "a flawless duet" : stars === 2 ? "a lovely dance" : stars === 1 ? "the dance is complete" : "you kept hold of each other");
       this.el.resTitle.textContent = lv.name;
       this.el.resScore.textContent = String(this.score);
       this.el.resBest.textContent = isBest ? "new best" : "best " + (prev ? prev.score : 0);

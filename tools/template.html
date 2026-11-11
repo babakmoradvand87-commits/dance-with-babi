@@ -43,6 +43,43 @@
   <!-- ──────────────────────── SCREENS ──────────────────────── -->
   <main id="screens">
 
+    <!-- WELCOME (the door to the ballroom) -->
+    <section class="screen" id="screen-login">
+      <div class="panel login-panel">
+        <div class="login-mark">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <defs>
+              <linearGradient id="lg-gold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#fff3d6"/><stop offset="0.5" stop-color="#ffd28a"/><stop offset="1" stop-color="#c9973f"/>
+              </linearGradient>
+            </defs>
+            <circle cx="32" cy="32" r="29" fill="none" stroke="url(#lg-gold)" stroke-width="1.1" opacity=".85"/>
+            <circle cx="32" cy="32" r="23" fill="none" stroke="url(#lg-gold)" stroke-width=".6" opacity=".5"/>
+            <circle cx="24" cy="32" r="12" fill="none" stroke="#ff9ecb" stroke-width="2" opacity=".9"/>
+            <circle cx="40" cy="32" r="12" fill="none" stroke="#8ff0e2" stroke-width="2" opacity=".9"/>
+            <circle cx="32" cy="32" r="4" fill="#ffd28a"/>
+          </svg>
+        </div>
+        <p class="kicker">the ballroom is open</p>
+        <h1 class="login-title">Dance<span class="with">with</span>Babi</h1>
+        <p class="tagline login-tag">Two dancers, one phone. Sign the guest book and the floor is yours.</p>
+
+        <form id="login-form" class="login-form" autocomplete="off">
+          <label class="field">
+            <span>Player one</span>
+            <input id="login-p1" type="text" maxlength="14" placeholder="your name" enterkeyhint="next" />
+          </label>
+          <label class="field">
+            <span>Player two</span>
+            <input id="login-p2" type="text" maxlength="14" placeholder="their name" enterkeyhint="go" />
+          </label>
+          <button class="btn primary login-go" type="submit">Enter the ballroom</button>
+        </form>
+
+        <p class="login-note">No account, no e-mail — the names stay on this phone.</p>
+      </div>
+    </section>
+
     <!-- TITLE -->
     <section class="screen" id="screen-title">
       <div class="panel title-panel">
@@ -84,7 +121,7 @@
         <p class="motion-tip">Tip the phone and the marble above will roll with it — that is the whole game.
           If nothing moves, <a href="./sensor.html">open the sensor test</a>.</p>
         
-        <p class="foot-note">inspired by <em>Bounden</em> · built with plain canvas &amp; web audio</p>
+        <p class="foot-note" id="title-names">inspired by <em>Bounden</em> · built with plain canvas &amp; web audio</p>
       </div>
     </section>
 

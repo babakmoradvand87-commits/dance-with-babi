@@ -652,3 +652,66 @@ kbd {
 }
 .sensor.live b { color: #6fe3d0; }
 .sensor.live { border-color: rgba(143, 240, 226, 0.28); }
+
+/* ─────────────────────── the door ─────────────────────── */
+.login-panel {
+  max-width: 420px;
+  padding: 34px 28px 26px;
+}
+.login-mark { width: 74px; height: 74px; margin: 0 auto 6px; animation: floaty 8s ease-in-out infinite; }
+.login-mark svg { width: 100%; height: 100%; overflow: visible; }
+.login-panel .kicker {
+  margin: 10px 0 0;
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(255, 210, 138, 0.75);
+}
+.panel h1.login-title {
+  font-size: clamp(30px, 8vw, 44px);
+  margin: 8px 0 0;
+}
+.panel h1.login-title .with {
+  font-size: 0.34em;
+  letter-spacing: 0.42em;
+  margin: 8px 0 0;
+}
+.tagline.login-tag { font-size: 13px; max-width: 27em; margin: 12px auto 0; }
+.tagline.login-tag::before { display: none; }
+
+.login-form { display: flex; flex-direction: column; gap: 14px; margin: 24px 0 0; }
+.field { display: block; text-align: left; }
+.field span {
+  display: block;
+  font-size: 9.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 210, 138, 0.62);
+  margin: 0 0 6px 2px;
+}
+.field input {
+  width: 100%;
+  padding: 12px 2px 11px;
+  font-family: var(--serif);
+  font-size: 19px;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 210, 138, 0.28);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field input::placeholder { color: rgba(255, 255, 255, 0.22); font-style: italic; }
+.field input:focus {
+  border-bottom-color: rgba(255, 210, 138, 0.9);
+  box-shadow: 0 12px 24px -18px rgba(255, 210, 138, 0.9);
+}
+.login-go { margin-top: 8px; padding: 15px 20px; font-size: 14.5px; }
+.login-note {
+  margin: 16px 0 0;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.3);
+}

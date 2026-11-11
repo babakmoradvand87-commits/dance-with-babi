@@ -314,8 +314,7 @@
       if (this._post) ctx.drawImage(this._post, 0, 0, this.w, this.h);
       else this.drawPost(pal);
 
-      if (scene.showBars && !scene.demo) this.drawGrips(scene, pal);
-      if (!scene.demo) this.drawLevel(scene, pal);
+      if (!scene.demo) this.drawThumbs(scene, pal);
 
       if (t0) {
         const ms = performance.now() - t0;
@@ -594,6 +593,39 @@
         const p = this.PT(gates[k].x, gates[k].z, 0.002);
         if (p) pts.push(p);
       }
+      if (pts.length > 1) {
+        /* chevrons flowing along the ribbon, so the way is obvious */
+        const SP = 46;
+        const flow = (this.time * 62) % SP;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        let carry = -flow;
+        for (let i = 1; i < pts.length; i++) {
+          const ax = pts[i - 1].x, ay = pts[i - 1].y;
+          const bx = pts[i].x, by = pts[i].y;
+          const seg = Math.hypot(bx - ax, by - ay) || 1;
+          const ux = (bx - ax) / seg, uy = (by - ay) / seg;
+          let d = carry;
+          while (d < seg) {
+            if (d > 0) {
+              const x = ax + ux * d, y = ay + uy * d;
+              const fade = clamp(1 - i / pts.length, 0.15, 1);
+              ctx.beginPath();
+              ctx.moveTo(x - ux * 4 - uy * 5, y - uy * 4 + ux * 5);
+              ctx.lineTo(x + ux * 3, y + uy * 3);
+              ctx.lineTo(x - ux * 4 + uy * 5, y - uy * 4 - ux * 5);
+              ctx.strokeStyle = C.out(C.lite(pal.ringNext, 0.65), 0.55 * fade);
+              ctx.lineWidth = 2;
+              ctx.lineCap = "round";
+              ctx.stroke();
+            }
+            d += SP;
+          }
+          carry = d - seg;
+        }
+        ctx.restore();
+      }
+
       if (pts.length > 1) {
         /* a wide soft band, then a bright core */
         for (let pass = 0; pass < 2; pass++) {
@@ -963,100 +995,108 @@
       }
     }
 
-    /* ── a bubble level, like the one in the iPhone's Measure app ── */
-    drawLevel(scene, pal) {
+    /* ── where the thumbs go: one at the bottom, one at the top ── */
+    drawThumbs(scene, pal) {
       const ctx = this.ctx;
       const w = this.w, h = this.h;
+      const held = scene.heldBy || [false, false];
+      const sensor = !!scene.sensor;
+      const pads = [
+        {
+          x: w / 2, y: h - 92, r: 27, color: pal.rimA, on: held[0],
+          label: isTouch() ? "PLAYER ONE" : "W A S D",
+          hint: "thumb here",
+        },
+        {
+          x: w / 2, y: 120, r: 27, color: pal.rimB, on: held[1],
+          label: isTouch() ? "PLAYER TWO" : "ARROWS",
+          hint: "thumb here",
+        },
+      ];
+      const pulse = 0.5 + 0.5 * Math.sin(this.time * 2.1);
 
-      if (!scene.sensor) {
-        const pw = 176, ph = 26;
-        const x = w / 2 - pw / 2, y = h - 62;
-        this.pill(x, y, pw, ph, "rgba(255,170,120,0.5)", "rgba(255,140,90,0.10)", null);
+      for (let i = 0; i < pads.length; i++) {
+        const p = pads[i];
+        const on = p.on;
+        const a = on ? 1 : 0.35 + 0.25 * pulse;
+
         ctx.save();
-        ctx.fillStyle = "rgba(255,196,160,0.95)";
-        ctx.font = "600 9.5px ui-sans-serif, system-ui, sans-serif";
-        ctx.textBaseline = "middle";
-        this.spaced("TOUCH MODE · NO SENSOR", w / 2, y + ph / 2 + 0.5, 1.1, "center");
-        ctx.restore();
-        return;
-      }
+        /* soft halo */
+        this.glow(p.color, p.x, p.y, p.r * (on ? 3.0 : 2.2), on ? 0.16 : 0.06);
 
-      const R = Math.min(52, w * 0.105);
-      const cx = w / 2;
-      const cy = h - R - 62;
-      const tx = clamp(this.tiltX, -1, 1);
-      const ty = clamp(this.tiltY, -1, 1);
-      const flat = Math.hypot(tx, ty) < 0.07;
-      const col = flat ? "#8ff0e2" : "#ffd28a";
-
-      ctx.save();
-      const gl = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.35, 0, cx, cy, R);
-      gl.addColorStop(0, "rgba(255,255,255,0.10)");
-      gl.addColorStop(0.55, "rgba(12,6,24,0.55)");
-      gl.addColorStop(1, "rgba(4,2,10,0.72)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, TAU);
-      ctx.fillStyle = gl;
-      ctx.fill();
-
-      const bez = ctx.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
-      bez.addColorStop(0, C.out(C.lite(col, 0.5), flat ? 0.95 : 0.5));
-      bez.addColorStop(0.5, C.out(col, flat ? 0.7 : 0.28));
-      bez.addColorStop(1, C.out(C.dark(col, 0.3), flat ? 0.6 : 0.22));
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, TAU);
-      ctx.strokeStyle = bez;
-      ctx.lineWidth = flat ? 2.4 : 1.7;
-      if (flat) { ctx.shadowColor = C.out(col, 1); ctx.shadowBlur = 16; }
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      for (let i = 0; i < 12; i++) {
-        const a = (i / 12) * TAU;
-        const r0 = R * (i % 3 === 0 ? 0.80 : 0.86);
-        const r1 = R * 0.93;
+        /* the ring the thumb goes in */
         ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0);
-        ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
-        ctx.strokeStyle = "rgba(255,255,255," + (i % 3 === 0 ? 0.26 : 0.13) + ")";
-        ctx.lineWidth = 1;
+        ctx.arc(p.x, p.y, p.r, 0, TAU);
+        ctx.fillStyle = on ? C.out(p.color, 0.16) : "rgba(10,5,20,0.42)";
+        ctx.fill();
+        ctx.setLineDash(on ? [] : [4, 5]);
+        ctx.strokeStyle = C.out(p.color, a);
+        ctx.lineWidth = on ? 2.2 : 1.4;
         ctx.stroke();
+        ctx.setLineDash([]);
+
+        /* a print inside: an oval and a little arc */
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y + 1, p.r * 0.30, p.r * 0.40, 0, 0, TAU);
+        ctx.strokeStyle = on ? C.out(C.lite(p.color, 0.6), 0.9) : C.out(p.color, 0.55);
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y + p.r * 0.62, p.r * 0.42, 1.15 * Math.PI, 1.85 * Math.PI);
+        ctx.strokeStyle = C.out(p.color, on ? 0.7 : 0.28);
+        ctx.lineWidth = 1.3;
+        ctx.stroke();
+
+        if (on) {
+          /* a tick when the thumb is down */
+          ctx.beginPath();
+          ctx.arc(p.x + p.r * 0.72, p.y - p.r * 0.72, 6.5, 0, TAU);
+          ctx.fillStyle = C.out(p.color, 0.95);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(p.x + p.r * 0.72 - 2.6, p.y - p.r * 0.72);
+          ctx.lineTo(p.x + p.r * 0.72 - 0.6, p.y - p.r * 0.72 + 2.2);
+          ctx.lineTo(p.x + p.r * 0.72 + 3.0, p.y - p.r * 0.72 - 2.4);
+          ctx.strokeStyle = "#0b0714";
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+        }
+
+        /* the name under it */
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        ctx.font = "600 9.5px ui-sans-serif, system-ui, -apple-system, sans-serif";
+        ctx.fillStyle = on ? C.out(C.lite(p.color, 0.55), 0.98) : C.out(p.color, 0.55);
+        const label = on ? p.label + " · HOLDING" : p.label;
+        this.spaced(label, p.x, p.y + p.r + 15, 1.0, "center");
+        if (!on) {
+          ctx.font = "500 8.5px ui-sans-serif, system-ui, sans-serif";
+          ctx.fillStyle = "rgba(255,255,255,0.34)";
+          this.spaced(p.hint, p.x, p.y + p.r + 27, 0.6, "center");
+        }
+        ctx.restore();
       }
 
-      ctx.strokeStyle = "rgba(255,255,255,0.20)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(cx - R * 0.62, cy); ctx.lineTo(cx + R * 0.62, cy);
-      ctx.moveTo(cx, cy - R * 0.62); ctx.lineTo(cx, cy + R * 0.62);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(cx, cy, R * 0.34, 0, TAU);
-      ctx.setLineDash([3, 4]);
-      ctx.strokeStyle = C.out(col, 0.30);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      const bx = cx + tx * R * 0.70;
-      const by = cy + ty * R * 0.70;
-      this.glow(col, bx, by, R * 0.80, 0.32);
-      const bg = ctx.createRadialGradient(bx - R * 0.09, by - R * 0.11, 0, bx, by, R * 0.285);
-      bg.addColorStop(0, "rgba(255,255,255,0.99)");
-      bg.addColorStop(0.55, C.out(C.lite(col, 0.55), 0.95));
-      bg.addColorStop(1, C.out(col, 0.75));
-      ctx.beginPath();
-      ctx.arc(bx, by, R * 0.255, 0, TAU);
-      ctx.fillStyle = bg;
-      ctx.fill();
-      ctx.strokeStyle = C.out(C.lite(col, 0.8), 0.55);
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      ctx.fillStyle = flat ? C.out(col, 0.85) : "rgba(255,255,255,0.30)";
-      ctx.font = "600 8px ui-sans-serif, system-ui, sans-serif";
-      ctx.textBaseline = "middle";
-      this.spaced(flat ? "LEVEL" : "TIP TO LEVEL", cx, cy + R + 11, 1.6, "center");
-      ctx.restore();
-      void pal;
+      /* a quiet chip in the corner, only when the sensor is missing */
+      if (!sensor) {
+        ctx.save();
+        this.pill(14, 96, 132, 22, "rgba(255,180,140,0.45)", "rgba(255,140,90,0.10)", null);
+        ctx.font = "600 8px ui-sans-serif, system-ui, sans-serif";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "left";
+        ctx.fillStyle = "rgba(255,196,160,0.9)";
+        this.spaced("NO SENSOR · TOUCH", 26, 107, 0.9, "left");
+        ctx.restore();
+      } else {
+        ctx.save();
+        this.pill(14, 96, 96, 22, "rgba(143,240,226,0.35)", "rgba(143,240,226,0.07)", null);
+        ctx.font = "600 8px ui-sans-serif, system-ui, sans-serif";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "left";
+        ctx.fillStyle = "rgba(143,240,226,0.85)";
+        this.spaced("GYROSCOPE", 26, 107, 0.9, "left");
+        ctx.restore();
+      }
     }
 
     /* ── atmosphere over everything ────────────────────────────── */

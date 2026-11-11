@@ -228,28 +228,41 @@
       const D = DRUMS[L.drums] || DRUMS.waltz;
       const e = spb / 2;               /* an eighth */
 
-      if (st === 0) this._pad(chord, when, e * per * 1.02);
+      /* the tune has a shape: eight bars of intro, verse, chorus, breath —
+         the same band, playing differently, for two and a half minutes */
+      const section = Math.floor(bar / 8) % 4;
+      const intro = section === 0;
+      const chorus = section === 2;
+      const breath = section === 3;
+
+      if (st === 0) this._pad(chord, when, e * per * (breath ? 1.6 : 1.02), breath ? 0.9 : 1);
 
       for (let i = 0; i < D.bass.length; i++) {
-        if (D.bass[i] === st) {
-          const up = i % 2 === 1;
-          this._bass(midi(chord[0] - 12 + (up ? 7 : 0)), when, e * 1.7, up ? 0.10 : 0.16);
-        }
+        if (D.bass[i] !== st) continue;
+        if (intro && st !== 0) continue;
+        if (breath && st !== 0) continue;
+        const up = i % 2 === 1;
+        this._bass(midi(chord[0] - 12 + (up ? 7 : 0)), when, e * 1.7, up ? 0.10 : 0.16);
       }
 
-      const arp = chord[st % chord.length] + 12 + (st === per - 1 ? 12 : 0);
-      this._harp(midi(arp), when, 0.055 * ARP_PATTERN[st % ARP_PATTERN.length]);
+      if (!intro && !breath) {
+        const arp = chord[st % chord.length] + 12 + (st === per - 1 ? 12 : 0);
+        this._harp(midi(arp), when, 0.055 * ARP_PATTERN[st % ARP_PATTERN.length]);
+      }
 
       for (let i = 0; i < D.lead.length; i++) {
-        if (D.lead[i] === st) {
-          const lift = st > per / 2 ? 12 : 0;
-          this._bell(midi(mel[bar % mel.length] + lift), when, 0.045);
-        }
+        if (D.lead[i] !== st) continue;
+        if (intro) continue;
+        const lift = st > per / 2 ? 12 : 0;
+        this._bell(midi(mel[bar % mel.length] + lift), when, chorus ? 0.058 : 0.042);
+        if (chorus) this._bell(midi(mel[bar % mel.length] + lift + 12), when + e * 0.5, 0.022);
       }
 
-      if (D.kick.indexOf(st) >= 0) this._kick(when, 0.30);
-      if (D.snare.indexOf(st) >= 0) this._snare(when, L.drums === "break" ? 0.10 : 0.085);
-      if (D.hat.indexOf(st) >= 0) this._hat(when, L.drums === "break" ? 0.030 : 0.038);
+      if (!intro && !breath) {
+        if (D.kick.indexOf(st) >= 0) this._kick(when, chorus ? 0.32 : 0.26);
+        if (D.snare.indexOf(st) >= 0) this._snare(when, L.drums === "break" ? 0.10 : 0.085);
+      }
+      if (!breath && D.hat.indexOf(st) >= 0) this._hat(when, chorus ? 0.046 : 0.032);
     }
 
     /* ── instruments ───────────────────────────────────────── */
@@ -303,11 +316,12 @@
       });
     }
 
-    _pad(chord, when, dur) {
+    _pad(chord, when, dur, level) {
       const ctx = this.ctx;
       const g = ctx.createGain();
+      const peak = 0.055 * (level == null ? 1 : level);
       g.gain.setValueAtTime(0.0001, when);
-      g.gain.exponentialRampToValueAtTime(0.055, when + 0.5);
+      g.gain.exponentialRampToValueAtTime(Math.max(0.001, peak), when + 0.5);
       g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
       const lp = ctx.createBiquadFilter();
       lp.type = "lowpass";

@@ -67,6 +67,10 @@
         resScore: document.getElementById("res-score"),
         resBest: document.getElementById("res-best"),
         resBreak: document.getElementById("res-breakdown"),
+        loginForm: document.getElementById("login-form"),
+        loginP1: document.getElementById("login-p1"),
+        loginP2: document.getElementById("login-p2"),
+        titleNames: document.getElementById("title-names"),
         again: document.getElementById("btn-again"),
         next: document.getElementById("btn-next"),
       };
@@ -107,12 +111,58 @@
       if (MOTION && !MOTION.needsPermission()) MOTION.enable().then(() => this.syncMotionUI());
       this.renderLevels();
       this.setMode(this.mode);
-      this.show("title");
+      this.bindLogin();
+      this.show(this.names().p1 ? "title" : "login");
       this.lastT = performance.now() / 1000;
       requestAnimationFrame(this.frame);
     }
 
     /* ── screens ───────────────────────────────────────────── */
+    names() {
+      return {
+        p1: String(store.get("dwb.p1", "") || "").trim(),
+        p2: String(store.get("dwb.p2", "") || "").trim(),
+      };
+    }
+
+    duet() {
+      const n = this.names();
+      if (n.p1 && n.p2) return n.p1 + " & " + n.p2;
+      return n.p1 || n.p2 || "the two of you";
+    }
+
+    bindLogin() {
+      const form = this.el.loginForm;
+      if (!form) return;
+      const n = this.names();
+      if (this.el.loginP1) this.el.loginP1.value = n.p1;
+      if (this.el.loginP2) this.el.loginP2.value = n.p2;
+      form.addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        const p1 = (this.el.loginP1 && this.el.loginP1.value || "").trim().slice(0, 14);
+        const p2 = (this.el.loginP2 && this.el.loginP2.value || "").trim().slice(0, 14);
+        store.set("dwb.p1", p1 || "Player one");
+        store.set("dwb.p2", p2 || "Player two");
+        this.paintNames();
+        this.show("title");
+      });
+      form.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter" && ev.target && ev.target.id === "login-p1") {
+          ev.preventDefault();
+          if (this.el.loginP2) this.el.loginP2.focus();
+        }
+      });
+    }
+
+    paintNames() {
+      if (this.el.titleNames) {
+        this.el.titleNames.innerHTML = "dancing tonight: <em>" + this.duet() + "</em>";
+      }
+      if (this.el.resKicker && this.state === "results") {
+        this.el.resKicker.textContent = this.duet() + " · dance complete";
+      }
+    }
+
     show(name) {
       const map = {
         title: "screen-title",
@@ -120,6 +170,7 @@
         howto: "screen-howto",
         pause: "screen-pause",
         results: "screen-results",
+        login: "screen-login",
       };
       document.querySelectorAll("#screens .screen").forEach((s) => s.classList.add("hidden"));
       this.el.screens.classList.remove("hidden");
@@ -778,7 +829,7 @@
       const unlocked = this.unlocked();
       if (stars >= 1 && this.li + 1 >= unlocked) store.set("dwb.unlocked", Math.min(LEVELS.length, this.li + 2));
 
-      this.el.resKicker.textContent = stars === 3 ? "a flawless duet" : stars === 2 ? "a lovely dance" : stars === 1 ? "the dance is complete" : "you kept hold of each other";
+      this.el.resKicker.textContent = this.duet() + " · " + (stars === 3 ? "a flawless duet" : stars === 2 ? "a lovely dance" : stars === 1 ? "the dance is complete" : "you kept hold of each other");
       this.el.resTitle.textContent = lv.name;
       this.el.resScore.textContent = String(this.score);
       this.el.resBest.textContent = isBest ? "new best" : "best " + (prev ? prev.score : 0);
