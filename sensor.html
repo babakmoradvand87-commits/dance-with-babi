@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<title>Sensor test — Dance with Babi</title>
+<meta name="theme-color" content="#08050f" />
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: radial-gradient(120% 90% at 50% 0%, #170c26 0%, #08060f 60%, #05040a 100%);
+    color: #efe9ff;
+    font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+    gap: 14px;
+    min-height: 100%;
+  }
+  h1 { font-size: 15px; letter-spacing: .16em; text-transform: uppercase; color: #b9a8d8; margin: 4px 0 0; font-weight: 600; }
+  .sub { font-size: 12.5px; color: #8d80a8; text-align: center; margin: 0; max-width: 26em; }
+  button {
+    font: inherit; font-weight: 650; letter-spacing: .02em;
+    padding: 14px 22px; border-radius: 999px; border: 0; cursor: pointer;
+    color: #08221f; background: linear-gradient(180deg, #8ff0e2, #57cdbd);
+    box-shadow: 0 8px 28px rgba(87, 205, 189, .28);
+  }
+  button.ghost { color: #e8ddff; background: rgba(255,255,255,.07); box-shadow: none; border: 1px solid rgba(255,255,255,.14); }
+  #state { font-size: 13px; font-weight: 600; color: #ff9ecb; text-align: center; min-height: 20px; }
+  #state.live { color: #6fe3d0; }
+  .bubble-wrap { position: relative; width: min(76vw, 300px); aspect-ratio: 1; }
+  svg { width: 100%; height: 100%; display: block; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: min(92vw, 380px); }
+  .cell {
+    background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 14px; padding: 10px 12px; text-align: center;
+  }
+  .cell small { display: block; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #8d80a8; margin-bottom: 3px; }
+  .cell b { font: 600 22px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; color: #fff; }
+  .cell b.zero { color: #6d6386; }
+  #log { font: 11px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; color: #8d80a8; width: min(92vw, 380px); }
+  #log .hot { color: #ffd28a; }
+  #ua { font: 10px/1.5 ui-monospace, monospace; color: #5d5474; width: min(92vw, 380px); text-align: center; word-break: break-all; }
+  a.back { color: #8ff0e2; font-size: 13px; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<h1>Sensor test</h1>
+<p class="sub">This page does nothing but listen. Tap the button, then tilt the phone. If the numbers never move, no game on this browser can use the sensor.</p>
+
+<button id="ask">Request sensor access</button>
+<div id="state">waiting for a tap…</div>
+
+<div class="bubble-wrap">
+  <svg viewBox="0 0 200 200" aria-hidden="true">
+    <circle cx="100" cy="100" r="92" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.14)" stroke-width="2"/>
+    <circle cx="100" cy="100" r="30" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+    <line x1="12" y1="100" x2="188" y2="100" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>
+    <line x1="100" y1="12" x2="100" y2="188" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>
+    <circle id="dot" cx="100" cy="100" r="19" fill="#fff" opacity=".95"/>
+  </svg>
+</div>
+
+<div class="grid">
+  <div class="cell"><small>beta</small><b id="beta" class="zero">—</b></div>
+  <div class="cell"><small>gamma</small><b id="gamma" class="zero">—</b></div>
+  <div class="cell"><small>tilt right</small><b id="tx" class="zero">—</b></div>
+  <div class="cell"><small>tilt away</small><b id="ty" class="zero">—</b></div>
+</div>
+
+<div id="log">
+  deviceorientation <span id="n1" class="hot">0</span><br/>
+  deviceorientationabsolute <span id="n2" class="hot">0</span><br/>
+  devicemotion <span id="n3" class="hot">0</span>
+</div>
+
+<div id="ua"></div>
+<a class="back" href="./index.html">← back to the game</a>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const state = $("state"), dot = $("dot");
+  let n1 = 0, n2 = 0, n3 = 0;
+  let zero = null;          /* the gravity vector we started from */
+  let last = null;
+  const D2R = Math.PI / 180;
+
+  $("ua").textContent = navigator.userAgent;
+
+  function screenAngle() {
+    return ((screen.orientation && screen.orientation.angle) || window.orientation || 0) * D2R;
+  }
+
+  /* gravity direction inside the screen frame */
+  function setG(x, y, z) {
+    const m = Math.hypot(x, y, z) || 1;
+    const ang = screenAngle();
+    const sx = (x / m) * Math.cos(ang) - (y / m) * Math.sin(ang);
+    const sy = (x / m) * Math.sin(ang) + (y / m) * Math.cos(ang);
+    const sz = z / m;
+    if (!zero) zero = [sx, sy, sz];
+    const a = zero, b = [sx, sy, sz];
+    const cx = a[1] * b[2] - a[2] * b[1];
+    const cy = a[2] * b[0] - a[0] * b[2];
+    const cz = a[0] * b[1] - a[1] * b[0];
+    const s = Math.hypot(cx, cy, cz);
+    const c = a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    let rx = 0, ry = 0;
+    if (s > 1e-6) {
+      const th = Math.atan2(s, c);
+      rx = cx * (th / s);
+      ry = cy * (th / s);
+    }
+    const RANGE = 26 * D2R;
+    const tx = -ry / RANGE, ty = rx / RANGE;
+    last = [tx, ty];
+    paint(tx, ty);
+  }
+
+  function paint(tx, ty) {
+    $("tx").textContent = tx.toFixed(2);
+    $("ty").textContent = ty.toFixed(2);
+    $("tx").className = Math.abs(tx) > 0.03 ? "" : "zero";
+    $("ty").className = Math.abs(ty) > 0.03 ? "" : "zero";
+    dot.setAttribute("cx", String(100 + Math.max(-1, Math.min(1, tx)) * 72));
+    dot.setAttribute("cy", String(100 + Math.max(-1, Math.min(1, ty)) * 72));
+    const live = Math.hypot(tx, ty) > 0.05;
+    state.className = live ? "live" : "";
+  }
+
+  function onOrient(ev) {
+    n1++;
+    $("n1").textContent = n1;
+    if (ev.beta == null && ev.gamma == null) return;
+    $("beta").textContent = (ev.beta || 0).toFixed(0) + "°";
+    $("gamma").textContent = (ev.gamma || 0).toFixed(0) + "°";
+    $("beta").className = "";
+    $("gamma").className = "";
+    const b = (ev.beta || 0) * D2R, g = (ev.gamma || 0) * D2R;
+    setG(Math.cos(b) * Math.sin(g), -Math.sin(b), -Math.cos(b) * Math.cos(g));
+  }
+
+  function onAbs(ev) {
+    n2++;
+    $("n2").textContent = n2;
+    if (ev.beta == null) return;
+    const b = (ev.beta || 0) * D2R, g = (ev.gamma || 0) * D2R;
+    setG(Math.cos(b) * Math.sin(g), -Math.sin(b), -Math.cos(b) * Math.cos(g));
+  }
+
+  let firstMotion = true;
+  function onMotion(ev) {
+    n3++;
+    $("n3").textContent = n3;
+    if (n1 > 2 || n2 > 2) return;            /* orientation already works */
+    const a = ev.accelerationIncludingGravity;
+    if (!a || a.x == null) return;
+    const m = Math.hypot(a.x, a.y, a.z);
+    if (m < 3) return;
+    if (firstMotion) { firstMotion = false; $("beta").textContent = "—"; }
+    setG(-a.x / m, -a.y / m, -a.z / m);
+  }
+
+  function attach(how) {
+    window.addEventListener("deviceorientation", onOrient, true);
+    window.addEventListener("deviceorientationabsolute", onAbs, true);
+    window.addEventListener("devicemotion", onMotion, true);
+    state.textContent = how + " — now tilt the phone";
+  }
+
+  $("ask").addEventListener("click", async () => {
+    state.textContent = "asking…";
+    try {
+      const O = window.DeviceOrientationEvent;
+      const M = window.DeviceMotionEvent;
+      let granted = true;
+      if (O && typeof O.requestPermission === "function") {
+        const r = await O.requestPermission();
+        granted = r === "granted";
+        if (!granted && M && typeof M.requestPermission === "function") {
+          granted = (await M.requestPermission()) === "granted";
+        }
+      }
+      if (!granted) {
+        state.textContent = "permission refused — allow motion for this site and tap again";
+        return;
+      }
+      attach("listening");
+    } catch (err) {
+      state.textContent = "blocked: " + (err && err.message ? err.message : err) +
+        (window.top !== window.self ? " (this page is inside a frame — open it directly)" : "");
+    }
+  });
+
+  $("dot").addEventListener("click", () => { zero = null; });
+  window.addEventListener("touchstart", () => {
+    if (n1 + n2 + n3 === 0) $("ask").click();
+  }, { passive: true, once: true });
+})();
+</script>
+</body>
+</html>

@@ -53,6 +53,14 @@
         typeof window.DeviceMotionEvent !== "undefined";
     },
 
+    /* iOS 13+ only accepts a permission request from inside a tap */
+    needsPermission() {
+      return typeof window !== "undefined" && (
+        (window.DeviceOrientationEvent && typeof window.DeviceOrientationEvent.requestPermission === "function") ||
+        (window.DeviceMotionEvent && typeof window.DeviceMotionEvent.requestPermission === "function")
+      );
+    },
+
     inFrame() {
       try { return window.top !== window.self; } catch (e) { return true; }
     },
@@ -100,6 +108,8 @@
       if (!this._bound) this._bound = (ev) => Motion.read(ev);
       if (!this._motionBound) this._motionBound = (ev) => Motion.readMotion(ev);
       window.addEventListener("deviceorientation", this._bound, true);
+      /* some Androids only fire the absolute variant */
+      window.addEventListener("deviceorientationabsolute", this._bound, true);
       window.addEventListener("devicemotion", this._motionBound, true);
       if (window.screen && window.screen.orientation && window.screen.orientation.addEventListener) {
         window.screen.orientation.addEventListener("change", () => { Motion.has = false; });

@@ -103,7 +103,8 @@
 
       this.bindUI();
       this.bindInput();
-      if (MOTION) MOTION.enable().then(() => this.syncMotionUI());
+      /* only switch on by itself where no permission prompt is needed */
+      if (MOTION && !MOTION.needsPermission()) MOTION.enable().then(() => this.syncMotionUI());
       this.renderLevels();
       this.setMode(this.mode);
       this.show("title");
