@@ -306,6 +306,7 @@
         ctx.translate((Math.random() - 0.5) * s3, (Math.random() - 0.5) * s3);
       }
       this.drawPath(scene, pal);
+      this.drawGuide(scene, pal);
       this.drawRings(scene, pal);
       this.drawMarble(scene, pal);
       this.drawParticles();
@@ -646,6 +647,64 @@
           ctx.setLineDash([]);
         }
       }
+    }
+
+    /* ── the rescue line: pearl lost → a glowing guide to the path ── */
+    drawGuide(scene, pal) {
+      const gates = scene.gates;
+      if (!gates || !gates.length || scene.demo) return;
+      const ng = scene.nextGate || 0;
+      const g0 = gates[ng];
+      if (!g0 || g0.state !== 0) return;
+      const far = Math.hypot((scene.mx || 0) - g0.x, (scene.mz || 0) - g0.z);
+      if (far < 3.2) return;   /* close enough — the ribbon already shows the way */
+      const ctx = this.ctx;
+      const p0 = this.PT(scene.mx || 0, scene.mz || 0, 0.03);
+      if (!p0) return;
+      const pts = [p0];
+      const to = Math.min(gates.length, ng + 6);
+      for (let k = ng; k < to; k++) {
+        const p = this.PT(gates[k].x, gates[k].z, 0.03);
+        if (p) pts.push(p);
+      }
+      if (pts.length < 2) return;
+      const pulse = 0.65 + 0.35 * Math.sin(this.time * 6);
+      const SP = 26;
+      const flow = (this.time * 95) % SP;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      /* wide soft glow under the line */
+      ctx.strokeStyle = C.out(pal.pearl, 0.15 * pulse + 0.07);
+      ctx.lineWidth = 15;
+      ctx.setLineDash([3, 11]);
+      ctx.stroke();
+      /* bright dashed core flowing toward the ring you owe */
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.strokeStyle = C.out(C.lite(pal.pearl, 0.55), 0.9 * pulse);
+      ctx.lineWidth = 3.2;
+      ctx.setLineDash([SP * 0.6, SP * 0.4]);
+      ctx.lineDashOffset = -flow;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      /* an arrowhead at the next ring */
+      const a = pts[pts.length - 1], b = pts[pts.length - 2] || pts[0];
+      const seg = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+      const ux = (a.x - b.x) / seg, uy = (a.y - b.y) / seg;
+      ctx.beginPath();
+      ctx.moveTo(a.x + ux * 12, a.y + uy * 12);
+      ctx.lineTo(a.x - uy * 7, a.y + ux * 7);
+      ctx.lineTo(a.x + uy * 7, a.y - ux * 7);
+      ctx.closePath();
+      ctx.fillStyle = C.out(C.lite(pal.pearl, 0.6), 0.9 * pulse);
+      ctx.fill();
+      ctx.restore();
     }
 
     /* ── the rings ─────────────────────────────────────────────── */

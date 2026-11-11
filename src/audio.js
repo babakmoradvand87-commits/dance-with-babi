@@ -68,6 +68,8 @@
       this.fileMode = false;
       this.media = null;          /* HTMLAudioElement */
       this.gridZero = 0;          /* song position (s) that maps to t = 0 */
+      this._fileBuf = null;       /* decoded mono buffer of the current song */
+      this._bufFor = null;        /* which url _fileBuf belongs to */
     }
 
     /* ── setup ─────────────────────────────────────────────── */
@@ -172,7 +174,7 @@
       /* the count-in happens in negative song time: the track starts
          `intro` beats early so the dancers can feel the tempo */
       const lead = level.intro * level.spb;
-      if (level.audio) { this._startFile(level, lead); return; }
+      if (level.audio) { this._startFile(level); return; }
       this.pointer = -Math.round(level.intro * 2);
       if (this.ctx) {
         this.t0 = this.ctx.currentTime + 0.16 + lead;
@@ -186,13 +188,17 @@
       this._schedule();
     }
 
-    /* a level with its own recording: play the file and put t = 0 on the
-       song's first downbeat + one intro bar, so every gate k lands exactly
-       on beat k of the real music (gateAt(k) = k * spb) */
-    _startFile(level, lead) {
+    /* a level with its own recording: t = 0 sits on the song's first
+       measured downbeat, so every gate k lands exactly on beat k of the
+       real music (gateAt(k) = k * spb). Playback does NOT start at the
+       beginning of the file — some songs only start their rhythm seconds
+       in — it starts 3 beats before that first downbeat, so the count-in
+       is danced to the song's own groove, never to dead air. */
+    _startFile(level) {
       this._fileStop();
       this.fileMode = true;
-      this.gridZero = (level.beatOffset || 0) + lead;
+      this.gridZero = level.beatOffset || 0;
+      const startPos = Math.max(0, this.gridZero - 3 * level.spb);
       if (typeof Audio !== "undefined") {
         if (!this.media) {
           this.media = new Audio();
@@ -210,13 +216,75 @@
         if (this.media.getAttribute("src") !== level.audio) {
           this.media.setAttribute("src", level.audio);
         }
-        try { this.media.currentTime = 0; } catch (e) {}
+        try { this.media.currentTime = startPos; } catch (e) {}
         try {
           const p = this.media.play();
           if (p && p.catch) p.catch(() => {});
         } catch (e) {}
       }
+      this._loadFileBuffer(level);
       this._clearTimer();
+    }
+
+    /* decode the mp3 once per level into a small mono buffer, so a ring
+       hit can replay the song's OWN sound at that exact beat */
+    _loadFileBuffer(level) {
+      const url = level.audio;
+      if (this._bufFor === url) return;
+      this._bufFor = url;
+      this._fileBuf = null;
+      if (typeof fetch !== "function") return;
+      fetch(url)
+        .then((r) => { if (!r.ok) throw new Error("http " + r.status); return r.arrayBuffer(); })
+        .then((ab) => {
+          const Ctx = this.ctx && this.ctx.constructor;
+          const dec = (c) => c.decodeAudioData(ab.slice(0));
+          const use = (c) => dec(c).then((buf) => {
+            if (this._bufFor !== url) return;
+            /* downmix to mono 22 kHz — enough for a percussive hit slice,
+               and ~8x smaller than the full-rate stereo decode */
+            const sr = 22050;
+            const n = Math.floor(buf.duration * sr);
+            const mono = (this.ctx || c).createBuffer(1, n, sr);
+            const d = mono.getChannelData(0);
+            const ch0 = buf.getChannelData(0);
+            const ch1 = buf.numberOfChannels > 1 ? buf.getChannelData(1) : ch0;
+            const ratio = buf.sampleRate / sr;
+            for (let i = 0; i < n; i++) {
+              const j = Math.min(buf.length - 1, Math.floor(i * ratio));
+              d[i] = (ch0[j] + ch1[j]) * 0.5;
+            }
+            this._fileBuf = mono;
+          });
+          if (typeof OfflineAudioContext !== "undefined") {
+            try { return use(new OfflineAudioContext(1, 22050, 1)); } catch (e) {}
+          }
+          if (this.ctx) return use(this.ctx);
+          throw new Error("no audio context");
+        })
+        .catch(() => { if (this._bufFor === url) this._fileBuf = null; });
+    }
+
+    /* the ring-entry sound IS the song: replay a short slice of the
+       recording starting exactly at the gate's beat, accented */
+    _songSlice(pos, streak) {
+      if (!this.ctx || !this._fileBuf || this.muted) return;
+      const buf = this._fileBuf;
+      const start = Math.max(0, Math.min(pos, buf.duration - 0.06));
+      const dur = Math.min(0.35, buf.duration - start);
+      const ctx = this.ctx;
+      const when = this._now();
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const g = ctx.createGain();
+      const peak = Math.min(1.5, 0.85 + Math.min(streak || 0, 12) * 0.05);
+      g.gain.setValueAtTime(0.0001, when);
+      g.gain.exponentialRampToValueAtTime(peak, when + 0.012);
+      g.gain.setValueAtTime(peak, when + Math.max(0.02, dur - 0.06));
+      g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      src.connect(g);
+      g.connect(this.sfxGain);
+      src.start(when, start, dur + 0.03);
     }
 
     _fileStop() {
@@ -666,7 +734,13 @@
       return this.ctx.currentTime + (delay || 0.001);
     }
 
-    hit(streak) {
+    hit(streak, atT) {
+      /* in a real recording the hit sound is the song's own beat at that
+         moment — replay a slice of the track, never a separate synth */
+      if (this.fileMode) {
+        if (this._fileBuf && typeof atT === "number") this._songSlice(atT + this.gridZero, streak);
+        return;
+      }
       if (!this.ready || this.muted) return;
       const when = this._now();
       const step = PENTA[Math.min(PENTA.length - 1, streak % PENTA.length)];

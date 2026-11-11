@@ -791,7 +791,7 @@
       this.babiMood = Math.min(1.2, this.babiMood + 0.7);
 
       this.popJudge(tier.label, tier.q === 3 ? "perfect" : tier.q === 2 ? "good" : "soft");
-      this.sound.hit(this.combo);
+      this.sound.hit(this.combo, g.expected);
       const ps = this.stage.pearlScreen || { x: this.stage.cx, y: this.stage.cy };
       this.stage.burst(
         ps.x, ps.y,

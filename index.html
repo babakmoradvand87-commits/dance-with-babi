@@ -1480,23 +1480,25 @@ kbd {
 
   /* ── derive the timing and the ribbon for every track ─────── */
   /* real recordings from the user's Drive folder, analysed offline:
-     bpm = onset autocorrelation, offset = beat-0 phase, dur = decoded length;
-     the ring grid IS the song's own beat grid, so rings land on the music */
+     bpm = onset-grid regression fit, offset = position of the first strong
+     downbeat (some songs start their rhythm seconds into the file),
+     dur = decoded length; the ring grid IS the song's own beat grid */
   const TRACKS = [
-    { audio: "tracks/01-ahang-faransavi-mp3.mp3", name: "ahang faransavi", bpm: 141.03, offset: 0.096, dur: 268.29 },
-    { audio: "tracks/02-ahang-toki-ei-tango-mp3.mp3", name: "ahang toki ei — tango", bpm: 141.92, offset: 0.149, dur: 226.82 },
-    { audio: "tracks/03-and-she-was-talking-heads-mp3.mp3", name: "And She Was — Talking Heads", bpm: 126.2, offset: 0.186, dur: 219.6 },
-    { audio: "tracks/04-dance-me-to-the-end-of-love-leonard-cohen-mp3.mp3", name: "Dance Me to the End of Love — Leonard Cohen", bpm: 132.6, offset: 0.352, dur: 289.44 },
-    { audio: "tracks/05-enrike-tango-mp3.mp3", name: "enrike — tango", bpm: 109.9, offset: 0.249, dur: 333.11 },
-    { audio: "tracks/06-feel-so-close-calvin-harris-mp3.mp3", name: "feel so close — calvin harris", bpm: 126.75, offset: 0.265, dur: 208.17 },
-    { audio: "tracks/07-i-love-you-baby-frank-sinatra-mp3.mp3", name: "I love you baby — Frank Sinatra", bpm: 120.75, offset: 0.191, dur: 221.01 },
-    { audio: "tracks/08-royals-lorde-mp3.mp3", name: "Royals — Lorde", bpm: 136.36, offset: 0.355, dur: 190.22 },
-    { audio: "tracks/09-selna-gomez-dance-mp3.mp3", name: "selna gomez — dance", bpm: 110.61, offset: 0.376, dur: 200.68 },
-    { audio: "tracks/10-shut-up-and-dance-walk-the-moon-mp3.mp3", name: "Shut Up and Dance — Walk the Moon", bpm: 128.13, offset: 0.265, dur: 197.72 },
-    { audio: "tracks/11-theres-nothing-holdin-me-back-shawn-mendes-mp3.mp3", name: "Theres Nothing Holdin Me Back — Shawn Mendes", bpm: 120.75, offset: 0.118, dur: 199.46 },
-    { audio: "tracks/12-what-do-you-mean-justin-bieber-mp3.mp3", name: "What Do You Mean — Justin Bieber", bpm: 123.75, offset: 0.383, dur: 207.65 },
+    { audio: "tracks/01-ahang-faransavi-mp3.mp3", name: "ahang faransavi", bpm: 139.01, offset: 7.285, dur: 268.29 },
+    { audio: "tracks/02-ahang-toki-ei-tango-mp3.mp3", name: "ahang toki ei — tango", bpm: 145.3, offset: 0.149, dur: 226.82 },
+    { audio: "tracks/03-and-she-was-talking-heads-mp3.mp3", name: "And She Was — Talking Heads", bpm: 124.73, offset: 0.186, dur: 219.6 },
+    { audio: "tracks/04-dance-me-to-the-end-of-love-leonard-cohen-mp3.mp3", name: "Dance Me to the End of Love — Leonard Cohen", bpm: 133.18, offset: 4.017, dur: 289.44 },
+    { audio: "tracks/05-enrike-tango-mp3.mp3", name: "enrike — tango", bpm: 109.01, offset: 0.627, dur: 333.11 },
+    { audio: "tracks/06-feel-so-close-calvin-harris-mp3.mp3", name: "feel so close — calvin harris", bpm: 126.83, offset: 1.486, dur: 208.17 },
+    { audio: "tracks/07-i-love-you-baby-frank-sinatra-mp3.mp3", name: "I love you baby — Frank Sinatra", bpm: 120.81, offset: 4.122, dur: 221.01 },
+    { audio: "tracks/08-royals-lorde-mp3.mp3", name: "Royals — Lorde", bpm: 84.15, offset: 1.01, dur: 190.22 },
+    { audio: "tracks/09-selna-gomez-dance-mp3.mp3", name: "selna gomez — dance", bpm: 109.02, offset: 3.402, dur: 200.68 },
+    { audio: "tracks/10-shut-up-and-dance-walk-the-moon-mp3.mp3", name: "Shut Up and Dance — Walk the Moon", bpm: 126.72, offset: 3.855, dur: 197.72 },
+    { audio: "tracks/11-theres-nothing-holdin-me-back-shawn-mendes-mp3.mp3", name: "Theres Nothing Holdin Me Back — Shawn Mendes", bpm: 120.83, offset: 0.987, dur: 199.46 },
+    { audio: "tracks/12-what-do-you-mean-justin-bieber-mp3.mp3", name: "What Do You Mean — Justin Bieber", bpm: 123.8, offset: 5.445, dur: 207.65 },
   ];
 
+  /* ── derive the timing and the ribbon for every track ─────── */
   LEVELS.forEach((lv, index) => {
     lv.index = index;
     const t = TRACKS[index];
@@ -1512,7 +1514,7 @@ kbd {
     /* a real song runs almost its full length (minus the count-in lead
        and a small tail); a synth fallback stays 2:24 */
     lv.gates = lv.dur
-      ? Math.max(40, Math.floor((lv.dur - (lv.beatOffset || 0) - (lv.intro || 8) * lv.spb - 2) / lv.spb))
+      ? Math.max(40, Math.floor((lv.dur - (lv.beatOffset || 0) - 1.5) / lv.spb))
       : Math.round(144 / lv.spb);
     const route = makeRoute(lv.seed, lv.step, lv.gates);
     lv.points = route.points;
@@ -1886,6 +1888,8 @@ kbd {
       this.fileMode = false;
       this.media = null;          /* HTMLAudioElement */
       this.gridZero = 0;          /* song position (s) that maps to t = 0 */
+      this._fileBuf = null;       /* decoded mono buffer of the current song */
+      this._bufFor = null;        /* which url _fileBuf belongs to */
     }
 
     /* ── setup ─────────────────────────────────────────────── */
@@ -1990,7 +1994,7 @@ kbd {
       /* the count-in happens in negative song time: the track starts
          `intro` beats early so the dancers can feel the tempo */
       const lead = level.intro * level.spb;
-      if (level.audio) { this._startFile(level, lead); return; }
+      if (level.audio) { this._startFile(level); return; }
       this.pointer = -Math.round(level.intro * 2);
       if (this.ctx) {
         this.t0 = this.ctx.currentTime + 0.16 + lead;
@@ -2004,13 +2008,17 @@ kbd {
       this._schedule();
     }
 
-    /* a level with its own recording: play the file and put t = 0 on the
-       song's first downbeat + one intro bar, so every gate k lands exactly
-       on beat k of the real music (gateAt(k) = k * spb) */
-    _startFile(level, lead) {
+    /* a level with its own recording: t = 0 sits on the song's first
+       measured downbeat, so every gate k lands exactly on beat k of the
+       real music (gateAt(k) = k * spb). Playback does NOT start at the
+       beginning of the file — some songs only start their rhythm seconds
+       in — it starts 3 beats before that first downbeat, so the count-in
+       is danced to the song's own groove, never to dead air. */
+    _startFile(level) {
       this._fileStop();
       this.fileMode = true;
-      this.gridZero = (level.beatOffset || 0) + lead;
+      this.gridZero = level.beatOffset || 0;
+      const startPos = Math.max(0, this.gridZero - 3 * level.spb);
       if (typeof Audio !== "undefined") {
         if (!this.media) {
           this.media = new Audio();
@@ -2028,13 +2036,75 @@ kbd {
         if (this.media.getAttribute("src") !== level.audio) {
           this.media.setAttribute("src", level.audio);
         }
-        try { this.media.currentTime = 0; } catch (e) {}
+        try { this.media.currentTime = startPos; } catch (e) {}
         try {
           const p = this.media.play();
           if (p && p.catch) p.catch(() => {});
         } catch (e) {}
       }
+      this._loadFileBuffer(level);
       this._clearTimer();
+    }
+
+    /* decode the mp3 once per level into a small mono buffer, so a ring
+       hit can replay the song's OWN sound at that exact beat */
+    _loadFileBuffer(level) {
+      const url = level.audio;
+      if (this._bufFor === url) return;
+      this._bufFor = url;
+      this._fileBuf = null;
+      if (typeof fetch !== "function") return;
+      fetch(url)
+        .then((r) => { if (!r.ok) throw new Error("http " + r.status); return r.arrayBuffer(); })
+        .then((ab) => {
+          const Ctx = this.ctx && this.ctx.constructor;
+          const dec = (c) => c.decodeAudioData(ab.slice(0));
+          const use = (c) => dec(c).then((buf) => {
+            if (this._bufFor !== url) return;
+            /* downmix to mono 22 kHz — enough for a percussive hit slice,
+               and ~8x smaller than the full-rate stereo decode */
+            const sr = 22050;
+            const n = Math.floor(buf.duration * sr);
+            const mono = (this.ctx || c).createBuffer(1, n, sr);
+            const d = mono.getChannelData(0);
+            const ch0 = buf.getChannelData(0);
+            const ch1 = buf.numberOfChannels > 1 ? buf.getChannelData(1) : ch0;
+            const ratio = buf.sampleRate / sr;
+            for (let i = 0; i < n; i++) {
+              const j = Math.min(buf.length - 1, Math.floor(i * ratio));
+              d[i] = (ch0[j] + ch1[j]) * 0.5;
+            }
+            this._fileBuf = mono;
+          });
+          if (typeof OfflineAudioContext !== "undefined") {
+            try { return use(new OfflineAudioContext(1, 22050, 1)); } catch (e) {}
+          }
+          if (this.ctx) return use(this.ctx);
+          throw new Error("no audio context");
+        })
+        .catch(() => { if (this._bufFor === url) this._fileBuf = null; });
+    }
+
+    /* the ring-entry sound IS the song: replay a short slice of the
+       recording starting exactly at the gate's beat, accented */
+    _songSlice(pos, streak) {
+      if (!this.ctx || !this._fileBuf || this.muted) return;
+      const buf = this._fileBuf;
+      const start = Math.max(0, Math.min(pos, buf.duration - 0.06));
+      const dur = Math.min(0.35, buf.duration - start);
+      const ctx = this.ctx;
+      const when = this._now();
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const g = ctx.createGain();
+      const peak = Math.min(1.5, 0.85 + Math.min(streak || 0, 12) * 0.05);
+      g.gain.setValueAtTime(0.0001, when);
+      g.gain.exponentialRampToValueAtTime(peak, when + 0.012);
+      g.gain.setValueAtTime(peak, when + Math.max(0.02, dur - 0.06));
+      g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      src.connect(g);
+      g.connect(this.sfxGain);
+      src.start(when, start, dur + 0.03);
     }
 
     _fileStop() {
@@ -2484,7 +2554,13 @@ kbd {
       return this.ctx.currentTime + (delay || 0.001);
     }
 
-    hit(streak) {
+    hit(streak, atT) {
+      /* in a real recording the hit sound is the song's own beat at that
+         moment — replay a slice of the track, never a separate synth */
+      if (this.fileMode) {
+        if (this._fileBuf && typeof atT === "number") this._songSlice(atT + this.gridZero, streak);
+        return;
+      }
       if (!this.ready || this.muted) return;
       const when = this._now();
       const step = PENTA[Math.min(PENTA.length - 1, streak % PENTA.length)];
@@ -2883,6 +2959,7 @@ kbd {
         ctx.translate((Math.random() - 0.5) * s3, (Math.random() - 0.5) * s3);
       }
       this.drawPath(scene, pal);
+      this.drawGuide(scene, pal);
       this.drawRings(scene, pal);
       this.drawMarble(scene, pal);
       this.drawParticles();
@@ -3223,6 +3300,64 @@ kbd {
           ctx.setLineDash([]);
         }
       }
+    }
+
+    /* ── the rescue line: pearl lost → a glowing guide to the path ── */
+    drawGuide(scene, pal) {
+      const gates = scene.gates;
+      if (!gates || !gates.length || scene.demo) return;
+      const ng = scene.nextGate || 0;
+      const g0 = gates[ng];
+      if (!g0 || g0.state !== 0) return;
+      const far = Math.hypot((scene.mx || 0) - g0.x, (scene.mz || 0) - g0.z);
+      if (far < 3.2) return;   /* close enough — the ribbon already shows the way */
+      const ctx = this.ctx;
+      const p0 = this.PT(scene.mx || 0, scene.mz || 0, 0.03);
+      if (!p0) return;
+      const pts = [p0];
+      const to = Math.min(gates.length, ng + 6);
+      for (let k = ng; k < to; k++) {
+        const p = this.PT(gates[k].x, gates[k].z, 0.03);
+        if (p) pts.push(p);
+      }
+      if (pts.length < 2) return;
+      const pulse = 0.65 + 0.35 * Math.sin(this.time * 6);
+      const SP = 26;
+      const flow = (this.time * 95) % SP;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      /* wide soft glow under the line */
+      ctx.strokeStyle = C.out(pal.pearl, 0.15 * pulse + 0.07);
+      ctx.lineWidth = 15;
+      ctx.setLineDash([3, 11]);
+      ctx.stroke();
+      /* bright dashed core flowing toward the ring you owe */
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.strokeStyle = C.out(C.lite(pal.pearl, 0.55), 0.9 * pulse);
+      ctx.lineWidth = 3.2;
+      ctx.setLineDash([SP * 0.6, SP * 0.4]);
+      ctx.lineDashOffset = -flow;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      /* an arrowhead at the next ring */
+      const a = pts[pts.length - 1], b = pts[pts.length - 2] || pts[0];
+      const seg = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+      const ux = (a.x - b.x) / seg, uy = (a.y - b.y) / seg;
+      ctx.beginPath();
+      ctx.moveTo(a.x + ux * 12, a.y + uy * 12);
+      ctx.lineTo(a.x - uy * 7, a.y + ux * 7);
+      ctx.lineTo(a.x + uy * 7, a.y - ux * 7);
+      ctx.closePath();
+      ctx.fillStyle = C.out(C.lite(pal.pearl, 0.6), 0.9 * pulse);
+      ctx.fill();
+      ctx.restore();
     }
 
     /* ── the rings ─────────────────────────────────────────────── */
@@ -4564,7 +4699,7 @@ kbd {
       this.babiMood = Math.min(1.2, this.babiMood + 0.7);
 
       this.popJudge(tier.label, tier.q === 3 ? "perfect" : tier.q === 2 ? "good" : "soft");
-      this.sound.hit(this.combo);
+      this.sound.hit(this.combo, g.expected);
       const ps = this.stage.pearlScreen || { x: this.stage.cx, y: this.stage.cy };
       this.stage.burst(
         ps.x, ps.y,
