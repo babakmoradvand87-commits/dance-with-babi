@@ -19,6 +19,20 @@
 
 ---
 
+## The look
+
+A dark ballroom drawn entirely on a 2D canvas — no WebGL, no textures, no network. An
+obsidian slab with a gold inlay floats over a polished floor; a single warm light comes in
+from the upper left, the rest of the hall falls away into haze, arches and out-of-focus
+lights. The pearl is the brightest thing on screen, the ring you have to reach is second,
+everything else stays quiet. The slab's inlay breathes on the beat, the pearl drags a short
+trail, and the camera sways a few millimetres as if somebody were holding it — because
+somebody is.
+
+The hall and the floor never change within a level, so they are baked once into an offscreen
+layer and blitted per frame; the atmosphere layers are baked the same way. If a phone still
+can't hold 60fps, the renderer quietly lowers its own resolution instead of dropping frames.
+
 ## فارسی
 
 **Dance with Babi** یک بازی رقص دونفره است با الهام از بازی *Bounden*: **گوشی همان سینی است**. دو نفر گوشی را

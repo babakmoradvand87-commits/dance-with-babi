@@ -244,13 +244,20 @@ body { touch-action: none; }
 }
 
 .panel {
-  border: 1px solid var(--line);
-  border-radius: 26px;
-  background: var(--panel);
-  backdrop-filter: blur(22px) saturate(120%);
-  -webkit-backdrop-filter: blur(22px) saturate(120%);
-  box-shadow: var(--shadow);
-  padding: 30px 26px;
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: 28px;
+  /* a gold hairline drawn as a gradient border */
+  background:
+    linear-gradient(180deg, rgba(22, 14, 34, 0.88), rgba(11, 7, 20, 0.92)) padding-box,
+    linear-gradient(150deg, rgba(255, 210, 138, 0.55), rgba(255, 158, 203, 0.16) 40%, rgba(143, 240, 226, 0.30)) border-box;
+  backdrop-filter: blur(26px) saturate(120%);
+  -webkit-backdrop-filter: blur(26px) saturate(120%);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.62),
+    0 2px 0 rgba(255, 255, 255, 0.05) inset,
+    0 40px 120px -40px rgba(255, 158, 203, 0.22);
+  padding: 32px 26px;
   text-align: center;
 }
 .panel.wide { padding: 22px 24px 18px; text-align: left; }
@@ -262,10 +269,11 @@ body { touch-action: none; }
   line-height: 1;
   letter-spacing: 0.01em;
   margin: 14px 0 0;
-  background: linear-gradient(100deg, #fff 10%, var(--rose) 48%, var(--gold) 78%, var(--aqua));
+  background: linear-gradient(100deg, #fffdf6 6%, #ffe6c2 30%, var(--gold) 52%, var(--rose) 76%, #ffd7ec 96%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  filter: drop-shadow(0 8px 34px rgba(255, 190, 150, 0.28));
 }
 .panel h1 .with {
   display: block;
@@ -290,6 +298,15 @@ body { touch-action: none; }
   line-height: 1.65;
   margin: 14px 0 0;
 }
+.tagline::before {
+  content: "";
+  display: block;
+  width: 96px;
+  height: 1px;
+  margin: 0 auto 16px;
+  background: linear-gradient(90deg, transparent, rgba(255, 210, 138, 0.8), transparent);
+}
+.tagline.fa::before { display: none; }
 .foot-note {
   margin: 22px 0 0;
   font-size: 11px;
@@ -328,13 +345,22 @@ body { touch-action: none; }
 .btn:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.26); }
 .btn:active { transform: scale(0.97); }
 .btn.primary {
-  background: linear-gradient(100deg, rgba(255, 158, 203, 0.95), rgba(255, 210, 138, 0.95));
+  background: linear-gradient(100deg, #ffd8ea 0%, #ffc3dd 32%, #ffd28a 100%);
   border-color: transparent;
-  color: #24101c;
-  box-shadow: 0 12px 34px rgba(255, 150, 170, 0.28);
+  color: #2a1120;
+  letter-spacing: 0.05em;
+  box-shadow:
+    0 14px 38px rgba(255, 150, 170, 0.34),
+    0 1px 0 rgba(255, 255, 255, 0.65) inset,
+    0 -2px 10px rgba(180, 90, 40, 0.18) inset;
 }
 .btn.primary:hover { box-shadow: 0 16px 44px rgba(255, 150, 170, 0.42); filter: brightness(1.05); }
-.btn.ghost { background: rgba(255, 255, 255, 0.04); }
+.btn.ghost {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 210, 138, 0.28);
+  color: rgba(255, 246, 232, 0.9);
+}
+.btn.ghost:hover { border-color: rgba(255, 210, 138, 0.55); background: rgba(255, 210, 138, 0.08); }
 .btn.tiny { padding: 8px 14px; font-size: 12px; border-radius: 10px; }
 
 .panel-head {

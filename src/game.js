@@ -459,8 +459,8 @@
       if (!lv) return;
       this.li = i;
       this.level = lv;
-      this.stage.particles.length = 0;
-      this.stage.babi.ready = false;
+      if (this.stage.reset) this.stage.reset();
+      else { this.stage.particles.length = 0; this.stage.babi.ready = false; }
 
       this.gates = [];
       for (let k = 0; k < lv.gates; k++) {
