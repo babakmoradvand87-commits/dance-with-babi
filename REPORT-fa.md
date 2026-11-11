@@ -148,3 +148,35 @@ index.html      یک فایل، ۱۵۷ KB، بدون هیچ درخواست شب�
 ### جمع‌بندی
 
 آنچه تحویل داده شد یک محصول زنده روی `petavu.ir` است: سه‌بعدی، دو‌نفره، ۱۰ رقص ۲:۲۴ با موسیقی متغیر، ورودی ژیروسکوپ با دو نقطهٔ تماس، راهنمای مسیر، و در ورودی لاکچری. آنچه باقی مانده عمدتاً **اعتبارسنجی روی دستگاه واقعی** و **لایهٔ رشد** (تحلیل رفتار، اشتراک‌گذاری، نصب) است — نه بازنویسی.
+
+---
+
+## ۱۱. به‌روزرسانی PWA و امنیت — ۲۰ آبان ۱۴۰۵ (11 Nov 2026، commitهای `47054b8` تا `994742c`)
+
+### چه اضافه شد
+- **PWA قابل نصب**: `manifest.webmanifest` (name/short_name، `display: standalone`، start_url و scope روی `/`، آیکون‌های ۱۹۲ و ۵۱۲ + maskable، theme/background `#08050f`) + آیکون Home Screenِ iOS (`apple-touch-icon.png` ۱۸۰×۱۸۰، همان emblem طلایی پایین پوستر).
+- **Service worker (`sw.js`)**: کش نسخه‌دار (`dwb-v2`؛ هر release باید bump شود)،IFE网页‌ها **network-first** هستند تا هر update خودکار اعمال شود (`skipWaiting` + `clients.claim` + reload خودکار با `controllerchange` — اگر وسط رقص باشد، به‌محض برگشت به منو)، بقیهٔ فایل‌ها cache-first با به‌روزرسانی پس‌زمینه؛ فقط same-origin هندل می‌شود. نیاز به HTTPS دارد که `petavu.ir` دارد (http→https 301).
+- **بنر «Install app» داخل بازی**: روی منوها فقط؛ روی Android/Chrome با `beforeinstallprompt` دکمهٔ Install واقعی، روی iOS متن راهنمای Share → Add to Home Screen؛ با dismiss دائمی (`dwb.noInstall`) و وقتی standalone است کلاً مخفی.
+- ** menus شیشه‌ای (frosted glass)**: پنل‌ها با `backdrop-filter: blur(26px) saturate(150%)` و پس‌زمینهٔ ~۴۰٪ شفاف تا پوستر پشت منوی انتخاب مرحله دیده شود؛ fallback مات برای مرورگر بدون backdrop-filter. رندر 3D زیر منو متوقف است (صرفهٔ CPU).
+- **ورودی یک‌بار**: بعد از START، صفحهٔ ورود هرگز برنمی‌گردد (popstate → لیست رقص‌ها).
+- **امنیت**: CSP سخت‌گیرانه از طریق meta (`default-src 'self'`، `object-src 'none'`، `base-uri 'none'`، `form-action 'none'` — GitHub Pages هدر HTTP نمی‌دهد)؛ escape کردن نام‌های ذخیره‌شده در localStorage (stored-XSS بسته شد)؛ بدون هیچ منبع external؛ بدون eval/new Function/document.write.
+- **پوستر به‌عنوان og:image** (`https://petavu.ir/poster.jpg`) و بک‌گراند/ورودی بازی (inline به‌صورت `--poster`؛ فایل تک‌فایلی ~۳۳۸ KB).
+
+### تست‌های خودکار (همه پاس)
+| تست | نتیجه |
+|---|---|
+| `tests/smoke.js` | ۱۰ رقص، ۳ ستاره، judging و flow کامل — بدون ارور |
+| `tests/gyro.js` | دو شست → tilt 0.80؛ یک شست → 0؛ permission denied → fallback |
+| `tests/render.js` | بدون ارور runtime |
+| `tests/audio.js` | گراف صوتی بدون استثنا (305 osc در ۲۰ ثانیه با موتور جدید) |
+| `tests/security.js` | **۴۰/۴۰** — CSP، بدون sinks ناامن، escape شدن نام‌های مخرب، localStorage خراب |
+| `tests/sw.js` | **۱۹/۱۹** — install/activate، پاک شدن کش قدیمی، network-first، fallback آفلاین، cross-origin ignore |
+| `tests/pwa.js` | **۳۴/۳۴** روی سایت زنده — manifest، آیکون‌ها (اندازهٔ واقعی = announce)، sw.js، https، CSP، apple-touch-icon، og:image |
+
+### audit
+Lighthouse کامل در این sandbox اجرا نشد (Chrome بدون libهای سیستمی و بدون root؛ PageSpeed API現在 به کلید نیاز دارد). به‌جای آن همان معیارهای catégorieهای PWA/Securityِ Lighthouse به‌صورت live روی `https://petavu.ir` در `tests/pwa.js` audit شدند و ۳۴/۳۴ پاس. برای گزارش کامل روی دستگاه خودتان: `npx lighthouse https://petavu.ir/ --view --only-categories=pwa,security,performance`.
+
+### ریسک‌های باقی‌مانده (诚实انه)
+- **نصب واقعی روی دستگاه Android/iOS** هنوز با دست تست نشده — همهٔ معیارهای installability پاس شده‌اند، اما تأیید نهایی با Chrome → ⋮ → Install و Safari → Share → Add to Home Screen روی گوشی واقعی است.
+- **R1 předchozí** (permission ژیروسکوپ iOS در Safari واقعی) هنوز نیاز به تست دستی دارد.
+- поведение auto-update بعد از اولین update واقعی (v1→v2 همین حالا ship شد) از طریق `tests/sw.js` شبیه‌سازی و پاس شده؛ تأیید Terrain روی دستگاه واقعیCr 值 دارد.
