@@ -553,17 +553,17 @@
 
       this.gates = [];
       for (let k = 0; k < lv.gates; k++) {
-        /* ring kinds: every 4th-but-2 ring is BIG (10 pts), every 16th is a
-           PORTAL into a new world (20 pts), the rest are normal (5 pts) —
-           staying on the path always scores */
-        const kind = k % 16 === 8 ? "portal" : k % 4 === 2 ? "big" : "norm";
+        /* ring kinds cycle in turn: simple 5-pt, FIRE 10-pt, PORTAL
+           20-pt (passing through enters a new world) — staying on the
+           path always scores */
+        const kind = ["norm", "fire", "portal"][k % 3];
         this.gates.push({
           x: lv.gateX(k),
           z: lv.gateZ(k),
           expected: lv.gateAt(k),
           note: lv.noteAt ? lv.noteAt(k) : 0,
           kind,
-          pts: kind === "portal" ? 20 : kind === "big" ? 10 : 5,
+          pts: kind === "portal" ? 20 : kind === "fire" ? 10 : 5,
           state: 0, q: 0, flash: 0,
         });
       }

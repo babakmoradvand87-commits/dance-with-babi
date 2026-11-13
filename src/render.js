@@ -998,82 +998,127 @@
       ctx.restore();
     }
 
-    /* ── the rings: every ring is a NOTE-shaped GATE standing on the
-       floor — the pearl flies through the note. 5-pt rings are normal
-       notes, 10-pt rings are big notes, 20-pt portals are huge notes
-       with a rotating halo ─────────────────────────────────────── */
+    /* ── the rings: upright rings standing on the floor like movie
+       fire-gates, with the beat's NOTE inside each ring. Three kinds
+       in turn: simple (5), FIRE (10), PORTAL black-hole (20) ────── */
     drawRings(scene, pal) {
       const ctx = this.ctx;
       const gates = scene.gates;
       if (!gates || !gates.length) return;
       const pulse = 0.5 + 0.5 * Math.sin(this.time * 3.4);
       const nextK = scene.nextGate;
+      const t = this.time;
 
       for (let k = 0; k < gates.length; k++) {
         const g = gates[k];
-        /* big rings and portal rings are drawn larger */
-        const rr = g.kind === "portal" ? RING_R * 1.75 : g.kind === "big" ? RING_R * 1.45 : RING_R;
+        const kind = g.kind || "norm";
+        const rr = kind === "portal" ? RING_R * 1.6 : kind === "fire" ? RING_R * 1.3 : RING_R;
         const e = this.disc(g.x, g.z, rr);
         if (!e) continue;
-        const col = g.kind === "portal" ? (pal.aura2 || pal.ring) : pal.ring;
         const isNext = k === nextK;
         const hit = g.state === 1;
         const flash = g.flash || 0;
         const ahead = nextK == null ? 9 : k - nextK;
         if (!isNext && !hit && (ahead < 0 || ahead > 8)) continue;
 
-        /* faint target zone lying on the floor under the gate */
+        const midi = g.note || 0;
+        const hue = midi ? (midi * 14 + 318) % 360 : 320;
+
+        /* the upright ring: centre lifted above the floor point */
+        const lift = rr * 2.3;
+        const c = this.PT(g.x, g.z, lift);
+        if (!c) continue;
+        const pR = this.PT(g.x + rr, g.z, lift);
+        const R = pR ? Math.hypot(pR.x - c.x, pR.y - c.y) : e.rx * 1.6;
+
+        /* faint target zone on the floor under the ring */
         ctx.save();
         ctx.translate(e.x, e.y);
         ctx.rotate(e.rot);
         ctx.beginPath();
         ctx.ellipse(0, 0, e.rx, e.ry, 0, 0, TAU);
-        const zoneA = isNext ? 0.22 + 0.16 * pulse : hit ? flash * 0.5 : clamp(0.30 - ahead * 0.05, 0.05, 0.30);
-        ctx.strokeStyle = C.out(C.mix(col, "#ffffff", 0.25), zoneA);
-        ctx.lineWidth = 1.1;
+        ctx.strokeStyle = C.out("#ffffff", isNext ? 0.20 + 0.14 * pulse : hit ? flash * 0.4 : clamp(0.24 - ahead * 0.04, 0.04, 0.24));
+        ctx.lineWidth = 1;
         ctx.stroke();
-        if (g.kind === "portal") {
-          /* a portal gate has a slowly rotating halo around its base */
-          ctx.beginPath();
-          ctx.ellipse(0, 0, e.rx * 1.35, e.ry * 1.35, 0, this.time * 0.6, this.time * 0.6 + Math.PI * 1.4);
-          ctx.strokeStyle = C.out(col, (isNext ? 0.55 : clamp(0.4 - ahead * 0.05, 0.08, 0.4)));
-          ctx.lineWidth = 1.6;
+        ctx.restore();
+
+        const baseA = isNext ? 0.95 : hit ? Math.max(0.15, flash) : clamp(0.62 - ahead * 0.07, 0.12, 0.62);
+
+        ctx.save();
+        if (kind === "portal") {
+          /* black-hole portal: dark core, swirling coloured rim */
+          const bg = ctx.createRadialGradient(c.x, c.y, R * 0.1, c.x, c.y, R);
+          bg.addColorStop(0, "rgba(2,0,10,0.92)");
+          bg.addColorStop(0.7, "rgba(12,4,32,0.55)");
+          bg.addColorStop(1, "hsla(" + Math.round(C.hue(pal.aura2 || pal.ring)) + ", 90%, 60%, 0)");
+          ctx.fillStyle = bg;
+          ctx.beginPath(); ctx.arc(c.x, c.y, R, 0, TAU); ctx.fill();
+          for (let i = 0; i < 3; i++) {
+            const a0 = t * (0.9 + i * 0.35) + i * 2.1;
+            ctx.beginPath();
+            ctx.arc(c.x, c.y, R * (1 - i * 0.15), a0, a0 + Math.PI * 1.15);
+            ctx.strokeStyle = "hsla(" + ((hue + i * 45) % 360) + ", 95%, " + (68 - i * 10) + "%, " + (baseA * (0.9 - i * 0.22)).toFixed(3) + ")";
+            ctx.lineWidth = Math.max(1.5, R * 0.07);
+            ctx.stroke();
+          }
+          ctx.beginPath(); ctx.arc(c.x, c.y, R, 0, TAU);
+          ctx.strokeStyle = C.out(pal.aura2 || pal.ring, baseA);
+          ctx.lineWidth = Math.max(2, R * 0.05);
           ctx.stroke();
+          this.glow(pal.aura2 || pal.ring, c.x, c.y, R * 1.8, 0.10 * baseA + (isNext ? 0.08 * pulse : 0));
+        } else if (kind === "fire") {
+          /* fire ring: flickering orange-red double rim */
+          const flick = 0.72 + 0.28 * Math.sin(t * 13 + k * 1.7) * Math.sin(t * 7.3 + k * 2.3);
+          const fg = ctx.createLinearGradient(c.x, c.y - R, c.x, c.y + R);
+          fg.addColorStop(0, "hsla(48, 100%, 68%, " + (baseA * flick).toFixed(3) + ")");
+          fg.addColorStop(0.5, "hsla(22, 100%, 55%, " + baseA.toFixed(3) + ")");
+          fg.addColorStop(1, "hsla(8, 100%, 45%, " + (baseA * flick).toFixed(3) + ")");
+          ctx.strokeStyle = fg;
+          ctx.lineWidth = Math.max(2.5, R * 0.10) * flick;
+          ctx.beginPath(); ctx.arc(c.x, c.y, R, 0, TAU); ctx.stroke();
+          ctx.strokeStyle = "hsla(38, 100%, 78%, " + (baseA * 0.8 * flick).toFixed(3) + ")";
+          ctx.lineWidth = Math.max(1.2, R * 0.045);
+          ctx.beginPath(); ctx.arc(c.x, c.y, R * 0.87, 0, TAU); ctx.stroke();
+          this.glow("#ff7a2a", c.x, c.y, R * 1.7, (isNext ? 0.17 : 0.10) * baseA * flick);
+        } else {
+          /* simple ring — the one you owe burns gold */
+          const rim = isNext ? C.out(pal.ringNext, baseA) : "hsla(" + hue + ", 85%, 65%, " + baseA.toFixed(3) + ")";
+          ctx.strokeStyle = rim;
+          ctx.lineWidth = Math.max(2, R * 0.075) * (isNext ? 1.15 + 0.1 * pulse : 1);
+          ctx.beginPath(); ctx.arc(c.x, c.y, R, 0, TAU); ctx.stroke();
+          ctx.strokeStyle = isNext ? C.out(C.lite(pal.ringNext, 0.8), baseA * 0.6) : "hsla(" + hue + ", 95%, 82%, " + (baseA * 0.5).toFixed(3) + ")";
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.arc(c.x, c.y, R * 0.9, 0, TAU); ctx.stroke();
+          if (isNext) this.glow(pal.ringNext, c.x, c.y, R * 1.7, 0.10 + 0.08 * pulse);
         }
         ctx.restore();
 
-        /* the NOTE gate standing on the ring — its pitch is the song's
-           note on this beat, its size is the ring's kind */
-        const midi = g.note || 0;
-        const hue = midi ? (midi * 14 + 318) % 360 : Math.round(C.hue(col));
-        const s = Math.max(16, e.rx * (g.kind === "portal" ? 2.1 : g.kind === "big" ? 1.8 : 1.5));
-        const gy = e.y - e.ry * 0.8 - s * 0.45;
+        /* the beat's NOTE standing inside the ring */
+        const s = Math.max(12, R * 0.95);
         let gcol, dim = false;
         if (hit) {
           if (flash < 0.02) dim = true;
-          gcol = "hsla(" + hue + ", 25%, 32%, " + Math.min(1, flash * 0.9 + 0.18) + ")";
+          gcol = "hsla(" + hue + ", 25%, 32%, " + Math.min(1, flash * 0.9 + 0.15) + ")";
         } else if (isNext) {
-          gcol = C.out(C.lite(pal.ringNext, 0.25 + 0.25 * pulse), 0.95);
+          gcol = C.out(C.lite(pal.ringNext, 0.3 + 0.2 * pulse), 0.95);
+        } else if (kind === "fire") {
+          gcol = "hsla(40, 100%, 80%, " + baseA.toFixed(3) + ")";
+        } else if (kind === "portal") {
+          gcol = "hsla(" + ((hue + 180) % 360) + ", 95%, 78%, " + baseA.toFixed(3) + ")";
         } else {
-          gcol = "hsla(" + hue + ", 75%, 62%, " + clamp(0.55 - ahead * 0.06, 0.14, 0.55) + ")";
+          gcol = "hsla(" + hue + ", 80%, 68%, " + baseA.toFixed(3) + ")";
         }
-        if (isNext) {
-          this.glow(pal.ringNext, e.x, gy, s * 1.7, 0.10 + 0.09 * pulse);
-          this.glow(pal.ringNext, e.x, e.y, Math.max(e.rx, e.ry) * 1.7, 0.07 + 0.05 * pulse);
-        } else if (g.kind === "portal" && !hit) {
-          this.glow(col, e.x, gy, s * 1.4, 0.10);
-        }
-        this.noteGlyph(e.x, gy, s, gcol, dim);
+        this.noteGlyph(c.x, c.y + s * 0.5, s, gcol, dim);
 
-        /* a gem floating over the gate you owe */
+        /* a gem floating over the ring you owe */
         if (isNext) {
-          const gm = this.PT(g.x, g.z, 1.05 + 0.05 * Math.sin(this.time * 2.6));
+          const gm = this.PT(g.x, g.z, lift + rr * 1.3 + 0.05 * Math.sin(t * 2.6));
           if (gm) {
             const gr = clamp((this.focal * 0.035) / gm.z, 2, 9);
             this.glow(pal.ringNext, gm.x, gm.y, gr * 4.2, 0.22);
             ctx.save();
             ctx.translate(gm.x, gm.y);
-            ctx.rotate(Math.PI / 4 + this.time * 0.5);
+            ctx.rotate(Math.PI / 4 + t * 0.5);
             ctx.fillStyle = C.out(C.lite(pal.ringNext, 0.55), 0.95);
             ctx.fillRect(-gr * 0.62, -gr * 0.62, gr * 1.24, gr * 1.24);
             ctx.restore();
