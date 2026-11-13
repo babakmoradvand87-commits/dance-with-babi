@@ -475,8 +475,11 @@
           const c01 = this.PT(wx0, wz0 + GRID, 0.001);
           if (!c00 || !c10 || !c11 || !c01) continue;
           const wave = 0.5 + 0.5 * Math.sin(t * 2.2 - (i + j) * 0.55 + fr * 6);
-          const a = (0.020 + 0.085 * beatGlow) * (0.25 + 0.75 * wave);
-          ctx.fillStyle = "hsla(" + ((fr * 360 + t * 14) % 360) + ", 95%, 62%, " + a.toFixed(3) + ")";
+          const hue = (fr * 360 + t * 14) % 360;
+          /* mirror tile: soft base + a hot specular flash when the light
+             wave crosses it, strongest on the beat */
+          const a = 0.030 + 0.20 * beatGlow * wave * wave;
+          ctx.fillStyle = "hsla(" + hue + ", 95%, 60%, " + a.toFixed(3) + ")";
           ctx.beginPath();
           ctx.moveTo(c00.x, c00.y);
           ctx.lineTo(c10.x, c10.y);
@@ -484,6 +487,21 @@
           ctx.lineTo(c01.x, c01.y);
           ctx.closePath();
           ctx.fill();
+          if (wave > 0.72) {
+            const m = { x: (c00.x + c11.x) / 2, y: (c00.y + c11.y) / 2 };
+            const k = (wave - 0.72) / 0.28;
+            ctx.fillStyle = "hsla(" + hue + ", 100%, 82%, " + (0.5 * k * (0.4 + 0.6 * beatGlow)).toFixed(3) + ")";
+            ctx.beginPath();
+            ctx.moveTo((c00.x + m.x) / 2, (c00.y + m.y) / 2);
+            ctx.lineTo((c10.x + m.x) / 2, (c10.y + m.y) / 2);
+            ctx.lineTo((c11.x + m.x) / 2, (c11.y + m.y) / 2);
+            ctx.lineTo((c01.x + m.x) / 2, (c01.y + m.y) / 2);
+            ctx.closePath();
+            ctx.fill();
+          }
+          ctx.strokeStyle = "rgba(255,255,255,0.055)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
         }
       }
       ctx.restore();
@@ -596,6 +614,31 @@
         ctx.lineTo(ex + dx * wd, ey + dy * wd);
         ctx.lineTo(ex - dx * wd, ey - dy * wd);
         ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+
+      /* pools of colored light where each beam lands on the mirror floor —
+         they sweep across the tiles with the beam, flaring on the beat */
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      for (let i = 0; i < beams.length; i++) {
+        const b = beams[i];
+        const ang = b.base + Math.sin(t * b.sp + b.ph) * 0.55;
+        const wx = f.x + Math.sin(ang) * 4.4;
+        const wz = f.z - 3.0 - Math.cos(ang) * 2.8;
+        const c = this.PT(wx, wz, 0.003);
+        if (!c) continue;
+        const pr = this.PT(wx + 1.2, wz, 0.003);
+        const rx = pr ? Math.max(24, Math.abs(pr.x - c.x) * 2.4) : 60;
+        const pulse = 0.45 + 0.55 * beatGlow;
+        const rg = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, rx);
+        rg.addColorStop(0, "hsla(" + b.hue + ", 100%, 66%, " + (0.20 * pulse).toFixed(3) + ")");
+        rg.addColorStop(0.55, "hsla(" + b.hue + ", 100%, 62%, " + (0.07 * pulse).toFixed(3) + ")");
+        rg.addColorStop(1, "hsla(" + b.hue + ", 100%, 60%, 0)");
+        ctx.fillStyle = rg;
+        ctx.beginPath();
+        ctx.ellipse(c.x, c.y, rx, rx * 0.30, 0, 0, TAU);
         ctx.fill();
       }
       ctx.restore();
