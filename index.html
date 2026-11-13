@@ -3380,7 +3380,19 @@ kbd {
       const g0 = gates[ng];
       if (!g0 || g0.state !== 0) return;
       const far = Math.hypot((scene.mx || 0) - g0.x, (scene.mz || 0) - g0.z);
-      if (far < 3.2) return;   /* close enough — the ribbon already shows the way */
+      if (far < 6) return;   /* not really lost yet */
+      /* only when the main path is out of sight: if the next ring (or one
+         of the few after it) still shows on screen, the ribbon already
+         guides — the rescue line stays hidden */
+      let pathVisible = false;
+      for (let k = ng; k < Math.min(gates.length, ng + 4); k++) {
+        const p = this.PT(gates[k].x, gates[k].z, 0.03);
+        if (p && p.x > -100 && p.x < this.w + 100 && p.y > -100 && p.y < this.h + 100) {
+          pathVisible = true;
+          break;
+        }
+      }
+      if (pathVisible) return;
       const ctx = this.ctx;
       const p0 = this.PT(scene.mx || 0, scene.mz || 0, 0.03);
       if (!p0) return;
