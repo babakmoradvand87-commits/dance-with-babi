@@ -871,6 +871,8 @@
       const to = Math.min(gates.length, ng + 24);
       for (let k = from; k < to; k++) {
         const g = gates[k];
+        /* gates in the ring window are drawn by drawRings as note-gates */
+        if (k >= ng && k <= ng + 8) continue;
         const midi = g.note || 0;
         if (!midi) continue;                       /* rest — no note here */
         const e = this.disc(g.x, g.z, RING_R);
@@ -996,7 +998,10 @@
       ctx.restore();
     }
 
-    /* ── the rings ─────────────────────────────────────────────── */
+    /* ── the rings: every ring is a NOTE-shaped GATE standing on the
+       floor — the pearl flies through the note. 5-pt rings are normal
+       notes, 10-pt rings are big notes, 20-pt portals are huge notes
+       with a rotating halo ─────────────────────────────────────── */
     drawRings(scene, pal) {
       const ctx = this.ctx;
       const gates = scene.gates;
@@ -1017,34 +1022,52 @@
         const ahead = nextK == null ? 9 : k - nextK;
         if (!isNext && !hit && (ahead < 0 || ahead > 8)) continue;
 
-        if (isNext) this.glow(pal.ringNext, e.x, e.y, Math.max(e.rx, e.ry) * 1.7, 0.06 + 0.04 * pulse);
-
+        /* faint target zone lying on the floor under the gate */
         ctx.save();
         ctx.translate(e.x, e.y);
         ctx.rotate(e.rot);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, e.rx, e.ry, 0, 0, TAU);
+        const zoneA = isNext ? 0.22 + 0.16 * pulse : hit ? flash * 0.5 : clamp(0.30 - ahead * 0.05, 0.05, 0.30);
+        ctx.strokeStyle = C.out(C.mix(col, "#ffffff", 0.25), zoneA);
+        ctx.lineWidth = 1.1;
+        ctx.stroke();
+        if (g.kind === "portal") {
+          /* a portal gate has a slowly rotating halo around its base */
+          ctx.beginPath();
+          ctx.ellipse(0, 0, e.rx * 1.35, e.ry * 1.35, 0, this.time * 0.6, this.time * 0.6 + Math.PI * 1.4);
+          ctx.strokeStyle = C.out(col, (isNext ? 0.55 : clamp(0.4 - ahead * 0.05, 0.08, 0.4)));
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+        }
+        ctx.restore();
 
+        /* the NOTE gate standing on the ring — its pitch is the song's
+           note on this beat, its size is the ring's kind */
+        const midi = g.note || 0;
+        const hue = midi ? (midi * 14 + 318) % 360 : Math.round(C.hue(col));
+        const s = Math.max(16, e.rx * (g.kind === "portal" ? 2.1 : g.kind === "big" ? 1.8 : 1.5));
+        const gy = e.y - e.ry * 0.8 - s * 0.45;
+        let gcol, dim = false;
+        if (hit) {
+          if (flash < 0.02) dim = true;
+          gcol = "hsla(" + hue + ", 25%, 32%, " + Math.min(1, flash * 0.9 + 0.18) + ")";
+        } else if (isNext) {
+          gcol = C.out(C.lite(pal.ringNext, 0.25 + 0.25 * pulse), 0.95);
+        } else {
+          gcol = "hsla(" + hue + ", 75%, 62%, " + clamp(0.55 - ahead * 0.06, 0.14, 0.55) + ")";
+        }
         if (isNext) {
-          /* the ring you owe, in gold, with a column of light */
-          ctx.beginPath();
-          ctx.ellipse(0, 0, e.rx * (1.20 + 0.09 * pulse), e.ry * (1.20 + 0.09 * pulse), 0, 0, TAU);
-          ctx.strokeStyle = C.out(pal.ringNext, 0.26 + 0.22 * pulse);
-          ctx.lineWidth = 1.3;
-          ctx.stroke();
+          this.glow(pal.ringNext, e.x, gy, s * 1.7, 0.10 + 0.09 * pulse);
+          this.glow(pal.ringNext, e.x, e.y, Math.max(e.rx, e.ry) * 1.7, 0.07 + 0.05 * pulse);
+        } else if (g.kind === "portal" && !hit) {
+          this.glow(col, e.x, gy, s * 1.4, 0.10);
+        }
+        this.noteGlyph(e.x, gy, s, gcol, dim);
 
-          const mg = ctx.createLinearGradient(-e.rx, -e.ry, e.rx, e.ry);
-          mg.addColorStop(0, C.out(C.lite(pal.ringNext, 0.85), 1));
-          mg.addColorStop(0.35, C.out(C.lite(pal.ringNext, 0.30), 1));
-          mg.addColorStop(0.75, C.out(pal.ringNext, 0.95));
-          mg.addColorStop(1, C.out(C.dark(pal.ringNext, 0.45), 0.95));
-          ctx.beginPath();
-          ctx.ellipse(0, 0, e.rx, e.ry, 0, 0, TAU);
-          ctx.strokeStyle = mg;
-          ctx.lineWidth = 3.0;
-          ctx.stroke();
-          ctx.restore();
-
-          /* a gem floating over the ring you owe */
-          const gm = this.PT(g.x, g.z, 0.46 + 0.04 * Math.sin(this.time * 2.6));
+        /* a gem floating over the gate you owe */
+        if (isNext) {
+          const gm = this.PT(g.x, g.z, 1.05 + 0.05 * Math.sin(this.time * 2.6));
           if (gm) {
             const gr = clamp((this.focal * 0.035) / gm.z, 2, 9);
             this.glow(pal.ringNext, gm.x, gm.y, gr * 4.2, 0.22);
@@ -1055,33 +1078,6 @@
             ctx.fillRect(-gr * 0.62, -gr * 0.62, gr * 1.24, gr * 1.24);
             ctx.restore();
           }
-
-        } else if (hit) {
-          if (flash < 0.02) { ctx.restore(); continue; }
-          ctx.beginPath();
-          ctx.ellipse(0, 0, e.rx, e.ry, 0, 0, TAU);
-          ctx.strokeStyle = C.out(C.mix(pal.ring, "#ffffff", 0.25), flash * 0.6);
-          ctx.lineWidth = 1.2;
-          ctx.stroke();
-          ctx.restore();
-          this.glow(pal.ring, e.x, e.y, Math.max(e.rx, e.ry) * 1.2, flash * 0.16);
-        } else {
-          const near = clamp(0.42 - ahead * 0.07, 0.06, 0.42);
-          ctx.beginPath();
-          ctx.ellipse(0, 0, e.rx, e.ry, 0, 0, TAU);
-          ctx.strokeStyle = C.out(C.mix(col, "#ffffff", 0.25), near);
-          ctx.lineWidth = 1.1;
-          ctx.stroke();
-          if (g.kind === "portal") {
-            /* a portal ring has a second, slowly rotating outer ring */
-            ctx.beginPath();
-            ctx.ellipse(0, 0, e.rx * 1.3, e.ry * 1.3, 0, this.time * 0.6, this.time * 0.6 + Math.PI * 1.4);
-            ctx.strokeStyle = C.out(col, near * 0.9);
-            ctx.lineWidth = 1.6;
-            ctx.stroke();
-            this.glow(col, e.x, e.y, Math.max(e.rx, e.ry) * 1.6, near * 0.35);
-          }
-          ctx.restore();
         }
       }
     }
