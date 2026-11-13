@@ -557,6 +557,7 @@
           x: lv.gateX(k),
           z: lv.gateZ(k),
           expected: lv.gateAt(k),
+          note: lv.noteAt ? lv.noteAt(k) : 0,
           state: 0, q: 0, flash: 0,
         });
       }

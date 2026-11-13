@@ -308,6 +308,7 @@
       this.drawPath(scene, pal, dt);
       this.drawGuide(scene, pal);
       this.drawRings(scene, pal);
+      this.drawNotes(scene, pal);
       this.drawMarble(scene, pal);
       this.drawParticles();
       ctx.restore();
@@ -636,29 +637,74 @@
       }
 
       if (pts.length > 1) {
-        /* wide soft band + bright core, segment by segment so the trail
-           fades with age instead of being cut off */
+        /* a faint glow band only — the NOTES are the visible path now,
+           still fading with age segment by segment */
         for (let i = 1; i < pts.length; i++) {
           const a = pts[i - 1].p, b = pts[i].p;
-          const fade = clamp(1 - Math.abs(pts[i].k - ng) / 24, 0.10, 1);
+          const fade = clamp(1 - Math.abs(pts[i].k - ng) / 24, 0.08, 1);
           ctx.lineCap = "round";
           ctx.lineJoin = "round";
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = C.out(pal.ringNext, 0.20 * fade);
-          ctx.lineWidth = 18;
+          ctx.strokeStyle = C.out(pal.ringNext, 0.09 * fade);
+          ctx.lineWidth = 16;
           ctx.stroke();
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = C.out(C.lite(pal.ringNext, 0.5), 0.55 * fade);
-          ctx.lineWidth = 2.4;
-          ctx.setLineDash([1, 9]);
-          ctx.stroke();
-          ctx.setLineDash([]);
         }
       }
+    }
+
+    /* ── the path is music: one floating 3D note per beat ─────────
+       each note's pitch is the note the song actually plays on that
+       beat; once you pass a note, its colour dims */
+    drawNotes(scene, pal) {
+      const gates = scene.gates;
+      if (!gates || !gates.length) return;
+      const ctx = this.ctx;
+      const ng = scene.nextGate || 0;
+      const from = Math.max(0, ng - 12);
+      const to = Math.min(gates.length, ng + 20);
+      for (let k = from; k < to; k++) {
+        const g = gates[k];
+        const midi = g.note || 0;
+        if (!midi) continue;                       /* rest — no note here */
+        const e = this.disc(g.x, g.z, RING_R);
+        if (!e) continue;
+        const hp = this.PT(g.x, g.z, 0.42);
+        if (!hp) continue;
+        const ahead = k - ng;
+        const fade = clamp(1 - Math.abs(ahead) / 24, 0.15, 1);
+        const s = Math.max(9, e.rx * (0.72 + (midi - 48) * 0.05));
+        const hue = (midi * 14 + 318) % 360;
+        const done = g.state !== 0;                /* passed → dimmed */
+        const col = done
+          ? "hsla(" + hue + ", 22%, 30%, " + (0.32 * fade) + ")"
+          : "hsla(" + hue + ", 90%, 67%, " + (0.95 * fade) + ")";
+        this.noteGlyph(hp.x, hp.y, s, col, done);
+      }
+    }
+
+    /* an eighth-note glyph: head, stem, flag */
+    noteGlyph(x, y, s, color, dim) {
+      const ctx = this.ctx;
+      ctx.save();
+      if (!dim) { ctx.shadowColor = color; ctx.shadowBlur = 12; }
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = Math.max(1.4, s * 0.10);
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.ellipse(x, y, s * 0.30, s * 0.22, -0.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(x + s * 0.26, y - s * 0.12);
+      ctx.lineTo(x + s * 0.26, y - s * 1.12);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x + s * 0.26, y - s * 1.12);
+      ctx.quadraticCurveTo(x + s * 0.95, y - s * 0.94, x + s * 0.66, y - s * 0.42);
+      ctx.stroke();
+      ctx.restore();
     }
 
     /* ── the rescue line: pearl lost → a glowing guide to the path ── */
