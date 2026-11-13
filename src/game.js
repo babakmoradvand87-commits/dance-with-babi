@@ -18,7 +18,7 @@
   const PAD_RATE = 3.2;      /* how fast a key tips the tray */
   const RIM_BOUNCE = 0.42;
   const RIM_PENALTY = 0.9;   /* how hard the marble must hit the rim to count */
-  const FOLLOW = 22;         /* how quickly the tray answers your hands */
+  const FOLLOW = 30;         /* how quickly the tray answers your hands */
 
   /* judged on the beat: how close is the marble to the ring centre */
   const JUDGE = [

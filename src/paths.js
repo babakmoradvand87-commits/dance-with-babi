@@ -17,7 +17,7 @@
     const sub = 6;                 /* samples per ring */
     const ds = step / sub;
     const want = Math.min(6000, Math.ceil((count * step * 1.35) / ds) + 8);
-    const a = 1.05, b = 0.78, c = 0.22, zz = 0.60;
+    const a = 1.05, b = 0.66, c = 0.22, zz = 0.42;
     const p1 = (seed * 1.91) % 6.28, p2 = (seed * 3.37) % 6.28, p3 = (seed * 5.13) % 6.28;
     const xs = new Float64Array(want + 1);
     const zs = new Float64Array(want + 1);
@@ -66,7 +66,7 @@
       subtitle: "Up, down, find the sway",
       blurb: "A slow three-four. The pearl swings away from you and back.",
       bpm: 84, gates: 202, intro: 6, level: 1,
-      step: 0.78, lag: 0.07, tiltRange: 26, difficulty: 1,
+      step: 0.78, lag: 0.045, tiltRange: 26, difficulty: 1,
       space: "aurora", seed: 3,
       stepsPerBar: 6, drums: "waltz",
       prog: [[57, 60, 64], [53, 57, 60], [55, 59, 62], [52, 55, 59]],
@@ -86,7 +86,7 @@
       subtitle: "The city hums under you",
       blurb: "Four on the floor, wide chords, a bass that leans forward.",
       bpm: 122, gates: 240, intro: 8, level: 2,
-      step: 0.84, lag: 0.07, tiltRange: 26, difficulty: 2,
+      step: 0.84, lag: 0.045, tiltRange: 26, difficulty: 2,
       space: "tokyo", seed: 11,
       stepsPerBar: 8, drums: "tech",
       prog: [[57, 60, 64], [53, 57, 60], [55, 60, 64], [50, 55, 59]],
@@ -106,7 +106,7 @@
       subtitle: "Let the drums argue",
       blurb: "Syncopated and warm. The pearl wants to go sideways.",
       bpm: 122, gates: 250, intro: 8, level: 3,
-      step: 0.86, lag: 0.07, tiltRange: 26, difficulty: 2,
+      step: 0.86, lag: 0.045, tiltRange: 26, difficulty: 2,
       space: "sahara", seed: 23,
       stepsPerBar: 8, drums: "afrohouse",
       prog: [[57, 60, 64], [55, 59, 62], [53, 57, 60], [52, 56, 59]],
@@ -126,7 +126,7 @@
       subtitle: "Sharp, bright, fast",
       blurb: "Tight drums, a bright lead, no room to drift.",
       bpm: 128, gates: 269, intro: 8, level: 4,
-      step: 0.88, lag: 0.07, tiltRange: 25, difficulty: 3,
+      step: 0.88, lag: 0.045, tiltRange: 25, difficulty: 3,
       space: "velvet", seed: 31,
       stepsPerBar: 8, drums: "kpop",
       prog: [[60, 64, 67], [57, 60, 64], [59, 62, 67], [55, 59, 62]],
@@ -146,7 +146,7 @@
       subtitle: "Both of you, one flourish",
       blurb: "Sliding melody over a walking bass. Big, generous phrases.",
       bpm: 104, gates: 235, intro: 6, level: 5,
-      step: 0.82, lag: 0.07, tiltRange: 26, difficulty: 2,
+      step: 0.82, lag: 0.045, tiltRange: 26, difficulty: 2,
       space: "garden", seed: 41,
       stepsPerBar: 8, drums: "filmi",
       prog: [[57, 60, 64], [57, 62, 65], [55, 58, 62], [53, 57, 60]],
@@ -166,7 +166,7 @@
       subtitle: "Hips before hands",
       blurb: "Dembow bounce. The ring is never where you left it.",
       bpm: 100, gates: 230, intro: 8, level: 6,
-      step: 0.85, lag: 0.07, tiltRange: 26, difficulty: 2,
+      step: 0.85, lag: 0.045, tiltRange: 26, difficulty: 2,
       space: "ember", seed: 53,
       stepsPerBar: 8, drums: "dembow",
       prog: [[57, 60, 64], [50, 53, 57], [55, 58, 62], [52, 55, 59]],
@@ -186,7 +186,7 @@
       subtitle: "Slow it down and listen",
       blurb: "Seventh chords, soft brushes, a long trailing line.",
       bpm: 118, gates: 221, intro: 6, level: 7,
-      step: 0.80, lag: 0.07, tiltRange: 27, difficulty: 1,
+      step: 0.80, lag: 0.045, tiltRange: 27, difficulty: 1,
       space: "ice", seed: 61,
       stepsPerBar: 8, drums: "disco",
       prog: [[60, 64, 67], [57, 60, 64], [53, 57, 60], [55, 59, 62]],
@@ -206,7 +206,7 @@
       subtitle: "Further, faster, hold the line",
       blurb: "The curve widens at the corners. Lead the pearl a beat early.",
       bpm: 124, gates: 259, intro: 8, level: 8,
-      step: 0.88, lag: 0.07, tiltRange: 25, difficulty: 3,
+      step: 0.88, lag: 0.045, tiltRange: 25, difficulty: 3,
       space: "nebula", seed: 71,
       stepsPerBar: 8, drums: "tech",
       prog: [[57, 60, 64], [55, 59, 62], [53, 57, 60], [50, 55, 59]],
@@ -226,7 +226,7 @@
       subtitle: "Nothing to bump into",
       blurb: "Rolling breaks, one long breath. The floor is the whole world.",
       bpm: 174, gates: 288, intro: 8, level: 9,
-      step: 0.90, lag: 0.07, tiltRange: 25, difficulty: 3,
+      step: 0.90, lag: 0.045, tiltRange: 25, difficulty: 3,
       space: "space", seed: 83,
       stepsPerBar: 8, drums: "dnb",
       prog: [[57, 60, 64], [53, 57, 60], [60, 63, 67], [55, 58, 62]],
@@ -246,7 +246,7 @@
       subtitle: "All the way, every beat",
       blurb: "The fastest dance of the evening. The pearl has no time to settle.",
       bpm: 128, gates: 278, intro: 8, level: 10,
-      step: 0.92, lag: 0.07, tiltRange: 25, difficulty: 3,
+      step: 0.92, lag: 0.045, tiltRange: 25, difficulty: 3,
       space: "ember", seed: 97,
       stepsPerBar: 8, drums: "bigroom",
       prog: [[57, 60, 64], [59, 62, 67], [57, 60, 64], [55, 59, 62]],
@@ -266,7 +266,7 @@
       subtitle: "One more for the road",
       blurb: "A real chart track, synced ring by ring.",
       bpm: 120, gates: 240, intro: 8, level: 10,
-      step: 0.9, lag: 0.07, tiltRange: 25, difficulty: 3,
+      step: 0.9, lag: 0.045, tiltRange: 25, difficulty: 3,
       space: "velvet", seed: 101,
       stepsPerBar: 8, drums: "tech",
       prog: [[57, 60, 64], [53, 57, 60], [55, 59, 62], [52, 55, 59]],
@@ -286,7 +286,7 @@
       subtitle: "Last dance of the night",
       blurb: "A real chart track, synced ring by ring.",
       bpm: 120, gates: 240, intro: 8, level: 10,
-      step: 0.92, lag: 0.07, tiltRange: 25, difficulty: 3,
+      step: 0.92, lag: 0.045, tiltRange: 25, difficulty: 3,
       space: "ocean", seed: 113,
       stepsPerBar: 8, drums: "bigroom",
       prog: [[57, 60, 64], [59, 62, 67], [57, 60, 64], [55, 59, 62]],
@@ -345,10 +345,10 @@
     /* the pace of the dance IS the song's tempo (one ring per beat), but
        the marble gets a little more than half a beat per ring and its top
        speed is capped, so fast songs stay fun instead of frantic */
-    lv.speed = Math.min(3.1, Math.max(1.25, lv.step / lv.spb / 0.78));
-    lv.perfect = lv.step * 0.30;
-    lv.good = lv.step * 0.60;
-    lv.edge = lv.step * 0.88;
+    lv.speed = Math.min(2.6, Math.max(1.2, lv.step / lv.spb / 0.85));
+    lv.perfect = lv.step * 0.38;
+    lv.good = lv.step * 0.78;
+    lv.edge = lv.step * 1.15;
     lv.gateX = function (i) {
       if (i < 0) i = 0;
       if (i <= lastK) return lv.points[i][0];

@@ -15,7 +15,7 @@
   const TAU = Math.PI * 2;
   const FOV = (58 * Math.PI) / 180;
   const MARBLE_R = 0.100;
-  const RING_R = 0.25;
+  const RING_R = 0.32;
   const GRID = 1.15;          /* world spacing of the floor inlay */
 
   const isTouch = () =>
