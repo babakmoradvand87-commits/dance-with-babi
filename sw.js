@@ -7,7 +7,7 @@
    ────────────────────────────────────────────────────────────── */
 "use strict";
 
-const VERSION = "dwb-v13";
+const VERSION = "dwb-v14";
 const CORE = [
   "/",
   "/index.html",

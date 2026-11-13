@@ -305,7 +305,7 @@
         const s3 = scene.shake * 10;
         ctx.translate((Math.random() - 0.5) * s3, (Math.random() - 0.5) * s3);
       }
-      this.drawPath(scene, pal, dt);
+      /* the path is the notes themselves — no line is drawn anymore */
       this.drawGuide(scene, pal);
       this.drawRings(scene, pal);
       this.drawNotes(scene, pal);
@@ -662,8 +662,8 @@
       if (!gates || !gates.length) return;
       const ctx = this.ctx;
       const ng = scene.nextGate || 0;
-      const from = Math.max(0, ng - 12);
-      const to = Math.min(gates.length, ng + 20);
+      const from = Math.max(0, ng - 16);
+      const to = Math.min(gates.length, ng + 24);
       for (let k = from; k < to; k++) {
         const g = gates[k];
         const midi = g.note || 0;
@@ -673,7 +673,7 @@
         const hp = this.PT(g.x, g.z, 0.42);
         if (!hp) continue;
         const ahead = k - ng;
-        const fade = clamp(1 - Math.abs(ahead) / 24, 0.15, 1);
+        const fade = clamp(1 - Math.abs(ahead) / 30, 0.15, 1);
         const s = Math.max(9, e.rx * (0.72 + (midi - 48) * 0.05));
         const hue = (midi * 14 + 318) % 360;
         const done = g.state !== 0;                /* passed → dimmed */
@@ -801,8 +801,11 @@
 
       for (let k = 0; k < gates.length; k++) {
         const g = gates[k];
-        const e = this.disc(g.x, g.z, RING_R);
+        /* big rings and portal rings are drawn larger */
+        const rr = g.kind === "portal" ? RING_R * 1.75 : g.kind === "big" ? RING_R * 1.45 : RING_R;
+        const e = this.disc(g.x, g.z, rr);
         if (!e) continue;
+        const col = g.kind === "portal" ? (pal.aura2 || pal.ring) : pal.ring;
         const isNext = k === nextK;
         const hit = g.state === 1;
         const flash = g.flash || 0;
@@ -861,9 +864,18 @@
           const near = clamp(0.42 - ahead * 0.07, 0.06, 0.42);
           ctx.beginPath();
           ctx.ellipse(0, 0, e.rx, e.ry, 0, 0, TAU);
-          ctx.strokeStyle = C.out(C.mix(pal.ring, "#ffffff", 0.25), near);
+          ctx.strokeStyle = C.out(C.mix(col, "#ffffff", 0.25), near);
           ctx.lineWidth = 1.1;
           ctx.stroke();
+          if (g.kind === "portal") {
+            /* a portal ring has a second, slowly rotating outer ring */
+            ctx.beginPath();
+            ctx.ellipse(0, 0, e.rx * 1.3, e.ry * 1.3, 0, this.time * 0.6, this.time * 0.6 + Math.PI * 1.4);
+            ctx.strokeStyle = C.out(col, near * 0.9);
+            ctx.lineWidth = 1.6;
+            ctx.stroke();
+            this.glow(col, e.x, e.y, Math.max(e.rx, e.ry) * 1.6, near * 0.35);
+          }
           ctx.restore();
         }
       }

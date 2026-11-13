@@ -553,11 +553,17 @@
 
       this.gates = [];
       for (let k = 0; k < lv.gates; k++) {
+        /* ring kinds: every 4th-but-2 ring is BIG (10 pts), every 16th is a
+           PORTAL into a new world (20 pts), the rest are normal (5 pts) —
+           staying on the path always scores */
+        const kind = k % 16 === 8 ? "portal" : k % 4 === 2 ? "big" : "norm";
         this.gates.push({
           x: lv.gateX(k),
           z: lv.gateZ(k),
           expected: lv.gateAt(k),
           note: lv.noteAt ? lv.noteAt(k) : 0,
+          kind,
+          pts: kind === "portal" ? 20 : kind === "big" ? 10 : 5,
           state: 0, q: 0, flash: 0,
         });
       }
@@ -788,7 +794,9 @@
       this.combo += 1;
       this.maxCombo = Math.max(this.maxCombo, this.combo);
       const mult = 1 + Math.min(3, Math.floor(this.combo / 8)) * 0.5;
-      this.score += Math.round(tier.points * mult);
+      /* staying on the path always scores: 5 per ring, 10 for big rings,
+         20 for portal rings — the final total is what counts */
+      this.score += Math.round((g.pts || 5) * mult);
       this.babiMood = Math.min(1.2, this.babiMood + 0.7);
 
       this.popJudge(tier.label, tier.q === 3 ? "perfect" : tier.q === 2 ? "good" : "soft");
