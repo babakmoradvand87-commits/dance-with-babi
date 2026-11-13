@@ -552,18 +552,25 @@
       else { this.stage.particles.length = 0; this.stage.babi.ready = false; }
 
       this.gates = [];
+      let ringCount = 0;
       for (let k = 0; k < lv.gates; k++) {
-        /* ring kinds cycle in turn: simple 5-pt, FIRE 10-pt, PORTAL
-           20-pt (passing through enters a new world) — staying on the
-           path always scores */
-        const kind = ["norm", "fire", "portal"][k % 3];
+        /* RINGS are separate from notes and appear randomly, every few
+           notes; their kinds cycle in turn: simple 5-pt, FIRE 10-pt,
+           PORTAL 20-pt. Every note on the path scores 1 pt while lit. */
+        const hsh = Math.sin(k * 12.9898 + 78.233) * 43758.5453;
+        const fr = hsh - Math.floor(hsh);
+        let ring = null;
+        if (fr > 0.70) {
+          const kind = ["norm", "fire", "portal"][ringCount++ % 3];
+          ring = { kind, pts: kind === "portal" ? 20 : kind === "fire" ? 10 : 5 };
+        }
         this.gates.push({
           x: lv.gateX(k),
           z: lv.gateZ(k),
           expected: lv.gateAt(k),
           note: lv.noteAt ? lv.noteAt(k) : 0,
-          kind,
-          pts: kind === "portal" ? 20 : kind === "fire" ? 10 : 5,
+          ring,
+          pts: ring ? ring.pts : 1,
           state: 0, q: 0, flash: 0,
         });
       }
