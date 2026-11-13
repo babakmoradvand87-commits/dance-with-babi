@@ -1015,7 +1015,7 @@
         const g = gates[k];
         if (!g.ring) continue;                     /* most notes have no ring */
         const kind = g.ring.kind;
-        const rr = kind === "portal" ? RING_R * 1.6 : kind === "fire" ? RING_R * 1.3 : RING_R;
+        const rr = kind === "portal" ? RING_R * 1.8 : kind === "fire" ? RING_R * 1.45 : RING_R * 1.15;
         const e = this.disc(g.x, g.z, rr);
         if (!e) continue;
         const isNext = k === nextK;

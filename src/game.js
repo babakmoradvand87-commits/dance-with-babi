@@ -560,7 +560,7 @@
         const hsh = Math.sin(k * 12.9898 + 78.233) * 43758.5453;
         const fr = hsh - Math.floor(hsh);
         let ring = null;
-        if (fr > 0.70) {
+        if (fr > 0.62) {
           const kind = ["norm", "fire", "portal"][ringCount++ % 3];
           ring = { kind, pts: kind === "portal" ? 20 : kind === "fire" ? 10 : 5 };
         }
@@ -599,7 +599,7 @@
       this.el.topbar.classList.remove("hidden");
       this.el.countin.classList.remove("hidden");
       this.el.hint.textContent = this.gyroLive()
-        ? "one thumb at each end of the phone — then tip it"
+        ? "both thumbs on the phone — the count starts when you're both holding"
         : this.mode === "solo"
           ? "drag anywhere (or WASD) to tip the tray"
           : "a thumb each: WASD and the arrows — tip it together";
@@ -734,8 +734,11 @@
         }
       }
 
-      /* count-in */
+      /* count-in — it does NOT start until BOTH players have their
+         hands on the phone: the song freezes until the grip is complete */
       if (this.state === "countin") {
+        if (!this.gripOK()) this.sound.pause();
+        else this.sound.resume();
         if (t > -3 * lv.spb && t < 0) {
           const n = Math.ceil(-t / lv.spb);
           if (n !== this.lastCount) {
